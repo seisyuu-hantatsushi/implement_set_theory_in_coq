@@ -1,0 +1,97 @@
+\chapter{命題論理}
+\section{命題論理とは}
+命題(proposition)とは
+\begin{quotation}
+ 正しい(真)か正しくない(偽)か決定できる式および文
+\end{quotation}
+である.\footnote{ゲーテルの不完全性定理はここでは考慮しない.}
+
+論理(logic)とはz
+\begin{quotation}
+ 思考,議論のため法則,ルール
+\end{quotation}
+である.
+
+ここでは\textgt{論理}は\textgt{数理論理}である.
+数理論理は\textgt{概念}を記号に置き換え\textgt{演算}を適用し,形式的に議論を進める.
+\textgt{命題論理}(propositional logic)は命題を形式化し演算(法則,ルール)により関係を調べる技法である.
+
+\section{基本記号の導入}
+基本記号には,命題定数,命題変数,基本述語,論理記号,括弧がある.
+\begin{description}
+ \item[命題定数] 真(true),偽(false)のことである. 真は$\top$,偽は$\bot$.
+ \item[命題変数] 形式的に,$A,B,C,A_1,B_2,...$と表される.
+ \item[基本述語] 命題変数同士での関係を表す記号である. $=,\in$など.
+ \item[論理記号] 命題(命題定数と命題変数)に演算を施す. $\lnot,\land,\lor,\to$.
+ \item[括弧] 命題同士の基本述語,論理記号での結合に強さを与える.$(,)$.
+\end{description}
+\newpage
+
+\section{論理式}
+命題定数と命題変数を論理記号と括弧で結合したものを,\textgt{論理式}(formula)という.
+\begin{dfn}
+ 論理式
+ \begin{enumerate}
+  \item 命題定数$\top,\bot$は論理式である.
+  \item 命題変数は論理式である.
+  \item $A,B$が任意の論理式ならば,$(A) \land (B),(A) \lor (B), \lnot (A), (A) \to (B))$は論理式である.
+  \item 1から3を満たすものだけが論理式である.
+ \end{enumerate}
+\end{dfn}
+
+\section{真理表}
+論理式は命題変数が,独立して真や偽を取るとき,真または偽を取ることができる.
+論理記号の演算による結果を表にした物を真理表(truth table)と言う.
+以下,$\mathfrak{A},\mathfrak{B}$を論理式とする
+\begin{enumerate}
+ \item 論理積 (logical product, conjunction, $\land$)
+
+   $\mathfrak{A},\mathfrak{B}$がともに真であるとき,$(\mathfrak{A}) \land (\mathfrak{B})$は真である.
+
+	   \begin{tabular}{|c c||c|}
+		\hline
+		$\mathfrak{A}$    & $\mathfrak{B}$    & $(\mathfrak{A}) \land (\mathfrak{B})$ \\
+		\hhline{|==#=|}
+		$\top$ & $\top$ & $\top$ \\
+		\hline
+		$\top$ & $\bot$ & $\bot$ \\
+		\hline
+		$\bot$ & $\top$ & $\bot$ \\
+		\hline
+		$\bot$ & $\bot$ & $\bot$ \\
+		\hline
+	   \end{tabular}
+
+ \item 論理和 (logical sum, disjunction, $\lor$)
+
+	   $\mathfrak{A},\mathfrak{B}$がともに偽であるとき,$(\mathfrak{A}) \lor (\mathfrak{B})$は偽である.
+
+	   \begin{tabular}{|c c||c|}
+		\hline
+		$\mathfrak{A}$    & $\mathfrak{B}$    & $(\mathfrak{A}) \lor (\mathfrak{B})$ \\
+		\hhline{|==#=|}
+		$\top$ & $\top$ & $\top$ \\
+		\hline
+		$\top$ & $\bot$ & $\top$ \\
+		\hline
+		$\bot$ & $\top$ & $\top$ \\
+		\hline
+		$\bot$ & $\bot$ & $\bot$ \\
+		\hline
+	   \end{tabular}
+ \item 否定(negation, $\lnot$)
+
+	   $\mathfrak{A}$が真のとき,$\lnot (\mathfrak{A})$は偽である.
+	   $\mathfrak{A}$が偽のとき,$\lnot (\mathfrak{A})$は真である.
+
+
+	   \begin{tabular}{|c||c|}
+		\hline
+		$\mathfrak{A}$    & $\lnot (\mathfrak{A}) $ \\
+		\hhline{|=#=|}
+		$\top$ & $\bot$ \\
+		\hline
+		$\bot$ & $\top$ \\
+		\hline
+	   \end{tabular}
+\end{enumerate}
