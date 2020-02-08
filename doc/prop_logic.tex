@@ -79,11 +79,11 @@
 		$\bot$ & $\bot$ & $\bot$ \\
 		\hline
 	   \end{tabular}
+
  \item 否定(negation, $\lnot$)
 
 	   $\mathfrak{A}$が真のとき,$\lnot (\mathfrak{A})$は偽である.
 	   $\mathfrak{A}$が偽のとき,$\lnot (\mathfrak{A})$は真である.
-
 
 	   \begin{tabular}{|c||c|}
 		\hline
@@ -94,4 +94,85 @@
 		$\bot$ & $\top$ \\
 		\hline
 	   \end{tabular}
+
+ \item 含意(implication,$\to$)
+
+	   $\mathfrak{A}$が真で,$\mathfrak{B}$が偽であるときに限り,偽である.
+
+	   含意は$\mathfrak{A}$の仮定より$\mathfrak{B}$が導かれるという内容を形式化した物である.
+
+	   \begin{tabular}{|c c||c|}
+		\hline
+		$\mathfrak{A}$    & $\mathfrak{B}$    & $(\mathfrak{A}) \to (\mathfrak{B})$ \\
+		\hhline{|==#=|}
+		$\top$ & $\top$ & $\top$ \\
+		\hline
+		$\top$ & $\bot$ & $\bot$ \\
+		\hline
+		$\bot$ & $\top$ & $\top$ \\
+		\hline
+		$\bot$ & $\bot$ & $\top$ \\
+		\hline
+	   \end{tabular}
 \end{enumerate}
+
+以上の論理記号の結合の強さは,$\lnot > \land = \lor > \to$であり,$\land,\lor$は左結合である.
+更に,$((\mathfrak{A}) \to (\mathfrak{B})) \land ((\mathfrak{B}) \to (\mathfrak{A}))$の略号として,
+\textgt{同値}(equivalence,$\leftrightarrow$)を導入する.真理表は以下のようになる.
+
+\begin{tabular}{|c c||c|}
+ \hline
+ $\mathfrak{A}$    & $\mathfrak{B}$    & $(\mathfrak{A}) \to (\mathfrak{B})$ \\
+ \hhline{|==#=|}
+ $\top$ & $\top$ & $\top$ \\
+ \hline
+ $\top$ & $\bot$ & $\bot$ \\
+ \hline
+ $\bot$ & $\top$ & $\bot$ \\
+ \hline
+ $\bot$ & $\bot$ & $\top$ \\
+ \hline
+\end{tabular}
+\newline
+\newline
+$\leftrightarrow$は以下を満たす.
+
+\begin{center}
+ \begin{tabular}{ll}
+  $\mathfrak{A} \leftrightarrow \mathfrak{A}$ & \textgt{反射律} (reflexive law) \\
+  $\mathfrak{A} \leftrightarrow \mathfrak{B}$ ならば $\mathfrak{B} \leftrightarrow \mathfrak{A}$ & \textgt{対称律} (symmetric law) \\
+  $\mathfrak{A} \leftrightarrow \mathfrak{B}$ かつ $\mathfrak{B} \leftrightarrow \mathfrak{C}$ ならば $\mathfrak{A} \leftrightarrow \mathfrak{C}$ & \textgt{推移律} (transitive law) \\
+ \end{tabular}
+\end{center}
+
+上の３つの関係を満たす場合,同値関係(equivalence relation)と言う.
+
+論理式内で括弧をつけなくても結合順位が明確な場合,括弧を省略する.
+
+真理表より$\lnot (\mathfrak{A} \land \mathfrak{B}) \leftrightarrow  \lnot \mathfrak{A} \lor \lnot \mathfrak{B}$を演算し真理値を得ることができる.
+\begin{center}
+ \begin{tabular}{|c c||c|c||c|c|c||c|}
+  \hline
+  $\mathfrak{A}$ & $\mathfrak{B}$ &
+		  $\mathfrak{A} \land \mathfrak{B}$ & $\lnot (\mathfrak{A} \land \mathfrak{B})$ &
+				  $\lnot \mathfrak{A}$ & $\lnot \mathfrak{B}$ & $\lnot \mathfrak{A} \lor \lnot \mathfrak{B}$ &
+							  $\lnot (\mathfrak{A} \land \mathfrak{B}) \leftrightarrow  \lnot \mathfrak{A} \lor \lnot \mathfrak{B}$ \\
+  \hhline{|==#=|=#=|=|=#=|}
+  $\top$ & $\top$ & $\top$ & $\bot$ & $\bot$ & $\bot$ & $\bot$ & $\top$ \\
+  \hline
+  $\top$ & $\bot$ & $\bot$ & $\top$ & $\bot$ & $\top$ & $\top$ & $\top$ \\
+  \hline
+  $\bot$ & $\top$ & $\bot$ & $\top$ & $\top$ & $\bot$ & $\top$ & $\top$ \\
+  \hline
+  $\bot$ & $\bot$ & $\bot$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ \\
+  \hline
+ \end{tabular}
+\end{center}
+
+
+\section{恒真}
+
+\begin{thebibliography}{9}
+ \bibitem{155129_8Feb20}
+		 松本和夫 『復刊 数理論理学』 共立出版 2001
+\end{thebibliography}
