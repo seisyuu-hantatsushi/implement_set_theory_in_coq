@@ -1,5 +1,6 @@
 \chapter{命題論理}
-\section{命題論理とは}
+\section{命題論理}
+\subsection{命題論理とは}
 命題(proposition)とは
 \begin{quotation}
  正しい(真)か正しくない(偽)か決定できる式および文
@@ -16,7 +17,7 @@
 数理論理は\textgt{概念}を記号に置き換え\textgt{演算}を適用し,形式的に議論を進める.
 \textgt{命題論理}(propositional logic)は命題を形式化し演算(法則,ルール)により関係を調べる技法である.
 
-\section{基本記号の導入}
+\subsection{基本記号の導入}
 基本記号には,命題定数,命題変数,基本述語,論理記号,括弧がある.
 \begin{description}
  \item[命題定数] 真(true),偽(false)のことである. 真は$\top$,偽は$\bot$.
@@ -27,7 +28,7 @@
 \end{description}
 \newpage
 
-\section{論理式}
+\subsection{論理式}
 命題定数と命題変数を論理記号と括弧で結合したものを,\textgt{論理式}(formula)という.
 \begin{dfn}
  論理式
@@ -39,18 +40,18 @@
  \end{enumerate}
 \end{dfn}
 
-\section{真理表}
+\subsection{真理表}
 論理式は命題変数が,独立して真や偽を取るとき,真または偽を取ることができる.
 論理記号の演算による結果を表にした物を真理表(truth table)と言う.
-以下,$\mathfrak{A},\mathfrak{B}$を論理式とする
+以下,$p,q$を論理式とする
 \begin{enumerate}
  \item 論理積 (logical product, conjunction, $\land$)
 
-   $\mathfrak{A},\mathfrak{B}$がともに真であるとき,$(\mathfrak{A}) \land (\mathfrak{B})$は真である.
+   $p,q$がともに真であるとき,$(p) \land (q)$は真である.
 
 	   \begin{tabular}{|c c||c|}
 		\hline
-		$\mathfrak{A}$    & $\mathfrak{B}$    & $(\mathfrak{A}) \land (\mathfrak{B})$ \\
+		$p$    & $q$    & $(p) \land (q)$ \\
 		\hhline{|==#=|}
 		$\top$ & $\top$ & $\top$ \\
 		\hline
@@ -64,11 +65,11 @@
 
  \item 論理和 (logical sum, disjunction, $\lor$)
 
-	   $\mathfrak{A},\mathfrak{B}$がともに偽であるとき,$(\mathfrak{A}) \lor (\mathfrak{B})$は偽である.
+	   $p,q$がともに偽であるとき,$(p) \lor (q)$は偽である.
 
 	   \begin{tabular}{|c c||c|}
 		\hline
-		$\mathfrak{A}$    & $\mathfrak{B}$    & $(\mathfrak{A}) \lor (\mathfrak{B})$ \\
+		$p$    & $q$    & $(p) \lor (q)$ \\
 		\hhline{|==#=|}
 		$\top$ & $\top$ & $\top$ \\
 		\hline
@@ -82,12 +83,12 @@
 
  \item 否定(negation, $\lnot$)
 
-	   $\mathfrak{A}$が真のとき,$\lnot (\mathfrak{A})$は偽である.
-	   $\mathfrak{A}$が偽のとき,$\lnot (\mathfrak{A})$は真である.
+	   $p$が真のとき,$\lnot (p)$は偽である.
+	   $p$が偽のとき,$\lnot (p)$は真である.
 
 	   \begin{tabular}{|c||c|}
 		\hline
-		$\mathfrak{A}$    & $\lnot (\mathfrak{A}) $ \\
+		$p$    & $\lnot (p) $ \\
 		\hhline{|=#=|}
 		$\top$ & $\bot$ \\
 		\hline
@@ -97,13 +98,13 @@
 
  \item 含意(implication,$\to$)
 
-	   $\mathfrak{A}$が真で,$\mathfrak{B}$が偽であるときに限り,偽である.
+	   $p$が真で,$q$が偽であるときに限り,偽である.
 
-	   含意は$\mathfrak{A}$の仮定より$\mathfrak{B}$が導かれるという内容を形式化した物である.
+	   含意は$p$の仮定より$q$が導かれるという内容を形式化した物である.
 
 	   \begin{tabular}{|c c||c|}
 		\hline
-		$\mathfrak{A}$    & $\mathfrak{B}$    & $(\mathfrak{A}) \to (\mathfrak{B})$ \\
+		$p$    & $q$    & $(p) \to (q)$ \\
 		\hhline{|==#=|}
 		$\top$ & $\top$ & $\top$ \\
 		\hline
@@ -117,12 +118,12 @@
 \end{enumerate}
 
 以上の論理記号の結合の強さは,$\lnot > \land = \lor > \to$であり,$\land,\lor$は左結合である.
-更に,$((\mathfrak{A}) \to (\mathfrak{B})) \land ((\mathfrak{B}) \to (\mathfrak{A}))$の略号として,
+更に,$((p) \to (q)) \land ((q) \to (p))$の略号として,
 \textgt{同値}(equivalence,$\leftrightarrow$)を導入する.真理表は以下のようになる.
 
 \begin{tabular}{|c c||c|}
  \hline
- $\mathfrak{A}$    & $\mathfrak{B}$    & $(\mathfrak{A}) \to (\mathfrak{B})$ \\
+ $p$    & $q$    & $(p) \to (q)$ \\
  \hhline{|==#=|}
  $\top$ & $\top$ & $\top$ \\
  \hline
@@ -139,9 +140,9 @@ $\leftrightarrow$は以下を満たす.
 
 \begin{center}
  \begin{tabular}{ll}
-  $\mathfrak{A} \leftrightarrow \mathfrak{A}$ & \textgt{反射律} (reflexive law) \\
-  $\mathfrak{A} \leftrightarrow \mathfrak{B}$ ならば $\mathfrak{B} \leftrightarrow \mathfrak{A}$ & \textgt{対称律} (symmetric law) \\
-  $\mathfrak{A} \leftrightarrow \mathfrak{B}$ かつ $\mathfrak{B} \leftrightarrow \mathfrak{C}$ ならば $\mathfrak{A} \leftrightarrow \mathfrak{C}$ & \textgt{推移律} (transitive law) \\
+  $p \leftrightarrow q$ & \textgt{反射律} (reflexive law) \\
+  $p \leftrightarrow q$ ならば $q \leftrightarrow p$ & \textgt{対称律} (symmetric law) \\
+  $p \leftrightarrow q$ かつ $q \leftrightarrow r$ ならば $p \leftrightarrow r$ & \textgt{推移律} (transitive law) \\
  \end{tabular}
 \end{center}
 
@@ -149,14 +150,16 @@ $\leftrightarrow$は以下を満たす.
 
 論理式内で括弧をつけなくても結合順位が明確な場合,括弧を省略する.
 
-真理表より$\lnot (\mathfrak{A} \land \mathfrak{B}) \leftrightarrow  \lnot \mathfrak{A} \lor \lnot \mathfrak{B}$を演算し真理値を得ることができる.
+真理表より論理式を演算し真理値を得ることができる.
+例として
+$\lnot (p \land p) \leftrightarrow  \lnot p \lor \lnot q$を演算する.
 \begin{center}
  \begin{tabular}{|c c||c|c||c|c|c||c|}
   \hline
-  $\mathfrak{A}$ & $\mathfrak{B}$ &
-		  $\mathfrak{A} \land \mathfrak{B}$ & $\lnot (\mathfrak{A} \land \mathfrak{B})$ &
-				  $\lnot \mathfrak{A}$ & $\lnot \mathfrak{B}$ & $\lnot \mathfrak{A} \lor \lnot \mathfrak{B}$ &
-							  $\lnot (\mathfrak{A} \land \mathfrak{B}) \leftrightarrow  \lnot \mathfrak{A} \lor \lnot \mathfrak{B}$ \\
+  $p$ & $q$ &
+		  $p \land q$ & $\lnot (p \land q)$ &
+				  $\lnot p$ & $\lnot q$ & $\lnot p \lor \lnot q$ &
+							  $\lnot (p \land q) \leftrightarrow \lnot p \lor \lnot q$ \\
   \hhline{|==#=|=#=|=|=#=|}
   $\top$ & $\top$ & $\top$ & $\bot$ & $\bot$ & $\bot$ & $\bot$ & $\top$ \\
   \hline
@@ -169,10 +172,187 @@ $\leftrightarrow$は以下を満たす.
  \end{tabular}
 \end{center}
 
+\subsection{恒真}
+恒に真である命題を恒真(tautology,valid)といい,恒に真である論理式を恒真式という.
+\begin{align}
+ A \land A \leftrightarrow A & \quad & \text{(ベキ等律,idempotent law)} \\
+ A \lor A \leftrightarrow A & \quad & \text{(ベキ等律)} \\
+ A \land B \leftrightarrow B \land A & \quad & \text{(交換律,commutative law)} \\
+ A \lor B \leftrightarrow B \lor A & \quad & \text{(交換律)} \\
+ (A \lor B) \lor C \leftrightarrow A \lor (B \lor C) & \quad & \text{(結合律,associative law)} \\
+ (A \land B) \land C \leftrightarrow A \land (B \land C) & \quad & \text{(結合律)} \\
+ (A \land B) \lor C \leftrightarrow (A \lor C) \land (B \lor C) & \quad & \text{(分配律,distributive law)} \\
+ (A \lor B) \land C \leftrightarrow (A \land C) \lor (B \land C) & \quad & \text{(分配律)} \\
+ (A \land B) \lor A \leftrightarrow A & \quad & \text{(吸収律,absorptive law)} \\
+ (A \lor B) \land A \leftrightarrow A & \quad & \text{(吸収律)} \\
+ \lnot (A \land B) \leftrightarrow \lnot A \lor \lnot B & \quad & \text{(ド・モルガン律,de Morgan's law)} \\
+ \lnot (A \lor B) \leftrightarrow \lnot A \land \lnot B & \quad & \text{(ド・モルガン律)}
+\end{align}
 
-\section{恒真}
+恒に偽となる論理式を\textgt{矛盾}と言う.
+
+\section{形式化体系}
+論理式を内容の\textgt{意味}と真偽を考慮して取り扱う方法論を\textgt{意味論,セマンティクス}(semantics)と言い,
+論理式の意味に立ち入らず形式的な\textgt{構造}を取り出して扱う方法論を\textgt{構文論,シンタックス}(syntax)と言う.
+構文論を適用すると形式的体系(formal system)を得ることができる.
+
+ここでいくつかの定義を与える.
+\begin{dfn}
+ 公理(axiom)
+
+ 無条件で真と仮定する命題のこと
+\end{dfn}
+
+\begin{dfn}
+ 推論規則(rule of inference)
+
+ 前提となる論理式から帰結となる論理式を導出する規則である.
+ 以下,$\phi,\psi$を論理式とすると,
+ \begin{prooftree}
+  \AxiomC{$\phi_1,...,\phi_i$}
+  \RightLabel{$(R_j)$}
+  \UnaryInfC{$\psi$}
+ \end{prooftree}
+ のように記述し,規則$R_j$により$\phi_1,...,\phi_i$から$\psi$が導出されることを示す.
+\end{dfn}
+
+\begin{dfn}
+ 形式化体系
+
+ 形式化体系とは,以下の集合のである.
+ \begin{enumerate}
+  \item 公理系(axioms)とよばれる公理の集合.
+  \item 推論規則を元とする集合.
+ \end{enumerate}
+\end{dfn}
+
+形式化体系の構築には,推論規則をできる限り少なくする方針,公理をできる限り少なくする方針がある.
+Sを形式化体系の一つとする.
+
+\begin{dfn}
+ 証明
+
+ 形式化体系Sにおける$\phi$の\textgt{証明}(proof)とは,論理式の有限列$\phi_1,...,\phi_n(\phi_n=\phi)$が次の条件を満たすことである.
+ 各$i(i=1,...,n)$に対して,
+ \begin{enumerate}
+  \item $\phi_i$はSの公理である.
+  \item $\phi_i$がSの推論規則の一つを適用することにより,有限個の論理式$\phi_j (j<i)$から導かれる.
+ \end{enumerate}
+\end{dfn}
+
+論理式の集合$\Gamma={\phi_1,...,\phi_n}$から$\psi$を導出されることを
+\begin{equation*}
+ \Gamma \vdash \psi
+\end{equation*}
+と表す,$\Gamma$は前提,仮定,$\psi$は帰結と言う.公理からのみ導かれる帰結の場合,
+\begin{equation*}
+ \vdash \psi
+\end{equation*}
+と書ける.
+
+\begin{dfn}
+ 定理(theorem)
+
+ $\phi$が定理とは,Sにおける$\phi$の証明が存在することを言う.
+\end{dfn}
+
+形式化体系には,ヒルベルト(Hilbert)流,ゲンツェン(Gentzen)の自然演繹(NJ),ゲンツェン(Gentzen)のシーケント計算(LJ)などがある.
+\subsection{ヒルベルト流}
+推論規則をできる限り少なくして構築した形式化体系の一つである.
+\subsubsection{定義}
+\begin{dfn}
+ ヒルベルト流
+
+ \begin{enumerate}
+  \renewcommand{\labelenumii}{\arabic{enumii}.}
+  \item 基本記号
+		\begin{description}
+		 \item [論理記号] $\lnot,\to$
+		 \item [命題定数] $\top,\bot$
+		 \item [命題変数] $A,B,...,A_1,A_2,...,B_1,B_2,..$
+		 \item [括弧] 補助記号
+		\end{description}
+
+  \item 論理式
+
+		論理式は以下のように帰納的に定義する.
+		\begin{enumerate}
+		 \item 命題変数,命題定数は論理式である.
+		 \item $\phi,\psi$が論理式ならば,$\lnot \phi, \phi \to \psi$は論理式である.
+		 \item 上２つを満たすもだけが論理式である.
+		\end{enumerate}
+
+  \item 公理系
+
+		公理系を構成する公理は以下である.
+		\begin{align}
+		 \phi \to (\psi \to \phi) \tag{HA1} \\
+		 (\phi \to (\psi \to \chi)) \to ((\phi \to \psi) \to (\phi \to \chi)) \tag{HA2}\\
+		 (\lnot \phi \to \lnot \psi) \to ((\lnot \phi \to \psi) \to \phi) \tag{HA3}
+		\end{align}
+
+  \item 推論規則
+		\textgt{modus ponens}のみである.以降,略して\textgt{MP}.
+		 \begin{prooftree}
+		  \AxiomC{$\phi \to \psi$}
+		  \AxiomC{$\phi$}
+		  \RightLabel{$(MP)$}
+		  \BinaryInfC{$\psi$}
+		 \end{prooftree}
+ \end{enumerate}
+
+\end{dfn}
+
+上の形式化体系をHとする.
+Hを用いた証明の例として$\vdash \phi \to \phi$を証明する.
+
+
+\subsubsection{演繹定理}
+
+\begin{thm}
+ 演繹定理(deduction theorem)
+
+ $\Gamma$を論理式の集合とする,$\phi,\psi$を論理式とするとき,Hにおいて,
+ \begin{equation*}
+  \Gamma, \phi \vdash \psi \quad ならば \quad \Gamma \vdash \phi \to \psi
+ \end{equation*}
+ である.
+
+\end{thm}
+\begin{proof}
+ 集合$\Gamma$に論理式$\phi$を加えた集合を$\Gamma \cup \{\phi\}$と表記する.仮定より,$\Gamma \cup \{\phi\}$から,$\psi$を導く証明が存在する.その証明を,$\psi_1,...,\psi_n$とする$(\psi_n=\psi)$.
+すべての$i(1 \leq i \leq n)$に対して,$\Gamma \vdash \phi \to \psi_i$が成立することを,帰納法により証明する.
+ \begin{description}
+  \item[$i=1$のとき] $\psi_1$は以下の何れかである.
+			 \begin{enumerate}
+			  \item $H$の公理である.
+			  \item $\psi_1$は,$\Gamma$に属する.
+			  \item $\psi_1=\phi$である.
+			 \end{enumerate}
+			 1,2の場合
+			 \begin{enumerate}
+			  \renewcommand{\labelenumi}{\arabic{enumi})}
+			  \item $\psi_1$
+			  \item $\psi_1 \to (\phi \to \psi_1)$ (HA1)
+			  \item $\phi \to \psi_1$ (1,2,MP)
+			 \end{enumerate}
+			 より$\phi \to \psi_1$が得られる.
+			 3の場合,$\phi \to \psi$
+   \item[$i>1$のとき]
+ \end{description}
+\end{proof}
+これは,形式化体系によって導かれる定理でなく,形式化体系自身の定理である.
+前者との区別のために,メタ定理(meta theorem)と言う.
+
+\subsection{自然演繹(NK)}
+
+\subsection{シーケント計算(LK)}
 
 \begin{thebibliography}{9}
  \bibitem{155129_8Feb20}
-		 松本和夫 『復刊 数理論理学』 共立出版 2001
+		松本和夫 『復刊 数理論理学』 共立出版 2001 ISBN 978-4-320-01682-8
+ \bibitem{180205_8Feb20}
+		島内剛一 『数学の基礎』 日本評論社 1971 ISBN 978-4-535-60106-2
+\bibitem{102203_9Feb20}
+		高崎金久 『数理論理学入門』 \url{http://www2.yukawa.kyoto-u.ac.jp/~kanehisa.takasaki/edu/logic/index.html}
 \end{thebibliography}
