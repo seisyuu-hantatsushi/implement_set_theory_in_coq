@@ -1,9 +1,18 @@
-\documentclass[a4paper]{jsbook}
+%#BIBTEX jbibtex main
+\documentclass[a4paper,12pt]{jsbook}
 \usepackage{hhline}
 \usepackage{amsthm}
 \usepackage{amssymb}
+\usepackage{amsmath}	% required for `\align' (yatex added)
+\usepackage{mathtools}
+\usepackage{url}
+\usepackage{bussproofs}
+\AtBeginDocument{\providecommand*\colonequiv{\vcentcolon\mspace{-1.2mu}\equiv}}
+
 \theoremstyle{definition}
 \newtheorem{dfn}{Def.}[section]
+\newtheorem{thm}{Th.}[section]
+
 \begin{document}
 \title{Coqによる集合の実装}
 \author{谷口和繁}
