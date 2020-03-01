@@ -317,7 +317,9 @@ Sを形式化体系の一つとする.
 Hを用いた証明の例として$\vdash \phi \to \phi$を証明する.
 \begin{proof}
 \begin{prooftree}
- \AxiomC{[HA2]} \AxiomC{$\psi = \phi \to \phi$} \AxiomC{$\chi = \phi$}
+
+ \AxiomC{[HA2]} \AxiomC{$\psi \leftrightarrow (\phi \to \phi$)} \AxiomC{$\chi \leftrightarrow
+ \phi$}
  \LeftLabel{(1)}
  \TrinaryInfC{$(\phi \to ((\phi \to \phi) \to \phi)) \to ((\phi \to (\phi \to \phi)) \to (\phi \to \phi))$}
 \end{prooftree}
@@ -335,6 +337,7 @@ Hを用いた証明の例として$\vdash \phi \to \phi$を証明する.
  \alwaysSingleLine
  \RightLabel{$(MP)$}
  \BinaryInfC{$\phi \to \phi$}
+
 \end{prooftree}
 \end{proof}
 
