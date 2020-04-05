@@ -26,7 +26,6 @@
  \item[論理記号] 命題(命題定数と命題変数)に演算を施す. $\lnot,\land,\lor,\to$.
  \item[括弧] 命題同士の基本述語,論理記号での結合に強さを与える.$(,)$.
 \end{description}
-\newpage
 
 \subsection{論理式}
 命題定数と命題変数を論理記号と括弧で結合したものを,\textgt{論理式}(formula)という.
@@ -152,7 +151,7 @@ $\leftrightarrow$は以下を満たす.
 
 真理表より論理式を演算し真理値を得ることができる.
 例として
-$\lnot (p \land p) \leftrightarrow  \lnot p \lor \lnot q$を演算する.
+$\lnot (p \land p) \leftrightarrow  \lnot p \lor \lnot q$(ド・モルガン律)を演算する.
 \begin{center}
  \begin{tabular}{|c c||c|c||c|c|c||c|}
   \hline
@@ -172,8 +171,21 @@ $\lnot (p \land p) \leftrightarrow  \lnot p \lor \lnot q$を演算する.
  \end{tabular}
 \end{center}
 
+\subsection{附値}
+命題変数を元とする集合を$I$とする.また,命題定数の集合を$B=\{\top,\bot\}$とする.
+関数はまだ定義できないが,関数の考え方を借用した関数論理式を定義する.
+\begin{equation*}
+ \nu:I \to B
+\end{equation*}
+$\nu$を\textgt{附値}(valuation)と言う.
+
 \subsection{恒真}
 恒に真である命題を恒真(tautology,valid)といい,恒に真である論理式を恒真式という.
+真理値表の結果がすべて,$\top$となる命題論理式である.
+命題論理式$A$が恒真であるとき,任意の附値$\nu$について$\nu(A)=\top$.
+命題論理式$A$が恒真であるとき,$\models A$と書く.
+以下は恒真である命題論理式である.
+
 \begin{align}
  A \land A \leftrightarrow A & \quad & \text{(ベキ等律,idempotent law)} \\
  A \lor A \leftrightarrow A & \quad & \text{(ベキ等律)} \\
@@ -190,6 +202,10 @@ $\lnot (p \land p) \leftrightarrow  \lnot p \lor \lnot q$を演算する.
 \end{align}
 
 恒に偽となる論理式を\textgt{矛盾}と言う.
+
+\subsection{充足可能}
+命題論理式$A$が\textgt{充足可能}(satisfiable)とは,$A$が$\nu(A)=\top$となるような,附値$\nu$が存在する.
+真理値表の結果が一つ以上,$\top$となる命題論理式である.
 
 \section{形式化体系}
 論理式を内容の\textgt{意味}と真偽を考慮して取り扱う方法論を\textgt{意味論,セマンティクス}(semantics)と言い,
