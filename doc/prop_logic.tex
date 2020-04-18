@@ -365,6 +365,8 @@ Hを用いた証明の例として$\vdash \phi \to \phi$を証明する.
 \end{proof}
 
 \subsubsection{演繹定理}
+\textgt{演繹}とは,普遍な命題から特殊な命題(限定された命題)を導く論理的推論である.
+形式化体系の推論規則で演繹が行えることを保証するのが\textgt{演繹定理}である.
 
 \begin{thm}
  演繹定理(deduction theorem)
@@ -393,13 +395,36 @@ Hを用いた証明の例として$\vdash \phi \to \phi$を証明する.
 			  \item $\psi_1 \to (\phi \to \psi_1)$ (HA1)
 			  \item $\phi \to \psi_1$ (1,2,MP)
 			 \end{enumerate}
-			 より$\phi \to \psi_1$が得られる.
-			 3の場合,$\phi \to \psi$
-   \item[$i>1$のとき]
+			 より$\phi \to \psi_1$が得られる. \\
+			 3の場合,$\phi \to \psi$から,$\Gamma \vdash \phi \to \psi_1$が成立する.
+  \item[$i>1$のとき]
+			 $k<i$であるすべての$k$について,$\Gamma \vdash \phi \to \psi_k$が成り立つと仮定する. \\
+			 $\psi_i$は以下の何れかである.
+			 \begin{enumerate}
+			  \item $\psi_i$は,$\Gamma$に属する.
+			  \item $H$の公理である.
+			  \item $\psi_1=\phi$である.
+			  \item $\psi_i,\psi_j,(j<i)$とすると,$\psi_j,(\psi_j\to\psi_i)\vdash\psi_i$ (MP)
+			 \end{enumerate}
+			 1から3の場合は,$i=1$と同様にして,$\Gamma \vdash \phi \to \psi_i$. \\
+			 4の場合
+			 \renewcommand{\labelenumi}{\arabic{enumi})}
+			 \begin{enumerate}
+			  \item $\Gamma \vdash \phi \to \psi_j$
+			  \item $\Gamma \vdash \phi \to (\psi_j \to \psi_i)$
+			  \item $\Gamma \vdash (\phi \to (\psi_j \to \psi_i)) \to ((\phi \to \psi_j) \to (\phi \to \psi_i))$ (HA2)
+			  \item $\Gamma \vdash (\phi \to \psi_j) \to (\phi \to \psi_i)$ (3,MP)
+			  \item $\Gamma \vdash \phi \to \psi_i$ (1,MP)
+			 \end{enumerate}
+			 から,$\Gamma \vdash \phi \to \psi_i$が成立する.
  \end{description}
 \end{proof}
 これは,形式化体系によって導かれる定理でなく,形式化体系自身の定理である.
 前者との区別のために,メタ定理(meta theorem)と言う.
+
+\subsubsection{コンパクト性}
+\subsubsection{完全性定理}
+
 
 \subsection{自然演繹(NK)}
 
