@@ -122,7 +122,7 @@
 
 \begin{tabular}{|c c||c|}
  \hline
- $p$    & $q$    & $(p) \to (q)$ \\
+ $p$    & $q$    & $(p) \leftrightarrow (q)$ \\
  \hhline{|==#=|}
  $\top$ & $\top$ & $\top$ \\
  \hline
@@ -260,11 +260,12 @@ Sを形式化体系の一つとする.
 \begin{equation*}
  \Gamma \vdash \psi
 \end{equation*}
-と表す,$\Gamma$は前提,仮定,$\psi$は帰結と言う.公理からのみ導かれる帰結の場合,
+と表す,$\Gamma$は前提,仮定,$\psi$は帰結と言う.
+公理からのみ導かれる帰結の場合,
 \begin{equation*}
  \vdash \psi
 \end{equation*}
-と書ける.
+と書ける.上記の場合,$\psi$は($\Gamma$から)\textgt{証明可能}と言う.
 
 \begin{dfn}
  定理(theorem)
@@ -329,8 +330,8 @@ Sを形式化体系の一つとする.
  \end{align}
 \end{dfn}
 
-上の形式化体系をHとする.
-Hを用いた証明の例として$\vdash \phi \to \phi$を証明する.
+上の形式化体系を$\bm{H}$とする.
+$\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
 
 \begin{lemma}
 \begin{equation}
@@ -338,7 +339,6 @@ Hを用いた証明の例として$\vdash \phi \to \phi$を証明する.
 \end{equation}
 \end{lemma}
 
-\begin{proof}
 \begin{prooftree}
 
  \AxiomC{[HA2]} \AxiomC{$\psi \leftrightarrow (\phi \to \phi$)} \AxiomC{$\chi \leftrightarrow
@@ -362,7 +362,6 @@ Hを用いた証明の例として$\vdash \phi \to \phi$を証明する.
  \BinaryInfC{$\phi \to \phi$}
 
 \end{prooftree}
-\end{proof}
 
 \subsubsection{演繹定理}
 \textgt{演繹}とは,普遍な命題から特殊な命題(限定された命題)を導く論理的推論である.
@@ -423,7 +422,127 @@ Hを用いた証明の例として$\vdash \phi \to \phi$を証明する.
 前者との区別のために,メタ定理(meta theorem)と言う.
 
 \subsubsection{コンパクト性}
+\textgt{コンパクト性}(compactness)とは,論理式の集合に対して,その任意の有限部分集合が個別に充足可能ならば,
+集合全体を同時に充足する解釈が存在することを言う.
+
+\begin{thm}
+ コンパクト性定理(compactness theorem)
+
+ 命題論理の論理式の集合Tが充足可能なのは,その任意の有限部分集合が充足可能なときである.
+
+\end{thm}
+\begin{proof}
+ Tが充足可能なら,その任意の有限部分集合が充足可能なのは明らか.
+\end{proof}
+
 \subsubsection{完全性定理}
+定理$\phi$は公理$T$からの証明可能でないといけないし,定理$\phi$が証明可能ならば公理$T$は恒真で,推論規則は恒真を保つ.
+前者は完全性(completeness),後者は健全性(soundness)という.形式化体系で両者が同値であることを示すのが\textgt{完全性定理}
+である.
+
+\begin{thm}
+ 形式化体系$\bm{H}$の完全性定理(compactness theorem)
+
+ 任意の論理式$\phi$において,$\models \phi \leftrightarrow \vdash \phi$
+\end{thm}
+
+上の定理を証明するのに,まず健全性を証明する.
+\begin{lemma}
+ 形式化体系$\bm{H}$の健全性定理(soundness theorem)
+
+ 任意の論理式$\phi$において,$\vdash \phi \to \models \phi$
+\end{lemma}
+\begin{proof}
+ 真理値表より$\bm{H}$の公理は恒真である.
+\begin{center}
+\begin{tabular}{|c c||c||c|}
+\hline
+$\phi$ & $\psi$ & $\psi \to \phi$ & $\phi \to (\psi \to \phi)$ \\
+\hhline{|==#=#=|}
+$\top$ & $\top$ & $\top$ & $\top$ \\
+\hline
+$\top$ & $\bot$ & $\top$ & $\top$ \\
+\hline
+$\bot$ & $\top$ & $\bot$ & $\top$ \\
+\hline
+$\bot$ & $\bot$ & $\top$ & $\top$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c c c||c|c||c|c||c|}
+\hline
+$\phi$ & $\psi$ & $\chi$ & $\psi \to \chi$ & $\phi \to (\psi \to \chi)$ & $\phi \to \psi$ & $ \phi \to \chi $ & $ (\phi \to \psi) \to (\phi \to \chi) $ \\
+\hhline{|===#=|=#=|=#=|}
+$\top$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ \\
+\hline
+$\top$ & $\top$ & $\bot$ & $\bot$ & $\bot$ & $\top$ & $\bot$ & $\bot$ \\
+\hline
+$\top$ & $\bot$ & $\top$ & $\top$ & $\top$ & $\bot$ & $\top$ & $\top$ \\
+\hline
+$\top$ & $\bot$ & $\bot$ & $\top$ & $\bot$ & $\bot$ & $\bot$ & $\top$ \\
+\hline
+$\bot$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ \\
+\hline
+$\bot$ & $\top$ & $\bot$ & $\bot$ & $\bot$ & $\top$ & $\bot$ & $\bot$ \\
+\hline
+$\bot$ & $\bot$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ \\
+\hline
+$\bot$ & $\bot$ & $\bot$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c c c||c|}
+\hline
+$\phi$ & $\psi$ & $\chi$ & $(\phi \to (\psi \to \chi)) \to ((\phi \to \psi) \to (\phi \to \chi))$ \\
+\hhline{|===#=|}
+$\top$ & $\top$ & $\top$ & $\top$ \\
+\hline
+$\top$ & $\top$ & $\bot$ & $\top$ \\
+\hline
+$\top$ & $\bot$ & $\top$ & $\top$ \\
+\hline
+$\top$ & $\bot$ & $\bot$ & $\top$ \\
+\hline
+$\bot$ & $\top$ & $\top$ & $\top$ \\
+\hline
+$\bot$ & $\top$ & $\bot$ & $\top$ \\
+\hline
+$\bot$ & $\bot$ & $\top$ & $\top$ \\
+\hline
+$\bot$ & $\bot$ & $\bot$ & $\top$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c c||c|c||c|c|c||c|}
+\hline
+$\phi$ & $\psi$ & $\lnot \phi$ & $\lnot \psi$ & $\lnot \phi \to \lnot \psi$ & $\lnot \phi \to \psi$ & $(\lnot \phi \to \psi) \to \phi$ & $(\lnot \phi \to \lnot \psi) \to ((\lnot \phi \to \psi) \to \phi)$ \\
+\hhline{|==#=|=#=|=|=#=|}
+$\top$ & $\top$ & $\bot$ & $\bot$ & $\top$ & $\top$ & $\top$ & $\top$ \\
+\hline
+$\top$ & $\bot$ & $\bot$ & $\top$ & $\top$ & $\top$ & $\top$ & $\top$ \\
+\hline
+$\bot$ & $\top$ & $\top$ & $\bot$ & $\bot$ & $\top$ & $\top$ & $\top$ \\
+\hline
+$\bot$ & $\bot$ & $\top$ & $\top$ & $\top$ & $\bot$ & $\top$ & $\top$ \\
+\hline
+\end{tabular}
+\end{center}
+形式化体系$\bm{H}$の推論規則はMPのみなので,MPが恒真を保てば健全性を証明できる.
+$\models \phi$かつ$\models \phi \to \psi$ならば$\models \psi$を証明する.
+\begin{proof}
+ $\psi$が恒真でないとすると,$\phi \to \psi$は恒真でない.
+ 仮定では,$\models \phi$かつ$\models \phi \to \psi$.
+ $\phi \to \psi$の真理値表より,$\psi$が$\bot$の場合,$\models \phi \to \psi$でなくなり,矛盾してしまう.
+ なので,$\models \psi$
+\end{proof}
+MPは仮定の2つが恒真式なら1つの恒真式を導く.
+\end{proof}
 
 
 \subsection{自然演繹(NK)}
