@@ -322,27 +322,28 @@ Sを形式化体系の一つとする.
 
 \begin{dfn}
  補助記号の定義
- \begin{align}
+ \begin{align*}
   \lnot \phi                & \coloneqq  \phi \to \bot \\
   \phi \lor \psi            & \coloneqq  \lnot \phi \to \psi \\
   \phi \land \psi           & \coloneqq  \lnot (\phi \to \lnot \psi) \\
   \phi \leftrightarrow \psi & \coloneqq (\phi \to \psi) \land (\psi \to \phi)
- \end{align}
+ \end{align*}
 \end{dfn}
 
 上の形式化体系を$\bm{H}$とする.
 $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
 
 \begin{lemma}
-\begin{equation}
+\label{rule_same_imp}
+\begin{equation*}
  \vdash \phi \to \phi
-\end{equation}
+\end{equation*}
 \end{lemma}
 
+\begin{proof}
+ 以下の証明図による.
 \begin{prooftree}
-
- \AxiomC{[HA2]} \AxiomC{$\psi \leftrightarrow (\phi \to \phi$)} \AxiomC{$\chi \leftrightarrow
- \phi$}
+ \AxiomC{[HA2]} \AxiomC{$\psi \to (\phi \to \phi$)} \AxiomC{$\chi \to \phi$}
  \LeftLabel{(1)}
  \TrinaryInfC{$(\phi \to ((\phi \to \phi) \to \phi)) \to ((\phi \to (\phi \to \phi)) \to (\phi \to \phi))$}
 \end{prooftree}
@@ -362,6 +363,7 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
  \BinaryInfC{$\phi \to \phi$}
 
 \end{prooftree}
+\end{proof}
 
 \subsubsection{演繹定理}
 \textgt{演繹}とは,普遍な命題から特殊な命題(限定された命題)を導く論理的推論である.
@@ -420,6 +422,104 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
 \end{proof}
 これは,形式化体系によって導かれる定理でなく,形式化体系自身の定理である.
 前者との区別のために,メタ定理(meta theorem)と言う.
+
+演繹定理から得られる補題を証明する.
+ \begin{lemma}
+  \label{rule0}
+  任意の論理式$\phi,\psi,\chi$において以下が成立する.
+  \begin{enumerate}
+   \item $\phi \to \psi, \psi \to \chi \vdash \phi \to \chi$
+   \item $\phi \to (\psi \to \chi), \psi \vdash \phi \to \chi$
+  \end{enumerate}
+ \end{lemma}
+
+\begin{proof}\mbox{}
+ \begin{enumerate}
+  \item
+	   演繹定理より,$\phi \to \psi, \psi \to \chi, \phi \vdash \chi$ならば,$\phi \to \psi, \psi \to \chi \vdash \phi \to \chi$.
+	   $\phi \to \psi, \psi \to \chi, \phi \vdash \chi$を証明する.
+	   \begin{prooftree}
+		\AxiomC{$\phi$}
+		\AxiomC{$\phi \to \psi$}
+		\RightLabel{$(MP)$}
+		\BinaryInfC{$\psi$}
+		\AxiomC{$\psi \to \chi$}
+		\RightLabel{$(MP)$}
+		\BinaryInfC{$\chi$}
+	   \end{prooftree}
+  \item
+	   演繹定理より,$\phi \to (\psi \to \chi), \psi, \phi \vdash \chi$ならば,$\phi \to (\psi \to \chi), \psi \vdash \phi \to \chi$.
+	   $\phi \to (\psi \to \chi), \psi, \phi \vdash \chi$を証明する.
+	   \begin{prooftree}
+		\AxiomC{$\psi$}
+		\AxiomC{$\phi$}
+		\AxiomC{$\phi \to (\psi \to \chi)$}
+		\RightLabel{$(MP)$}
+		\BinaryInfC{$\psi \to \chi$}
+		\RightLabel{$(MP)$}
+		\BinaryInfC{$\chi$}
+	   \end{prooftree}
+ \end{enumerate}
+\end{proof}
+
+ \begin{lemma}
+  \label{rule1}
+  任意の論理式$\phi,\psi$において以下が成立する.
+  \begin{enumerate}
+   \item $\vdash \lnot \lnot \phi \to \phi$
+   \item $\vdash \phi \to \lnot \lnot \phi$
+   \item $\vdash \lnot \phi \to (\phi \to \psi)$
+  \end{enumerate}
+ \end{lemma}
+
+ \begin{proof} \mbox{}
+  \begin{enumerate}
+   \item \mbox{}
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{[HA3]}
+		  \UnaryInfC{$(\lnot \phi \to \lnot \lnot \phi) \to ((\lnot \phi \to \lnot \phi) \to \phi)$}
+		  \AxiomC{[Lemma \ref{rule_same_imp}]}
+		  \UnaryInfC{$\lnot \phi \to \lnot \phi$}
+		  \alwaysSingleLine
+		  \RightLabel{(Lemma \ref{rule0}.2)}
+		  \LeftLabel{(1)}
+		  \BinaryInfC{$(\lnot \phi \to \lnot \lnot \phi) \to \phi$}
+		 \end{prooftree}
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{[HA1]}
+		  \UnaryInfC{$\lnot \lnot \phi \to (\lnot \phi \to \lnot \lnot \phi)$}
+		  \AxiomC{(1)}
+		  \UnaryInfC{$(\lnot \phi \to \lnot \lnot \phi) \to \phi$}
+		  \RightLabel{(Lemma \ref{rule0}.1)}
+		  \alwaysSingleLine
+		  \BinaryInfC{$\lnot \lnot \phi \to \phi$}
+		 \end{prooftree}
+   \item \mbox{}
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{[Lemma \ref{rule1}.1]}
+		  \UnaryInfC{$\lnot \lnot \lnot \phi \to \lnot \phi$}
+		  \AxiomC{[HA3]}
+		  \UnaryInfC{$(\lnot \lnot \lnot \phi \to \lnot \phi) \to ((\lnot \lnot \lnot \phi \to \phi) \to \lnot \lnot \phi)$}
+		  \alwaysSingleLine
+		  \RightLabel{(Lemma \ref{rule0}.2)}
+		  \LeftLabel{(1)}
+		  \BinaryInfC{$(\lnot \lnot \lnot \phi \to \phi) \to \lnot \lnot \phi$}
+		 \end{prooftree}
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{[HA1]}
+		  \UnaryInfC{$\phi \to (\lnot \lnot \lnot \phi \to \phi)$}
+		  \AxiomC{(1)}
+		  \UnaryInfC{$(\lnot \lnot \lnot \phi \to \phi) \to \lnot \lnot \phi$}
+		  \alwaysSingleLine
+		  \RightLabel{(Lemma \ref{rule0}.1)}
+		  \BinaryInfC{$\phi \to \lnot \lnot \phi$}
+		 \end{prooftree}
+  \end{enumerate}
+ \end{proof}
 
 \subsubsection{コンパクト性}
 \textgt{コンパクト性}(compactness)とは,論理式の集合に対して,その任意の有限部分集合が個別に充足可能ならば,
@@ -533,6 +633,7 @@ $\bot$ & $\bot$ & $\top$ & $\top$ & $\top$ & $\bot$ & $\top$ & $\top$ \\
 \hline
 \end{tabular}
 \end{center}
+
 形式化体系$\bm{H}$の推論規則はMPのみなので,MPが恒真を保てば健全性を証明できる.
 $\models \phi$かつ$\models \phi \to \psi$ならば$\models \psi$を証明する.
 \begin{proof}
@@ -542,6 +643,28 @@ $\models \phi$かつ$\models \phi \to \psi$ならば$\models \psi$を証明す�
  なので,$\models \psi$
 \end{proof}
 MPは仮定の2つが恒真式なら1つの恒真式を導く.
+\end{proof}
+
+次に,任意の論理式$\phi$において,$\models \phi \to \vdash \phi$を証明ために,次の補題を使う.
+\begin{lemma}
+ 附値$\nu$と命題変数$p$について
+ \begin{equation*}
+  p^\nu \coloneqq
+	\begin{cases}
+	 p & \nu(p) = \top のとき \\
+	 \lnot p & \nu(p) = \bot のとき
+	\end{cases}
+ \end{equation*}
+ と置く.
+ 論理式$\phi$は$p_1,...,p_n$以外の命題変数を含まないとして,
+ \begin{align}
+  \nu(\phi) &= \top ならば, p_1^{\nu},...,p_n^{\nu} \vdash \phi \\
+  \nu(\phi) &= \bot ならば, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \phi
+ \end{align}
+\end{lemma}
+
+\begin{proof}
+ 
 \end{proof}
 
 
