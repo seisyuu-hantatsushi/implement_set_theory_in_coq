@@ -469,6 +469,8 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
    \item $\vdash \lnot \lnot \phi \to \phi$
    \item $\vdash \phi \to \lnot \lnot \phi$
    \item $\vdash \lnot \phi \to (\phi \to \psi)$
+   \item $\vdash (\lnot \psi \to \lnot \phi) \to (\phi \to \psi)$
+   \item $\vdash (\phi \to \psi) \to (\lnot \psi \to \lnot \phi)$
   \end{enumerate}
  \end{lemma}
 
@@ -517,6 +519,91 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
 		  \alwaysSingleLine
 		  \RightLabel{(Lemma \ref{rule0}.1)}
 		  \BinaryInfC{$\phi \to \lnot \lnot \phi$}
+		 \end{prooftree}
+   \item \mbox{}
+		 演繹定理より,$\lnot \phi,\phi \vdash \psi$ならば,$\vdash \lnot \phi \to (\phi \to \psi)$.
+		 であるので,$\lnot \phi,\phi \vdash \psi$を証明する.
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{$\phi$}
+		  \AxiomC{[HA1]}
+		  \UnaryInfC{$\phi \to (\lnot \psi \to \phi)$}
+		  \alwaysSingleLine
+		  \LeftLabel{(1)}
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$\lnot \psi \to \phi$}
+		 \end{prooftree}
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{$\lnot \phi$}
+		  \AxiomC{[HA1]}
+		  \UnaryInfC{$\lnot \phi \to (\lnot \psi \to \lnot \phi)$}
+		  \alwaysSingleLine
+		  \LeftLabel{(2)}
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$\lnot \psi \to \lnot \phi$}
+		 \end{prooftree}
+
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{(1)}
+		  \UnaryInfC{$\lnot \psi \to \phi$}
+		  \AxiomC{(2)}
+		  \UnaryInfC{$\lnot \psi \to \lnot \phi$}
+		  \AxiomC{[HA3]}
+		  \UnaryInfC{($\lnot \psi \to \lnot \phi) \to ((\lnot \psi \to \phi) \to \psi))$}
+		  \alwaysSingleLine
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$(\lnot \psi \to \phi) \to \psi$}
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$\psi$}
+		 \end{prooftree}
+   \item \mbox{}
+		 演繹定理より,$(\lnot \psi \to \lnot \phi) \vdash (\phi \to \psi)$ならば
+		 $\vdash (\lnot \psi \to \lnot \phi) \to (\phi \to \psi)$であるので,
+		 $(\lnot \psi \to \lnot \phi) \vdash (\phi \to \psi)$を証明する.
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{[HA1]}
+		  \UnaryInfC{$\phi \to (\lnot \psi \to \phi)$}
+		  \AxiomC{$\lnot \psi \to \lnot \phi$}
+		  \AxiomC{[HA3]}
+		  \UnaryInfC{($\lnot \psi \to \lnot \phi) \to ((\lnot \psi \to \phi) \to \psi))$}
+		  \alwaysSingleLine
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$(\lnot \psi \to \phi) \to \psi$}
+		  \RightLabel{(Lemma \ref{rule0}.1)}
+		  \BinaryInfC{$\phi \to \psi$}
+		 \end{prooftree}
+   \item \mbox{}
+		 演繹定理より,$(\phi \to \psi) \vdash (\lnot \psi \to \lnot \phi)$ならば,
+		 $\vdash (\phi \to \psi) \to (\lnot \psi \to \lnot \phi)$であるので,
+		 $(\phi \to \psi) \vdash (\lnot \psi \to \lnot \phi)$を証明する.
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{[Lemma \ref{rule1}.1]}
+		  \UnaryInfC{$\lnot \lnot \phi \to \phi$}
+		  \AxiomC{$\phi \to \psi$}
+		  \alwaysSingleLine
+		  \RightLabel{(Lemma \ref{rule0}.1)}
+		  \BinaryInfC{$\lnot \lnot \phi \to \psi$}
+		  \alwaysNoLine
+		  \AxiomC{[Lemma \ref{rule1}.1]}
+		  \UnaryInfC{$\psi \to \lnot \lnot \psi$}
+		  \alwaysSingleLine
+		  \RightLabel{(Lemma \ref{rule0}.1)}
+		  \LeftLabel{(1)}
+		  \BinaryInfC{$\lnot \lnot \phi \to \lnot \lnot \psi$}
+		 \end{prooftree}
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{(1)}
+		  \UnaryInfC{$\lnot \lnot \phi \to \lnot \lnot \psi$}
+		  \AxiomC{[Lemma \ref{rule1}.4]}
+		  \UnaryInfC{$(\lnot \lnot \phi \to \lnot \lnot \psi) \to (\lnot \psi \to \lnot \phi)$}
+		  \alwaysSingleLine
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$\lnot \psi \to \lnot \phi$}
 		 \end{prooftree}
   \end{enumerate}
  \end{proof}
@@ -658,15 +745,49 @@ MPは仮定の2つが恒真式なら1つの恒真式を導く.
  と置く.
  論理式$\phi$は$p_1,...,p_n$以外の命題変数を含まないとして,
  \begin{align}
-  \nu(\phi) &= \top ならば, p_1^{\nu},...,p_n^{\nu} \vdash \phi \\
-  \nu(\phi) &= \bot ならば, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \phi
+  \nu(\phi) &= \top ならば, p_1^{\nu},...,p_n^{\nu} \vdash \phi \label{eq1} \\
+  \nu(\phi) &= \bot ならば, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \phi \label{eq2}
  \end{align}
 \end{lemma}
 
 \begin{proof}
- 
+ $\phi$には$\lnot, \to$以外の論理記号は含まれないとし,$\phi$に含まれる論理記号の数$n$についての帰納法で証明する.
+ \begin{enumerate}
+  \item $n=0$のとき,$\phi$は命題変数$p_1$に等しい,$\nu(p_1)=\top$ならば,$p_1^{\nu}=p_1, p_1 \vdash p_1$,$\nu(p_1)=\bot$ならば,$p_1^{\nu}=\lnot p_1, \lnot p_1 \vdash \lnot p_1$で成立.
+  \item $n>0$のとき,$i<k$なるすべての$i$について,定理が成立していると仮定する.
+		\begin{enumerate}
+		 \renewcommand{\labelenumii}{\arabic{enumii})}
+		 \renewcommand{\labelenumiii}{(\roman{enumiii})}
+		 \item $\phi$が$\lnot \psi$のとき. \newline
+			   $\psi$の論理記号の個数は$\phi$の論理記号より1つ少ない.
+			   $\psi$の附値が$\top$か$\bot$で場合分けをする.
+			   \begin{enumerate}
+				\item $\nu(\psi)$が$\top$を取るとき$\nu(\phi)$は$\bot$をとる.なので,$p_1^{\nu},...,p_n^{\nu} \vdash \psi, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \phi$.
+					  $p_1^{\nu},...,p_n^{\nu} \vdash \psi$について,Lemma.\ref{rule1}.2と(MP)より$p_1^{\nu},...,p_n^{\nu} \vdash \lnot \lnot \psi$.
+					  $\phi$が$\lnot \psi$から$\phi$が$\lnot \psi$.仮定から,$\phi=\lnot \psi$であるので, $p_1^{\nu},...,p_n^{\nu} \vdash \lnot \phi$.
+					  より,$\psi$の附値が$\top$は矛盾しない.
+				\item $\nu(\psi)$が$\bot$を取るとき$\nu(\phi)$は$\top$をとる.$p_1^{\nu},...,p_n^{\nu} \vdash \phi, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \psi$.
+					  $p_1^{\nu},...,p_n^{\nu} \vdash \lnot \psi$は仮定から,$\phi=\lnot \psi$であるので, $p_1^{\nu},...,p_n^{\nu} \vdash \phi$から,
+					  $\psi$の附値が$\bot$は矛盾しない.
+			   \end{enumerate}
+		 \item $\phi$が$\psi \to \theta$のとき. \newline
+			   $\psi,\theta$の論理記号の個数は$\phi$の論理記号より1つ少ない.より,$p_1^{\nu},...,p_n^{\nu} \vdash \psi, p_1^{\nu},...,p_n^{\nu} \vdash \theta$.
+			   $\nu(\psi \to \theta)$が$\top$または$\bot$どれを取るかで場合分けをする. 真理値表より,$\nu(\psi)$が$\bot$を取るとき$\nu(\psi \to \theta)$が$\top$,
+			   $\nu(\theta)$が$\top$を取るとき$\nu(\psi \to \theta)$が$\top$,$\nu(\psi)$が$\top$かつ$\nu(\theta)$が$\bot$のとき$\nu(\psi \to \theta)$が$\bot$.
+			   \begin{enumerate}
+				\item $\nu(\psi)$が$\bot$のとき. $p_1^{\nu},...,p_n^{\nu} \vdash \lnot \psi$.
+					  $\nu(\phi)$は$\top$であるので,$p_1^{\nu},...,p_n^{\nu} \vdash \phi$から$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$.
+					  Lemma.\ref{rule1}.3より,$p_1^{\nu},...,p_n^{\nu} \vdash \lnot \psi$から$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$を得るので,
+					  矛盾しない.
+				\item $\nu(\theta)$が$\top$のとき. $p_1^{\nu},...,p_n^{\nu} \vdash \theta$. $\nu(\phi)$は$\top$であるので,
+					  $p_1^{\nu},...,p_n^{\nu} \vdash \phi$から$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$.
+					  $p_1^{\nu},...,p_n^{\nu} \vdash \theta$と(HA1)より,$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$が成立し矛盾しない.
+				\item $\nu(\psi)$が$\top$かつ$\nu(\theta)$が$\bot$のとき. \newline
+					  
+			   \end{enumerate}
+		\end{enumerate}
+ \end{enumerate}
 \end{proof}
-
 
 \subsection{自然演繹(NK)}
 
