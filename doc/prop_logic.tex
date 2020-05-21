@@ -471,6 +471,8 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
    \item $\vdash \lnot \phi \to (\phi \to \psi)$
    \item $\vdash (\lnot \psi \to \lnot \phi) \to (\phi \to \psi)$
    \item $\vdash (\phi \to \psi) \to (\lnot \psi \to \lnot \phi)$
+   \item $\vdash \phi \to (\lnot \psi \to \lnot (\phi \to \psi))$
+   \item $\vdash (\phi \to \psi) \to ((\lnot \phi \to \psi) \to \psi)$
   \end{enumerate}
  \end{lemma}
 
@@ -604,6 +606,57 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
 		  \alwaysSingleLine
 		  \RightLabel{(MP)}
 		  \BinaryInfC{$\lnot \psi \to \lnot \phi$}
+		 \end{prooftree}
+   \item \mbox{}
+		 (MP)と演繹定理より,$\phi,\phi \to \psi \vdash \psi$ならば$\vdash \phi \to ((\phi \to \psi) \to \psi)$.
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{$\phi \to ((\phi \to \psi) \to \psi)$}
+		  \AxiomC{[Lemma \ref{rule1}.5]}
+		  \UnaryInfC{$((\phi \to \psi) \to \psi) \to (\lnot (\phi \to \psi) \to \lnot \phi)$}
+		  \alwaysSingleLine
+		  \RightLabel{(Lemma \ref{rule0}.1)}
+		  \BinaryInfC{$\phi \to (\lnot (\phi \to \psi) \to \lnot \phi)$}
+		 \end{prooftree}
+   \item \mbox{}
+		 演繹定理より,$\phi \to \psi,\lnot \phi \to \psi \vdash \psi$ならば
+		 $\vdash (\phi \to \psi) \to ((\lnot \phi \to \psi) \to \psi)$.より,
+		 $\phi \to \psi,\lnot \phi \to \psi \vdash \psi$を証明する.
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{$\lnot \phi \to \psi$}
+		  \AxiomC{[Lemma \ref{rule1}.5]}
+		  \UnaryInfC{$(\lnot \phi \to \psi) \to (\lnot \psi \to \lnot \lnot \phi)$}
+		  \alwaysSingleLine
+		  \LeftLabel{(1)}
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$\lnot \psi \to \lnot \lnot \phi$}
+		 \end{prooftree}
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{(1)}
+		  \UnaryInfC{$\lnot \psi \to \lnot \lnot \phi$}
+		  \AxiomC{[HA3]}
+		  \UnaryInfC{$(\lnot \psi \to \lnot \lnot \phi) \to ((\lnot \psi \to \lnot \phi) \to \psi)$}
+		  \alwaysSingleLine
+		  \LeftLabel{(2)}
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$(\lnot \psi \to \lnot \phi) \to \psi$}
+		 \end{prooftree}
+		 \begin{prooftree}
+		  \alwaysNoLine
+		  \AxiomC{$\phi \to \psi$}
+		  \AxiomC{[Lemma \ref{rule1}.5]}
+		  \UnaryInfC{$(\phi \to \psi) \to (\lnot \psi \to \lnot \phi)$}
+		  \alwaysSingleLine
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$\lnot \psi \to \lnot \phi$}
+		  \alwaysNoLine
+		  \AxiomC{(2)}
+		  \UnaryInfC{$(\lnot \psi \to \lnot \phi) \to \psi$}
+		  \alwaysSingleLine
+		  \RightLabel{(MP)}
+		  \BinaryInfC{$\psi$}
 		 \end{prooftree}
   \end{enumerate}
  \end{proof}
@@ -782,8 +835,9 @@ MPは仮定の2つが恒真式なら1つの恒真式を導く.
 				\item $\nu(\theta)$が$\top$のとき. $p_1^{\nu},...,p_n^{\nu} \vdash \theta$. $\nu(\phi)$は$\top$であるので,
 					  $p_1^{\nu},...,p_n^{\nu} \vdash \phi$から$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$.
 					  $p_1^{\nu},...,p_n^{\nu} \vdash \theta$と(HA1)より,$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$が成立し矛盾しない.
-				\item $\nu(\psi)$が$\top$かつ$\nu(\theta)$が$\bot$のとき. \newline
-					  
+				\item $\nu(\psi)$が$\top$かつ$\nu(\theta)$が$\bot$のとき. $p_1^{\nu},...,p_n^{\nu} \vdash \psi, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \theta$.
+					  $\nu(\psi \to \theta)$は$\bot$なので,$p_1^{\nu},...,p_n^{\nu} \vdash \lnot (\psi \to \theta)$.
+Lemma \ref{rule1}.6と演繹定理から,$\psi,\lnot \theta \vdash \lnot (\psi \to \theta)$成立するので矛盾しない.
 			   \end{enumerate}
 		\end{enumerate}
  \end{enumerate}
