@@ -24,7 +24,7 @@
  \item[命題変数] 形式的に,$A,B,C,A_1,B_2,...$と表される.
  \item[基本述語] 命題変数同士での関係を表す記号である. $=,\in$など.
  \item[論理記号] 命題(命題定数と命題変数)に演算を施す. $\lnot,\land,\lor,\to$.
- \item[括弧] 命題同士の基本述語,論理記号での結合に強さを与える.$(,)$.
+ \item[括弧] 命題同士の基本述語,論理記号での結合に強さを与える. $(,)$.
 \end{description}
 
 \subsection{論理式}
@@ -116,9 +116,9 @@
 	   \end{tabular}
 \end{enumerate}
 
-以上の論理記号の結合の強さは,$\lnot > \land = \lor > \to$であり,$\land,\lor$は左結合である.
+以上の論理記号の結合の強さは, $\lnot > \land = \lor > \to$であり, $\land,\lor$は左結合である.
 更に,$((p) \to (q)) \land ((q) \to (p))$の略号として,
-\textgt{同値}(equivalence,$\leftrightarrow$)を導入する.真理表は以下のようになる.
+\textgt{同値}(equivalence,$\leftrightarrow$)を導入する. 真理表は以下のようになる.
 
 \begin{tabular}{|c c||c|}
  \hline
@@ -145,9 +145,9 @@ $\leftrightarrow$は以下を満たす.
  \end{tabular}
 \end{center}
 
-上の３つの関係を満たす場合,同値関係(equivalence relation)と言う.
+上の３つの関係を満たす場合, 同値関係(equivalence relation)と言う.
 
-論理式内で括弧をつけなくても結合順位が明確な場合,括弧を省略する.
+論理式内で括弧をつけなくても結合順位が明確な場合, 括弧を省略する.
 
 真理表より論理式を演算し真理値を得ることができる.
 例として
@@ -172,7 +172,7 @@ $\lnot (p \land p) \leftrightarrow  \lnot p \lor \lnot q$(ド・モルガン律)
 \end{center}
 
 \subsection{附値}
-命題変数を元とする集合を$I$とする.また,命題定数の集合を$B=\{\top,\bot\}$とする.
+命題変数を元とする集合を$I$とする. また,命題定数の集合を$B=\{\top,\bot\}$とする.
 関数はまだ定義できないが,関数の考え方を借用した関数論理式を定義する.
 \begin{equation*}
  \nu:I \to B
@@ -380,8 +380,10 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
 
 \end{thm}
 \begin{proof}
- 集合$\Gamma$に論理式$\phi$を加えた集合を$\Gamma \cup \{\phi\}$と表記する.仮定より,$\Gamma \cup \{\phi\}$から,$\psi$を導く証明が存在する.その証明を,$\psi_1,...,\psi_n$とする$(\psi_n=\psi)$.
-すべての$i(1 \leq i \leq n)$に対して,$\Gamma \vdash \phi \to \psi_i$が成立することを,帰納法により証明する.
+ 集合$\Gamma$に論理式$\phi$を加えた集合を$\Gamma \cup \{\phi\}$と表記する.
+ 仮定より,$\Gamma \cup \{\phi\}$から,$\psi$を導く証明が存在する.
+ その証明を,$\psi_1,...,\psi_n$とする$(\psi_n=\psi)$.
+ すべての$i(1 \leq i \leq n)$に対して,$\Gamma \vdash \phi \to \psi_i$が成立することを,帰納法により証明する.
  \begin{description}
   \item[$i=1$のとき] $\psi_1$は以下の何れかである.
 			 \begin{enumerate}
@@ -666,6 +668,7 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
 集合全体を同時に充足する解釈が存在することを言う.
 
 \begin{thm}
+ \label{compactness_thm}
  コンパクト性定理(compactness theorem)
 
  命題論理の論理式の集合Tが充足可能なのは,その任意の有限部分集合が充足可能なときである.
@@ -681,6 +684,7 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
 である.
 
 \begin{thm}
+ \label{H_completeness}
  形式化体系$\bm{H}$の完全性定理(compactness theorem)
 
  任意の論理式$\phi$において,$\models \phi \leftrightarrow \vdash \phi$
@@ -688,6 +692,7 @@ $\bm{H}$を用いた証明の例として$\vdash \phi \to \phi$を証明する.
 
 上の定理を証明するのに,まず健全性を証明する.
 \begin{lemma}
+ \label{H_soundness}
  形式化体系$\bm{H}$の健全性定理(soundness theorem)
 
  任意の論理式$\phi$において,$\vdash \phi \to \models \phi$
@@ -815,13 +820,15 @@ MPは仮定の2つが恒真式なら1つの恒真式を導く.
 			   $\psi$の論理記号の個数は$\phi$の論理記号より1つ少ない.
 			   $\psi$の附値が$\top$か$\bot$で場合分けをする.
 			   \begin{enumerate}
-				\item $\nu(\psi)$が$\top$を取るとき$\nu(\phi)$は$\bot$をとる.なので,$p_1^{\nu},...,p_n^{\nu} \vdash \psi, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \phi$.
+				\item $\nu(\psi)$が$\top$を取るとき$\nu(\phi)$は$\bot$を取らないといけない.
+					  $\nu(\psi)$が$\top$から,$p_1^{\nu},...,p_n^{\nu} \vdash \psi$.
 					  $p_1^{\nu},...,p_n^{\nu} \vdash \psi$について,Lemma.\ref{rule1}.2と(MP)より$p_1^{\nu},...,p_n^{\nu} \vdash \lnot \lnot \psi$.
-					  $\phi$が$\lnot \psi$から$\phi$が$\lnot \psi$.仮定から,$\phi=\lnot \psi$であるので, $p_1^{\nu},...,p_n^{\nu} \vdash \lnot \phi$.
-					  より,$\psi$の附値が$\top$は矛盾しない.
-				\item $\nu(\psi)$が$\bot$を取るとき$\nu(\phi)$は$\top$をとる.$p_1^{\nu},...,p_n^{\nu} \vdash \phi, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \psi$.
-					  $p_1^{\nu},...,p_n^{\nu} \vdash \lnot \psi$は仮定から,$\phi=\lnot \psi$であるので, $p_1^{\nu},...,p_n^{\nu} \vdash \phi$から,
-					  $\psi$の附値が$\bot$は矛盾しない.
+					  仮定から,$\phi$が$\lnot \psi$であるので, $p_1^{\nu},...,p_n^{\nu} \vdash \lnot \phi$.
+					  より,$\nu(\phi)$は$\bot$となる.
+				\item $\nu(\psi)$が$\bot$を取るとき$\nu(\phi)$は$\top$をとらなければいけない.
+					  $\nu(\psi)$が$\bot$なら$p_1^{\nu},...,p_n^{\nu} \vdash \lnot \psi$.
+					  $p_1^{\nu},...,p_n^{\nu} \vdash \lnot \psi$は仮定から,$\phi$が$\lnot \psi$であるので, $p_1^{\nu},...,p_n^{\nu} \vdash \phi$から,
+					  $\nu(\phi)$が$\top$となる.
 			   \end{enumerate}
 		 \item $\phi$が$\psi \to \theta$のとき. \newline
 			   $\psi,\theta$の論理記号の個数は$\phi$の論理記号より1つ少ない.より,$p_1^{\nu},...,p_n^{\nu} \vdash \psi, p_1^{\nu},...,p_n^{\nu} \vdash \theta$.
@@ -832,20 +839,51 @@ MPは仮定の2つが恒真式なら1つの恒真式を導く.
 					  $\nu(\phi)$は$\top$であるので,$p_1^{\nu},...,p_n^{\nu} \vdash \phi$から$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$.
 					  Lemma.\ref{rule1}.3より,$p_1^{\nu},...,p_n^{\nu} \vdash \lnot \psi$から$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$を得るので,
 					  矛盾しない.
-				\item $\nu(\theta)$が$\top$のとき. $p_1^{\nu},...,p_n^{\nu} \vdash \theta$. $\nu(\phi)$は$\top$であるので,
+				\item $\nu(\theta)$が$\top$のとき,$\nu(\phi)$は$\top$でなければならない. $p_1^{\nu},...,p_n^{\nu} \vdash \theta$. あるので,
 					  $p_1^{\nu},...,p_n^{\nu} \vdash \phi$から$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$.
-					  $p_1^{\nu},...,p_n^{\nu} \vdash \theta$と(HA1)より,$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$が成立し矛盾しない.
-				\item $\nu(\psi)$が$\top$かつ$\nu(\theta)$が$\bot$のとき. $p_1^{\nu},...,p_n^{\nu} \vdash \psi, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \theta$.
+					  $p_1^{\nu},...,p_n^{\nu} \vdash \theta$と(HA1)より,$p_1^{\nu},...,p_n^{\nu} \vdash \psi \to \theta$.
+					  より,$\nu(\phi)$は$\top$.
+				\item $\nu(\psi)$が$\top$かつ$\nu(\theta)$が$\bot$のとき,$\nu(\phi)$は$\bot$である.
+					  $p_1^{\nu},...,p_n^{\nu} \vdash \psi, p_1^{\nu},...,p_n^{\nu} \vdash \lnot \theta$.
 					  $\nu(\psi \to \theta)$は$\bot$なので,$p_1^{\nu},...,p_n^{\nu} \vdash \lnot (\psi \to \theta)$.
-Lemma \ref{rule1}.6と演繹定理から,$\psi,\lnot \theta \vdash \lnot (\psi \to \theta)$成立するので矛盾しない.
+					  Lemma \ref{rule1}.6と演繹定理から,$\psi,\lnot \theta \vdash \lnot (\psi \to \theta)$から$\nu(\phi)$は$\bot$.
 			   \end{enumerate}
 		\end{enumerate}
  \end{enumerate}
 \end{proof}
 
-\subsection{自然演繹(NK)}
 
-\subsection{シーケント計算(LK)}
+\begin{lemma}
+ \label{H_completeness_lemma}
+ 形式化体系$\bm{H}$の論理式$\phi$が恒真ならば,$\phi$は証明可能である.
+ \begin{equation*}
+  \models \phi \quad ならば \quad \vdash \phi
+ \end{equation*}
+\end{lemma}
+
+\begin{proof}
+ $\models \phi$を仮定し,$\phi$に現れる命題変数を$p_1,...,p_n$とする.
+$\phi$は恒真であるので, $\nu(\phi)=\top$.
+なので,$p_1^{\nu},...,p_n^{\nu} \vdash \phi$.$\nu(p_n)$が$\top$また$\bot$とし,
+$\nu(p_k),(k=1,...,n-1)$の値を任意に取るとすると,$p_1^{\nu},...,p_{n-1}^{\nu} \vdash p_n \to \phi$
+,$p_1^{\nu},...,p_{n-1}^{\nu} \vdash \lnot p_n \to \phi$となる.
+Lemma \ref{rule1}.7から,$p_1^{\nu},...,p_{n-1}^{\nu} \vdash \phi$を得る.
+この操作を$k$回繰り返すことにより, $\vdash \phi$を得る.
+\end{proof}
+
+Lemma.\ref{H_soundness}とLemma.\ref{H_completeness_lemma}より,Th.\ref{H_completeness}は証明できた.
+
+\subsubsection{矛盾,無矛盾}
+\begin{dfn}
+とある形式化体系$S$においてある論理式$\phi$が存在し,$\phi$とその否定$\lnot \phi$がともに$S$にて証明可能なとき,
+$S$は\textgt{矛盾}(inconsistent)するという. $S$が矛盾しないとき$S$は\textgt{無矛盾}(consistent)という.
+\end{dfn}
+\begin{thm}
+形式化体系$\bm{H}$の論理式の集合$\Gamma$が無矛盾ならば,充足可能である.
+\end{thm}
+\begin{proof}
+ Th.\label{compactness_thm} コンパクト性定理とTh.\ref{H_completeness}の完全性定理から明らか.
+\end{proof}
 
 \begin{thebibliography}{9}
  \bibitem{144626_1Mar20}
