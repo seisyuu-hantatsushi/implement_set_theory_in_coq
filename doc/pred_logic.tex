@@ -9,6 +9,9 @@
 
 \subsection{述語論理}
 命題論理を述語を含む論理体系まで拡張する. そのため,記号として以下を導入する.
+\begin{dfn}
+ \label{pred_L}
+述語論理の言語
 \begin{enumerate}
  \item \textgt{対象定数}(individual constant) $c_i(i=0,1,2,\dots)$ $c_i$の集合$D$を\textgt{対象領域}という. $D$は空ではない.
  \item \textgt{自由変数}(free variable) $a_i(i=0,1,2,\dots)$ $a,b,c,\cdots$も用いる.
@@ -17,8 +20,53 @@
  \item \textgt{関数記号}(function symbol) $f_i^n(n=1,2,\dots;i=0,1,2,\dots)$
 	   $f_i^n$を$n$変数の関数記号といい, $f_i^n(*_1,\cdots,*_n)$と書くこともある.
 	   $n$を$f_i^n$の変数場所(argument place)の個数という.
-	   $i$は関数記号が一般に可算個あることを示しているが, 関数記号は全くなくてもよい. 
+	   $i$は関数記号が一般に可算個あることを示しているが, 関数記号は全くなくてもよい.
 	   単に$f_i,f^n.f,g$などと省略することもある.
- \item \textgt{述語記号}(predicate symbol) $P_i^n(n=1,2,\dots;i=0,1,2,\dots)$ $P_i^n$を$n$変数の述語記号といい. $P_i^n(*_1,\cdots,*_n)$
+ \item \textgt{述語記号}(predicate symbol) $P_i^n(n=1,2,\dots;i=0,1,2,\dots)$ $P_i^n$を$n$変数の述語記号といい.
+	   $P_i^n(*_1,\cdots,*_n)$と書くこともある.$n$を$P_i^n$の変数場所の個数という.
+	   単に,$P_i,P^n,P$などと省略することもある.
  \item \textgt{論理記号}(logical symbol) $\lnot,\land,\lor,\to,\forall,\exists$
 \end{enumerate}
+\end{dfn}
+
+\begin{dfn}
+ \textgt{項}(term)
+ \begin{enumerate}
+  \item 対象定数は項である.
+  \item 自由変数は項である.
+  \item $t_1,\dots,t_n$が項であり,$f^n$が$n$変数の関数記号であるならば$f^n(t_1,\dots,t_n)$は項である.
+  \item 上の1から3で項とわかるものだけが項である.
+ \end{enumerate}
+\end{dfn}
+
+自由変数を含まない項を\textgt{閉項}(closed term)と言う.
+
+\begin{dfn}
+ \textgt{論理式}(formula)
+ \begin{enumerate}
+  \item $t_1,\dots,t_n$が項であり,$P^n$が$n$変数の述語記号であるならば$P^n(t_1,\dots,t_n)$は論理式である.
+  \item $\phi$が論理式ならば,$\lnot \phi$は論理式である. \newline
+		$\phi,\psi$が論理式ならば, $\phi \land \psi, \phi \lor \psi, \phi \to \psi, \phi \leftrightarrow \psi$は論理式である.
+  \item $\phi(a)$が論理式で,$a$が自由変数のとき, $\forall x \phi(x)$と$\exists x \phi(x)$は論理式である.
+		ただし,$\phi(a)$は論理式$\phi$の中のいくつかの$a$を指定していることを表し,
+		$\phi(x)$は$\phi(a)$に現れない任意の束縛変数を$x$としたとき, $\phi(a)$で指定された$a$に$x$を代入したものを表す.
+  \item 上の1から3で論理式とわかるものだけが論理式である.
+ \end{enumerate}
+\end{dfn}
+
+自由変数を含まない論理式を\textgt{閉論理式}(closed formula)という.
+論理記号を含まない論理式を\textgt{素論理式}(prime formula)という.
+
+\begin{dfn}
+ \textgt{限定作用素}(quantifier)
+ \begin{enumerate}
+  \item $\forall x$を\textgt{全称作用素}と言う.\\
+		$\forall x \phi(x)$は''すべての$x$について,$\phi(x)$が成立する''となる.
+  \item $\exists x$を\textgt{存在作用素}と言う. \\
+		$\exists x \phi(x)$は''$\phi(x)$を成立するような,$x$が存在する''となる.
+  \item $\forall x \phi(x),\exists x \phi(x)$において,
+		$\phi(x)$を限定作用素の\textgt{適用範囲}(scope)という.
+ \end{enumerate}
+\end{dfn}
+
+Def.\ref{pred_L}で行ったことを,\textgt{言語}(language)$L$が定められた言う.
