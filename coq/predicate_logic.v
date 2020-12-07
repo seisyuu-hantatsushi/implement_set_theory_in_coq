@@ -16,13 +16,16 @@ Proof.
 Qed.
 
 (* 矛盾律 *)
-Theorem LawOfContradiction: forall P:Prop, ~(P /\ ~P).
+Theorem LawOfContradiction: forall P:Prop, P /\ ~P <-> False.
 Proof.
   move => P.
+  rewrite /iff.
+  split.
   case.
-  move => H HN.
-  apply HN.
-  apply H.
+  move => H0.
+  apply.
+  apply H0.
+  case.
 Qed.
 
 (* 二重否定 *)
@@ -301,6 +304,21 @@ Proof.
   case; apply.
   apply HA.
   apply HB.
+Qed.
+
+Theorem LawOfDeMorgan_NegtationOfConjucation_Open_Weak:
+  forall A B:Prop, (A \/ ~B) -> (~(A /\ B) -> (~A \/ ~B)).
+Proof.
+  move => A B.
+  case; move => H0 H1.
+  right.
+  move => H2.
+  apply H1.
+  split.
+  apply H0.
+  apply H2.
+  right.
+  apply H0.
 Qed.
 
 Theorem DoubleNegativeLawOfExcludeMiddle: forall P:Prop, ~~(P \/ ~P).
