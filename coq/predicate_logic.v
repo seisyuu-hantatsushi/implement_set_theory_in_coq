@@ -26,6 +26,14 @@ Proof.
 Qed.
 
 (* 二重否定 *)
+(*
+   クジラは哺乳類である(A)の命題の否定は,クジラは哺乳類でない(not A).
+   クジラは哺乳類である(A)の命題の二重否定は,クジラは哺乳類でないことはない.
+   クジラは哺乳類でないことはない(not not A)から否定を一つ外すと,
+   クジラは哺乳類でない,これはクジラが哺乳類以外のなにかであるなので,
+   これに否定をつけても,クジラが哺乳類であることを保証しないので,
+   二重否定の除去を認めない,構成的論理では~~A -> Aが成立しない.
+*)
 Theorem DoubleNegative: forall A:Prop, A -> ~~A.
 Proof.
   rewrite /not.
@@ -62,6 +70,7 @@ Proof.
   apply HP.
 Qed.
 
+(* 交換律 *)
 Theorem LawOfCommutativeAtAnd: forall A B:Prop, A /\ B <-> B /\ A.
 Proof.
   move => A B.
@@ -73,6 +82,7 @@ Proof.
   apply H0.
 Qed.
 
+(* 交換律 *)
 Theorem LawOfCommutativeAtOr: forall A B:Prop, A \/ B <-> B \/ A.
 Proof.
   move => A B.
@@ -88,6 +98,7 @@ Proof.
   apply H.
 Qed.
 
+(* 結合律 *)
 Theorem LawOfAssociateAtAnd: forall A B C:Prop, (A /\ B) /\ C <-> A /\ (B /\ C).
 Proof.
   move => A B C.
@@ -110,6 +121,7 @@ Proof.
   apply HC.
 Qed.
 
+(* 結合律 *)
 Theorem LawOfAssociateAtOr: forall A B C:Prop, (A \/ B) \/ C <-> A \/ (B \/ C).
 Proof.
   move => A B C.
@@ -137,6 +149,7 @@ Proof.
   apply H.
 Qed.
 
+(* 分配律 *)
 Theorem LawOfDistributiveByOr: forall A B C:Prop, (A /\ B) \/ C <-> (A \/ C) /\ (B \/ C).
 Proof.
   move => A B C.
@@ -163,6 +176,7 @@ Proof.
   apply H2.
 Qed.
 
+(* 分配律 *)
 Theorem LawOfDistributiveByAnd: forall A B C:Prop, (A \/ B) /\ C <-> (A /\ C) \/ (B /\ C).
 Proof.
   move => A B C.
@@ -186,6 +200,7 @@ Proof.
   apply H1.
 Qed.
 
+(* 吸収律 *)
 Theorem LawOfAbsorptionToOr: forall A B:Prop, (A /\ B) \/ A <-> A.
 Proof.
   move => A B.
@@ -201,6 +216,7 @@ Proof.
   apply HA.
 Qed.
 
+(* 吸収律 *)
 Theorem LawOfAbsorptionToAnd: forall A B:Prop, (A \/ B) /\ A <-> A.
 Proof.
   move => A B.
@@ -214,6 +230,77 @@ Proof.
   left.
   apply H0.
   apply H0.
+Qed.
+
+(* P implies not Q iff Q implies not P *)
+Theorem P_implies_notQ_iff_Q_implies_notP:
+  forall P Q:Prop, (P -> ~Q) <-> (Q -> ~P).
+Proof.
+  move => P Q.
+  rewrite /iff.
+  split; move => H0 H1 H2; apply H0.
+  apply H2.
+  apply H1.
+  apply H2.
+  apply H1.
+Qed.
+
+(* 構成的論理(直観主義論理)における対偶 *)
+(* If A implies B, then not B implies not A. *)
+(* 二重否定の除去を認めないので, ここでは逆は成立しない. *)
+Theorem ContrapositionInConstrutiveLogic: forall A B:Prop, (A -> B) -> (~B -> ~A).
+Proof.
+  move => A B H0 H1 H2.
+  apply H1.
+  apply H0.
+  apply H2.
+Qed.
+
+(* If not P or Q are true, then P implies Q. *)
+(* 構成的論理では逆は成り立たない. *)
+Theorem If_notP_or_Q_then_P_implies_Q:
+  forall P Q:Prop, (~P \/ Q) -> (P -> Q).
+Proof.
+  move => P Q.
+  case; move => H0 H1.
+  move: H0.
+  case.
+  apply H1.
+  apply H0.
+Qed.
+
+(* ド・モルガンの法則, 論理和の否定 *)
+Theorem LawOfDeMorgan_NegtationOfDisjunction:
+  forall A B:Prop, ~(A \/ B) <-> (~A /\ ~B).
+Proof.
+  move => A B.
+  rewrite /iff.
+  split.
+  move => H0.
+  split; move => H1; apply H0.
+  left.
+  apply H1.
+  right.
+  apply H1.
+  case.
+  move => HA HB.
+  case.
+  apply HA.
+  apply HB.
+Qed.
+
+(* ド・モルガンの法則, 論理積の否定 *)
+(* カッコを開く方は,構成的論理では証明できない *)
+Theorem LawOfDeMorgan_NegtationOfConjunction_Close:
+  forall A B:Prop, (~A \/ ~B) -> ~(A /\ B).
+Proof.
+  move => A B H0.
+  case.
+  move => HA HB.
+  move: H0.
+  case; apply.
+  apply HA.
+  apply HB.
 Qed.
 
 Theorem DoubleNegativeLawOfExcludeMiddle: forall P:Prop, ~~(P \/ ~P).
