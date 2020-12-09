@@ -70,3 +70,37 @@
 \end{dfn}
 
 Def.\ref{pred_L}で行ったことを,\textgt{言語}(language)$L$が定められた言う.
+
+\begin{dfn}
+ 1階述語論理上の形式化体系$H_p$
+  \begin{enumerate}
+   \renewcommand{\labelenumii}{\arabic{enumii})}
+   \item 公理
+		 \begin{enumerate}
+		  \item 論理的公理
+				\begin{align}
+				 \phi \to (\psi \to \phi) \tag{HA1} \\
+				 (\phi \to (\psi \to \chi)) \to ((\phi \to \psi) \to (\phi \to \chi)) \tag{HA2} \\
+				 (\lnot \phi \to \lnot \psi) \to ((\lnot \phi \to \psi) \to \phi) \tag{HA3} \\
+				 \forall x \phi(x) \to \phi(t) \tag{HA4} \\
+				 \phi(t) \to \exists x \phi(x) \tag{HA5}
+				\end{align}
+		  \item 数学的公理 \\
+				対象となる数学理論に必要な公理. その数学理論に対する公理系(axiom system)とも言う.
+		 \end{enumerate}
+   \item 推論規則
+		\begin{align}
+		 \phi,\phi \to \psi \vdash \psi \tag{HR1} \\
+		 \phi \to \psi(a) \vdash \phi \to \forall x \psi(x) \tag{HR2} \\
+		 \phi(a) \to \psi \vdash \exists x \phi(x) \to \psi \tag{HR3}
+		\end{align}
+ \end{enumerate}
+\end{dfn}
+
+\subsection{構造}
+
+\begin{dfn}
+\textgt{構造}(structure)
+ 言語$L$の構造,$L$-構造とは以下のような定義である.
+\end{dfn}
+言語$L$
