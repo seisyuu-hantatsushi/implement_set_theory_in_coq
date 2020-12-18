@@ -235,17 +235,13 @@ Proof.
   apply H0.
 Qed.
 
-(* P implies not Q iff Q implies not P *)
-Theorem P_implies_notQ_iff_Q_implies_notP:
-  forall P Q:Prop, (P -> ~Q) <-> (Q -> ~P).
+Theorem P_implies_notQ_to_Q_implies_notP:
+  forall P Q:Prop, (P -> ~Q) -> (Q -> ~P).
 Proof.
-  move => P Q.
-  rewrite /iff.
-  split; move => H0 H1 H2; apply H0.
-  apply H2.
-  apply H1.
-  apply H2.
-  apply H1.
+  move => P Q H0 HQ HP.
+  apply: H0.
+  apply: HP.
+  apply: HQ.
 Qed.
 
 (* 構成的論理(直観主義論理)における対偶 *)
@@ -261,7 +257,7 @@ Qed.
 
 (* If not P or Q are true, then P implies Q. *)
 (* 構成的論理では逆は成り立たない. *)
-Theorem If_notP_or_Q_then_P_implies_Q:
+Theorem notOr_to_imply:
   forall P Q:Prop, (~P \/ Q) -> (P -> Q).
 Proof.
   move => P Q.
@@ -321,6 +317,34 @@ Proof.
   apply H0.
 Qed.
 
+Theorem notAnd_to_imply: forall P Q:Prop, ~(P /\ Q) -> (P -> ~Q).
+Proof.
+  move => P Q HF HP HQ.
+  apply: HF.
+  split.
+  apply HP.
+  apply HQ.
+Qed.
+
+Theorem imply_to_notAnd: forall P Q:Prop, (P -> ~Q) -> ~(P /\ Q).
+Proof.
+  move => P Q H0.
+  case.
+  move => HP HQ.
+  apply H0.
+  apply HP.
+  apply HQ.
+Qed.
+
+Theorem imply_iff_notAnd: forall P Q:Prop, (P -> ~Q) <-> ~(P /\ Q).
+Proof.
+  move => P Q.
+  rewrite /iff.
+  split.
+  apply: imply_to_notAnd.
+  apply: notAnd_to_imply.
+Qed.
+
 Theorem DoubleNegativeLawOfExcludeMiddle: forall P:Prop, ~~(P \/ ~P).
 Proof.
   move => P H.
@@ -331,4 +355,3 @@ Proof.
   left.
   apply H0.
 Qed.
-
