@@ -3,26 +3,20 @@ From mathcomp Require Import ssreflect.
 (* 自同律 *)
 Theorem LawOfIdentity: forall A:Prop, A <-> A.
 Proof.
-  rewrite /iff.
-  split.
-  apply.
-  apply.
+  rewrite /iff. split. apply. apply.
 Qed.
 
 Theorem NotFalse : ~False.
 Proof.
-  rewrite /not.
   apply.
 Qed.
 
 (* 矛盾律 *)
 Theorem LawOfContradiction: forall P:Prop, P /\ ~P <-> False.
 Proof.
-  move => P.
   rewrite /iff.
   split.
-  case.
-  move => H0.
+  case => H0.
   apply.
   apply H0.
   case.
@@ -311,8 +305,8 @@ Proof.
   move => H2.
   apply H1.
   split.
-  apply H0.
-  apply H2.
+  apply: H0.
+  apply: H2.
   right.
   apply H0.
 Qed.
@@ -331,9 +325,9 @@ Proof.
   move => P Q H0.
   case.
   move => HP HQ.
-  apply H0.
-  apply HP.
-  apply HQ.
+  apply: H0.
+  apply: HP.
+  apply: HQ.
 Qed.
 
 Theorem imply_iff_notAnd: forall P Q:Prop, (P -> ~Q) <-> ~(P /\ Q).
@@ -354,4 +348,47 @@ Proof.
   apply H.
   left.
   apply H0.
+Qed.
+
+Theorem ForallToFree: forall I:Type, forall t:I, forall P:(I -> Prop), (forall x:I, P x) -> P t.
+Proof.
+  move => I t P H.
+  apply H.
+Qed.
+
+Theorem FreeToBind: forall I:Type, forall t:I, forall P:(I -> Prop), P t -> (exists x, P x).
+Proof.
+  move => I t P H.
+  exists t. apply: H.
+Qed.
+
+Theorem SwapForall: forall I:Type, forall P:(I -> Prop), (forall x:I, P x) -> (forall y:I, P y).
+Proof.
+  move => I P H y. apply H.
+Qed.
+
+Theorem SwapExists: forall I:Type, forall P:(I -> Prop), (exists x:I, P x) -> (exists y:I, P y).
+Proof.
+  move => I P.
+  case => x HP.
+  exists x. apply HP.
+Qed.
+
+Theorem DeMorganNotExists: forall I:Type, forall P:(I -> Prop), ~(exists x:I, P x) <-> forall x:I, ~(P x).
+Proof.
+  move => I P.
+  rewrite /iff. split; move => H.
+  move => x H0.
+  apply H.
+  exists x.
+  apply H0.
+  case.
+  apply H.
+Qed.
+
+Theorem DeMorganNotForall_Close: forall I:Type, forall P:(I -> Prop), (exists x:I, ~ (P x)) -> ~(forall x:I, P x).
+Proof.
+  move => I P.
+  case => x H HN.
+  apply /H /HN.
 Qed.
