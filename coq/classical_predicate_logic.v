@@ -84,4 +84,29 @@ Proof.
   apply H3.
 Qed.
 
+Theorem LawOfDeMorgan_NegtationOfConjunction_Open:
+  forall A B:Prop,  ~(A /\ B) -> (~A \/ ~B).
+Proof.
+  move => A B H.
+  apply: DoubleNegativeElimination.
+  move => H0.
+  apply LawOfDeMorgan_NegtationOfDisjunction in H0.
+  case: H0 => HNA HNB.
+  apply: H.
+  split.
+  move: HNA.
+  apply: DoubleNegativeElimination.
+  move: HNB.
+  apply: DoubleNegativeElimination.
+Qed.
+
+Theorem LawOfDeMorgan_NegtationOfConjunction:
+  forall A B:Prop,  (~A \/ ~B) <-> ~(A /\ B).
+Proof.
+  move => A B.
+  rewrite /iff. split.
+  apply: LawOfDeMorgan_NegtationOfConjunction_Close.
+  apply: LawOfDeMorgan_NegtationOfConjunction_Open.
+Qed.
+
 Require Export predicate_logic.
