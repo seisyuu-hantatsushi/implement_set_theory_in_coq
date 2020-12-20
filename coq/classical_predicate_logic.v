@@ -110,7 +110,7 @@ Proof.
 Qed.
 
 Theorem DeMorganNotForall_Open:
-  forall I:Type, forall P:(I -> Prop), ~(forall x:I, P x) -> (exists x:I, ~(P x)).
+  forall I:Type, forall P:LogicFunction I, ~(forall x:I, P x) -> (exists x:I, ~(P x)).
 Proof.
   move => I P.
   apply: ContrapositionInClassic.
@@ -123,13 +123,11 @@ Proof.
 Qed.
 
 Theorem DeMorganNotForall:
-  forall I:Type, forall P:(I -> Prop), ~(forall x:I, P x) <-> (exists x:I, ~(P x)).
+  forall I:Type, forall P:LogicFunction I, ~(forall x:I, P x) <-> (exists x:I, ~(P x)).
 Proof.
   rewrite /iff. split.
   apply: DeMorganNotForall_Open.
   apply: DeMorganNotForall_Close.
 Qed.
-
-
 
 Require Export predicate_logic.
