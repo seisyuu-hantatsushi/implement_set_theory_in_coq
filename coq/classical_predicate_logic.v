@@ -109,4 +109,27 @@ Proof.
   apply: LawOfDeMorgan_NegtationOfConjunction_Open.
 Qed.
 
+Theorem DeMorganNotForall_Open:
+  forall I:Type, forall P:(I -> Prop), ~(forall x:I, P x) -> (exists x:I, ~(P x)).
+Proof.
+  move => I P.
+  apply: ContrapositionInClassic.
+  move => H0.
+  apply: DoubleNegative.
+  move => x.
+  apply: DoubleNegativeElimination.
+  apply DeMorganNotExistsNot.
+  apply: H0.
+Qed.
+
+Theorem DeMorganNotForall:
+  forall I:Type, forall P:(I -> Prop), ~(forall x:I, P x) <-> (exists x:I, ~(P x)).
+Proof.
+  rewrite /iff. split.
+  apply: DeMorganNotForall_Open.
+  apply: DeMorganNotForall_Close.
+Qed.
+
+
+
 Require Export predicate_logic.

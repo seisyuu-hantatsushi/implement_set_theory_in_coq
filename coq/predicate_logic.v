@@ -392,3 +392,9 @@ Proof.
   case => x H HN.
   apply /H /HN.
 Qed.
+
+Theorem DeMorganNotExistsNot: forall I:Type, forall P:(I -> Prop), ~(exists x:I, ~ (P x)) <-> (forall x:I, ~~P x).
+Proof.
+  move => I P.
+  apply: DeMorganNotExists.
+Qed.
