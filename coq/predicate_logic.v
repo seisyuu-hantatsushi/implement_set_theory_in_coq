@@ -2,7 +2,7 @@ From mathcomp Require Import ssreflect.
 
 Section PredicateLogic.
 
-  Definition LogicFunction (I:Type) := I -> Prop.
+  Definition LogicFunction I := I -> Prop.
 
   (* 自同律 *)
   Theorem LawOfIdentity: forall A:Prop, A <-> A.
