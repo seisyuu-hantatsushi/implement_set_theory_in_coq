@@ -3,11 +3,11 @@ From mathcomp Require Import ssreflect.
 Require Import classical_predicate_logic.
 
 (*
-        A Collection does not include itself at type theory.
-        For the above reason, we can avoid russel's paradox.
+  A Collection does not include itself at type theory.
+  For the above reason, we can avoid russel's paradox.
  *)
 (*
-        Collection is aliase of LogicFunction.
+  Collection is aliase of LogicFunction.
  *)
 (*
   Uはこの世のすべての記号,元を集めた集合.
