@@ -1,23 +1,27 @@
 
+
 all: zf.vo
 
-zf.vo: relation.vo axiom_of_empty.vo
-	coqc zf.v
+zf.vo: zf.v relation.vo axiom_of_empty.vo axiom_of_pair.vo
+	coqc $<
 
-axiom_of_empty.vo: relation.vo axiom_of_empty.v
-	coqc axiom_of_empty.v
+axiom_of_pair.vo: axiom_of_pair.v relation.vo
+	coqc $<
 
-relation.vo: setsontypetheory.vo relation.v
-	coqc relation.v
+axiom_of_empty.vo: axiom_of_empty.v relation.vo
+	coqc $<
 
-setsontypetheory.vo: classical_predicate_logic.vo setsontypetheory.v
-	coqc setsontypetheory.v
+relation.vo: relation.v setsontypetheory.vo
+	coqc $<
 
-classical_predicate_logic.vo: predicate_logic.vo classical_predicate_logic.v
-	coqc classical_predicate_logic.v
+setsontypetheory.vo: setsontypetheory.v classical_predicate_logic.vo
+	coqc $<
+
+classical_predicate_logic.vo: classical_predicate_logic.v predicate_logic.vo
+	coqc $<
 
 predicate_logic.vo: predicate_logic.v
-	coqc predicate_logic.v
+	coqc $<
 
 clean:
 	rm -f *.glob *.vo *.vos *.vok .*.aux

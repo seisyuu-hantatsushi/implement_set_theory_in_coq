@@ -12,11 +12,11 @@ Inductive UnorderedPair (U:Type) (x y:U) : Collection U :=
 
 Definition Singleton U x := UnorderedPair U x x.
 
-Notation "{ x ',' y }" := (UnorderedPair _ x y) (at level 31).
-Notation "{ x , }" := (Singleton _ x).
+Notation "{| x ',' y |}" := (UnorderedPair _ x y).
+Notation "{| x |}" := (Singleton _ x).
 
 Theorem axiom_of_pair_create_unordered_pair:
-  forall {U:Type}, forall {x y:U}, exists z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) -> { x , y } = z'.
+  forall {U:Type}, forall {x y:U}, exists z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) -> {| x , y |} = z'.
 Proof.
   move => U x y.
   move: AxiomOfPair => HA.
@@ -40,7 +40,7 @@ Proof.
 Qed.
 
 Theorem unordered_pair_is_satisfied_axiom_of_pair:
-  forall {U:Type}, forall {x y:U}, exists z':Collection U, z' = { x , y } ->  (forall z:U, z ∈ z' <-> z = x \/ z = y).
+  forall {U:Type}, forall {x y:U}, exists z':Collection U, z' = {| x , y |} ->  (forall z:U, z ∈ z' <-> z = x \/ z = y).
 Proof.
   move => U x y.
   move: AxiomOfPair => HA.
@@ -51,14 +51,14 @@ Proof.
 Qed.
 
 Theorem singleton_to_eq:
-  forall U:Type, forall {x y:U}, x ∈ { y , } -> x = y.
+  forall U:Type, forall {x y:U}, x ∈ {| y |} -> x = y.
 Proof.
   move => U x y H.
   case H; reflexivity.
 Qed.
 
 Theorem eq_to_singleton:
-  forall U:Type, forall {x y:U}, x = y -> x ∈ { y , }.
+  forall U:Type, forall {x y:U}, x = y -> x ∈ {| y |}.
 Proof.
   move => U x y H.
   rewrite H.
@@ -66,7 +66,7 @@ Proof.
 Qed.
 
 Theorem singleton_iff_eq:
-  forall U:Type, forall {x y:U}, x ∈ { y , } <-> x = y.
+  forall U:Type, forall {x y:U}, x ∈ {| y |} <-> x = y.
 Proof.
   move => U x y.
   rewrite /iff. split.
@@ -74,8 +74,33 @@ Proof.
   apply eq_to_singleton.
 Qed.
 
+Theorem singleton_eq_to_element_eq:
+  forall U:Type, forall {x y:U}, {| x |} = {| y |} -> x = y.
+Proof.
+  move => U x y H.
+  apply singleton_iff_eq.
+  rewrite -H.
+  apply unordered_pair_r.
+Qed.
+
+Theorem element_eq_to_singleton_eq:
+  forall U:Type, forall {x y:U}, x = y -> {| x |} = {| y |}.
+Proof.
+  move => U x y H.
+  rewrite H. reflexivity.
+Qed.
+
+Theorem singleton_eq_iff_element_eq:
+  forall U:Type, forall {x y:U}, {| x |} = {| y |} <-> x = y.
+Proof.
+  move => U x y.
+  rewrite /iff. split.
+  apply singleton_eq_to_element_eq.
+  apply element_eq_to_singleton_eq.
+Qed.
+
 Theorem unordered_pair_is_uniqueness:
-  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) -> { x , y } = z'.
+  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) -> {| x , y |} = z'.
 Proof.
   move => U x y z' H.
   apply AxiomOfExtentionality => x0.
@@ -91,7 +116,7 @@ Proof.
 Qed.
 
 Theorem unordered_pair_to_or:
-  forall {U:Type}, forall {x y:U}, forall z':Collection U, { x , y } = z' -> (forall z:U, z ∈ z' <-> z = x \/ z = y).
+  forall {U:Type}, forall {x y:U}, forall z':Collection U, {| x , y |} = z' -> (forall z:U, z ∈ z' <-> z = x \/ z = y).
 Proof.
   move => U x y z' H z.
   rewrite -H.
@@ -105,7 +130,7 @@ Proof.
 Qed.
 
 Theorem unordered_pair_is_or:
-  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) <-> { x , y } = z'.
+  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) <-> {| x , y |} = z'.
 Proof.
   move => U x y z'.
   rewrite /iff. split.
@@ -113,15 +138,16 @@ Proof.
   apply unordered_pair_to_or.
 Qed.
 
-Theorem UnorderedPair_elements_is_sym:
-  forall U:Type, forall {x y:U}, { x , y } = { y , x }.
+Theorem unorderedPair_elements_is_sym:
+  forall U:Type, forall {x y:U}, {| x , y |} = {| y , x |}.
 Proof.
   move => U x y.
   apply AxiomOfExtentionality => x0.
   rewrite /iff. split; case.
-  apply unordered_pair_r.
-  apply unordered_pair_l.
-  apply unordered_pair_r.
-  apply unordered_pair_l.
+  apply unordered_pair_r. apply unordered_pair_l.
+  apply unordered_pair_r. apply unordered_pair_l.
 Qed.
 
+Inductive OrderedPair (U:Type) (x y:U) : Collection (Collection U) :=
+| ordered_pair_l : In (Collection U) (OrderedPair U x y) (Singleton U x)
+| ordered_pair_r : In (Collection U) (OrderedPair U x y) (UnorderedPair U x y).
