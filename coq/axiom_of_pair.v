@@ -73,3 +73,55 @@ Proof.
   apply singleton_to_eq.
   apply eq_to_singleton.
 Qed.
+
+Theorem unordered_pair_is_uniqueness:
+  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) -> { x , y } = z'.
+Proof.
+  move => U x y z' H.
+  apply AxiomOfExtentionality => x0.
+  rewrite /iff. split.
+  case; apply H.
+  left. reflexivity.
+  right. reflexivity.
+  move => H0.
+  apply (H x0) in H0.
+  case H0 => H1;rewrite H1.
+  left.
+  right.
+Qed.
+
+Theorem unordered_pair_to_or:
+  forall {U:Type}, forall {x y:U}, forall z':Collection U, { x , y } = z' -> (forall z:U, z ∈ z' <-> z = x \/ z = y).
+Proof.
+  move => U x y z' H z.
+  rewrite -H.
+  rewrite /iff. split => H0.
+  case H0.
+  left. reflexivity.
+  right. reflexivity.
+  case: H0 => H1; rewrite H1.
+  apply unordered_pair_l.
+  apply unordered_pair_r.
+Qed.
+
+Theorem unordered_pair_is_or:
+  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) <-> { x , y } = z'.
+Proof.
+  move => U x y z'.
+  rewrite /iff. split.
+  apply unordered_pair_is_uniqueness.
+  apply unordered_pair_to_or.
+Qed.
+
+Theorem UnorderedPair_elements_is_sym:
+  forall U:Type, forall {x y:U}, { x , y } = { y , x }.
+Proof.
+  move => U x y.
+  apply AxiomOfExtentionality => x0.
+  rewrite /iff. split; case.
+  apply unordered_pair_r.
+  apply unordered_pair_l.
+  apply unordered_pair_r.
+  apply unordered_pair_l.
+Qed.
+
