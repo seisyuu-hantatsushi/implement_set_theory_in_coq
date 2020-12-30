@@ -138,7 +138,7 @@ Proof.
   apply unordered_pair_to_or.
 Qed.
 
-Theorem unorderedPair_elements_is_sym:
+Theorem unordered_pair_elements_is_sym:
   forall U:Type, forall {x y:U}, {| x , y |} = {| y , x |}.
 Proof.
   move => U x y.
@@ -148,6 +148,25 @@ Proof.
   apply unordered_pair_r. apply unordered_pair_l.
 Qed.
 
+Lemma singleton_eq_unordered_pair_to_and:
+  forall U:Type, forall {a b c:U}, {| a |} = {| b , c |} -> a = b /\ b = c.
+Proof.
+  move => U a b c H.
+  apply mutally_included_iff_eq in H.
+  case: H => H0 H1.
+  move: (H1 b) (H1 c) => H1b H1c.
+  have L1: a=b.
+  apply eq_sym.
+  apply singleton_iff_eq.
+  apply: H1b. apply unordered_pair_l.
+  split.
+  -by [].
+  -apply eq_sym.
+   apply singleton_iff_eq.
+   rewrite -L1.
+   apply H1c. apply unordered_pair_r.
+Qed.
+
 Inductive OrderedPair (U:Type) (x y:U) : Collection (Collection U) :=
-| ordered_pair_l : In (Collection U) (OrderedPair U x y) (Singleton U x)
-| ordered_pair_r : In (Collection U) (OrderedPair U x y) (UnorderedPair U x y).
+| ordered_pair_first : In (Collection U) (OrderedPair U x y) (Singleton U x)
+| ordered_pair_second : In (Collection U) (OrderedPair U x y) (UnorderedPair U x y).

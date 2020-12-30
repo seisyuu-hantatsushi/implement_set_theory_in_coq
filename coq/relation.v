@@ -11,7 +11,6 @@ Definition AntisymmetricRelation U (R:Relation U) := forall x y:U, R x y -> R y 
 Definition AsymmetricRelation U (R:Relation U) := forall x y:U, ~(R x y -> R y x). (* 非対称的 *)
 Definition TransitiveRelation U (R:Relation U) := forall x y z:U, R x y -> R y z -> R x z. (* 推移的 *)
 
-Print ReflexiveRelation.
 Inductive PartialOrder (U:Type) (R:Relation U) : Prop :=
   define_partail_order: ReflexiveRelation U R -> AntisymmetricRelation U R -> TransitiveRelation U R -> PartialOrder U R.
 
