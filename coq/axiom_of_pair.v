@@ -167,6 +167,77 @@ Proof.
    apply H1c. apply unordered_pair_r.
 Qed.
 
+Lemma included_unorder_pair_to_and:
+  forall U:Type, forall {a b c d:U}, {|a , b|} ⊂ {|c , d|} -> (a = c \/ a = d) /\ (b = c \/ b = d).
+Proof.
+  move => U a b c d H.
+  split.
+  move: (H a) => Ha.
+  case: Ha.
+  left.
+  left. reflexivity.
+  right. reflexivity.
+  move: (H b) => Hb.
+  case: Hb.
+  right.
+  left. reflexivity.
+  right. reflexivity.
+Qed.
+
+Lemma unorder_pair_eq_to_or_l:
+  forall U:Type, forall {a b c d:U}, {|a , b|} = {|c , d|} -> (a = c) \/ (a = d /\ b = c).
+Proof.
+  move => U a b c d H.
+  apply mutally_included_iff_eq in H.
+  case: H => H0 H1.
+  apply included_unorder_pair_to_and in H0.
+  apply included_unorder_pair_to_and in H1.
+  case: H0 H1 => H0 H1.
+  case => H2 H3.
+  case H0 => H4.
+  left. by [].
+  right. split. by [].
+  case: H1.
+  apply.
+  move => H5.
+  have L1: a = b.
+  rewrite H4 H5.
+  reflexivity.
+  apply eq_sym.
+  case H2 => H6.
+  rewrite H6.
+  apply L1.
+  apply H6.
+Qed.
+
+Lemma unorder_pair_eq_to_or_r:
+  forall U:Type, forall {a b c d:U}, {|a , b|} = {|c , d|} -> (b = d) \/ (a = d /\ b = c).
+Proof.
+  move => U a b c d.
+  move: unordered_pair_elements_is_sym => H.
+  move: (H U a b) (H U c d) => H0 H1.
+  rewrite H0 H1.
+  move: unorder_pair_eq_to_or_l => Hl.
+  have L1: b = d \/ b = c /\ a = d -> b = d \/ a = d /\ b = c.
+  case => H2.
+  left. by [].
+  right.
+  apply and_comm. by[].
+  move => H2.
+  apply L1.
+  apply Hl. by [].
+Qed.
+
+Lemma unorder_pair_eq_to_or:
+  forall U:Type, forall {a b c d:U}, {|a , b|} = {|c , d|} -> (a = c /\ b = d) \/ (a = d /\ b = c).
+Proof.
+  move => U a b c d H.
+  apply LawOfDistributiveByOr.
+  split.
+  apply unorder_pair_eq_to_or_l in H. by [].
+  apply unorder_pair_eq_to_or_r in H. by [].
+Qed.
+
 Inductive OrderedPair (U:Type) (x y:U) : Collection (Collection U) :=
 | ordered_pair_first : In (Collection U) (OrderedPair U x y) (Singleton U x)
 | ordered_pair_second : In (Collection U) (OrderedPair U x y) (UnorderedPair U x y).
