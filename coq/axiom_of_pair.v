@@ -99,6 +99,30 @@ Proof.
   apply element_eq_to_singleton_eq.
 Qed.
 
+Theorem in_to_singleton_included:
+  forall U:Type, forall {x:U}, forall {x':Collection U}, x ∈ x' -> {| x |} ⊂ x'.
+Proof.
+  move => U x x' H x0.
+  case. by []. by [].
+Qed.
+
+Theorem singleton_included_to_in:
+  forall U:Type, forall {x:U}, forall {x':Collection U}, {| x |} ⊂ x' -> x ∈ x'.
+Proof.
+  move => U x x'.
+  apply.
+  apply singleton_iff_eq. reflexivity.
+Qed.
+
+Theorem in_iff_singleton_included:
+  forall U:Type, forall {x:U}, forall {x':Collection U}, x ∈ x' <-> {| x |} ⊂ x'.
+Proof.
+  move => U x x'.
+  rewrite /iff. split.
+  apply: in_to_singleton_included.
+  apply: singleton_included_to_in.
+Qed.
+
 Theorem unordered_pair_is_uniqueness:
   forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) -> {| x , y |} = z'.
 Proof.
