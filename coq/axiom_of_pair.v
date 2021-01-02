@@ -241,3 +241,42 @@ Qed.
 Inductive OrderedPair (U:Type) (x y:U) : Collection (Collection U) :=
 | ordered_pair_first : In (Collection U) (OrderedPair U x y) (Singleton U x)
 | ordered_pair_second : In (Collection U) (OrderedPair U x y) (UnorderedPair U x y).
+
+Notation "<| x , y |>" := (OrderedPair _ x y).
+
+Theorem ordered_pair_eq_unordered_pair:
+  forall (U:Type), forall {a b:U}, <| a , b |> = {| {|a|} , {|a , b|} |}.
+Proof.
+  move => U a b.
+  apply AxiomOfExtentionality.
+  move => x'.
+  rewrite /iff. split.
+  case. left. right.
+  case. left. right.
+Qed.
+
+Theorem ordered_pair_to_and:
+  forall (U:Type), forall {a b x y:U}, <| a , b |> = <| x , y |> -> a = x /\ b = y.
+Proof.
+  move => U a b x y H.
+  rewrite ordered_pair_eq_unordered_pair in H.
+  rewrite ordered_pair_eq_unordered_pair in H.
+  apply unorder_pair_eq_to_or in H.
+  case: H; case => H0 H1.
+  apply singleton_eq_to_element_eq in H0.
+  apply unorder_pair_eq_to_or in H1.
+  case: H1 => H1. by[].
+  split. by[].
+  case: H1 => H2 H3.
+  rewrite H0 in H2.
+  rewrite H3. by [].
+  apply singleton_eq_unordered_pair_to_and in H0.
+  apply eq_sym in H1.
+  apply singleton_eq_unordered_pair_to_and in H1.
+  case: H0 H1 => H0 H1.
+  case => H2 H3.
+  split. by [].
+  rewrite H0 in H3.
+  rewrite H1 in H3.
+  apply sym_eq in H3. by [].
+Qed.
