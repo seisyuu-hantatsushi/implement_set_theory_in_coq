@@ -139,6 +139,36 @@ Proof.
   right.
 Qed.
 
+Theorem in_unorder_pair_to_in_or:
+  forall {U:Type}, forall {x y z:U}, z ∈ {| x , y |} -> z ∈ {| x |} \/ z ∈ {| y |}.
+Proof.
+  move => U x y z H.
+  case H.
+  left. apply singleton_iff_eq. reflexivity.
+  right. apply singleton_iff_eq. reflexivity.
+Qed.
+
+Theorem in_or_to_in_unorder_pair:
+  forall {U:Type}, forall {x y z:U}, z ∈ {| x |} \/ z ∈ {| y |} -> z ∈ {| x , y |}.
+  move => U x y z H.
+  have Lx: z = x \/ z = y.
+  case H => H0.
+  left. apply singleton_iff_eq in H0. by [].
+  right. apply singleton_iff_eq in H0. by [].
+  case Lx => H0.
+  rewrite H0. left.
+  rewrite H0. right.
+Qed.
+
+Theorem in_unorder_pair_iff_in_or:
+  forall {U:Type}, forall {x y z:U}, z ∈ {| x , y |} <-> z ∈ {| x |} \/ z ∈ {| y |}.
+Proof.
+  move => U x y z.
+  rewrite /iff. split.
+  apply in_unorder_pair_to_in_or.
+  apply in_or_to_in_unorder_pair.
+Qed.
+
 Theorem unordered_pair_to_or:
   forall {U:Type}, forall {x y:U}, forall z':Collection U, {| x , y |} = z' -> (forall z:U, z ∈ z' <-> z = x \/ z = y).
 Proof.
