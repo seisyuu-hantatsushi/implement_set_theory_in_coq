@@ -6,9 +6,16 @@ Require Import relation.
 
 Axiom AxiomOfEmpty: forall U:Type, exists z':Collection U, (forall x:U, x ∉ z').
 
-Inductive EmptyCollection : forall U:Type, Collection U := .
+Inductive EmptyCollection (U:Type) : Collection U := .
+Inductive FullCollection (U:Type) : Collection U :=
+| intro_full_collection: forall x:U, x ∈ FullCollection U.
 
 Notation "`Ø`" :=  (EmptyCollection _) (at level 60).
+
+Definition ComplementOfCollection (U:Type) (X:Collection U) : Collection U :=
+  fun x:U => x ∉ X.
+
+Notation "A ^c" := (ComplementOfCollection _ A) (at level 65).
 
 Theorem noone_in_empty:
   forall U:Type, forall x:U, x ∉ `Ø`.

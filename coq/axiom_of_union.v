@@ -4,6 +4,7 @@ Require Import relation.
 Require Import axiom_of_pair.
 
 Reserved Notation "A ∪ B" (right associativity, at level 30).
+(* Unicode of ⋃ is 22c3 *)
 Reserved Notation "⋃ X" (right associativity, at level 30).
 
 Axiom AxiomOfUnion: forall U:Type, forall A:Collection (Collection U), exists B:Collection U, forall x:U, (x ∈ B <-> exists (C:Collection U), (x ∈ C /\ C ∈ A)).

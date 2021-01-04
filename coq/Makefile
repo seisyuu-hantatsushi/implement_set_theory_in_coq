@@ -8,7 +8,7 @@ zf.vo: zf.v relation.vo axiom_of_empty.vo axiom_of_pair.vo axiom_of_union.vo
 axiom_of_union.vo: axiom_of_union.v axiom_of_pair.vo relation.vo
 	coqc $<
 
-axiom_of_pair.vo: axiom_of_pair.v relation.vo
+axiom_of_pair.vo: axiom_of_pair.v axiom_of_empty.vo relation.vo
 	coqc $<
 
 axiom_of_empty.vo: axiom_of_empty.v relation.vo

@@ -32,7 +32,7 @@ Proof.
   apply ContrapositionInClassic.
 Qed.
 
-Theorem LawOfExcludeMiddle: forall P:Prop, P \/ ~P.
+Theorem LawOfExcludedMiddle: forall P:Prop, P \/ ~P.
 Proof.
   move => P.
   apply DoubleNegativeElimination.
@@ -44,7 +44,7 @@ Theorem imply_to_notOr:
   forall P Q:Prop, (P -> Q) -> (~P \/ Q).
 Proof.
   move => P Q H0.
-  move: (LawOfExcludeMiddle P).
+  move: (LawOfExcludedMiddle P).
   case.
   move => H1.
   right.
