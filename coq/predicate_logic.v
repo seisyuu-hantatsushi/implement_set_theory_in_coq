@@ -3,6 +3,7 @@ From mathcomp Require Import ssreflect.
 Section PredicateLogic.
 
   Definition LogicFunction I := I -> Prop.
+  Definition RelationLogicFunction X Y := X -> Y -> Prop.
 
   (* 自同律 *)
   Theorem LawOfIdentity: forall A:Prop, A <-> A.
