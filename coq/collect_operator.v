@@ -27,15 +27,13 @@ Proof.
 Qed.
 
 Theorem LawOfExcludedMiddleAtCollection:
-  forall U:Type, forall A:Collection U, A ∪ A ^c = FullCollection U.
+  forall U:Type, forall A:Collection U, A ∪ (A ^c) = FullCollection U.
 Proof.
   move => U A.
   apply mutally_included_iff_eq.
   split => x H.
-  case H.
-  exact.
   exact.
   apply: in_or_to_in_union.
   apply LawOfExcludedMiddle.
 Qed.
-  
+
