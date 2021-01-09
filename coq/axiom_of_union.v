@@ -3,10 +3,6 @@ From mathcomp Require Import ssreflect.
 Require Import relation.
 Require Import axiom_of_pair.
 
-Reserved Notation "A ∪ B" (right associativity, at level 30).
-(* Unicode of ⋃ is 22c3 *)
-Reserved Notation "⋃ X" (right associativity, at level 30).
-
 Axiom AxiomOfUnion: forall U:Type, forall A:Collection (Collection U), exists B:Collection U, forall x:U, (x ∈ B <-> exists (C:Collection U), (x ∈ C /\ C ∈ A)).
 
 Definition UnionFromAxiom U (A:Collection (Collection U)) : Collection U :=
@@ -18,9 +14,9 @@ Inductive UnionOfCollection (U:Type) (A B:Collection U): Collection U :=
 | union_of_collection_r: forall x:U, x ∈ B -> x ∈ UnionOfCollection U A B
 where "A ∪ B" := (UnionOfCollection _ A B).
 
-Inductive BigCupUnionOfCollection (U:Type) (X:Collection (Collection U)): Collection U :=
-| intro_bigcup_union_of_collection: forall A: Collection U, forall x:U, x ∈ A /\ A ∈ X -> x ∈ BigCupUnionOfCollection U X
-where "⋃ X" := (BigCupUnionOfCollection _ X).
+Inductive BigCupOfCollection (U:Type) (X:Collection (Collection U)): Collection U :=
+| intro_bigcup_of_collection: forall A: Collection U, forall x:U, x ∈ A /\ A ∈ X -> x ∈ BigCupOfCollection U X
+where "⋃ X" := (BigCupOfCollection _ X).
 
 Section UnionFromAxiomTest.
   Variable U:Type.
@@ -58,10 +54,10 @@ Section UnionFromAxiomTest.
      left. by [].
      right. by [].
     +case => x0 H.
-     apply (intro_bigcup_union_of_collection U {|A,B|} A).
+     apply (intro_bigcup_of_collection U {|A,B|} A).
      split. by [].
      left.
-     apply (intro_bigcup_union_of_collection U {|A,B|} B).
+     apply (intro_bigcup_of_collection U {|A,B|} B).
      split. by [].
      right.
   Qed.

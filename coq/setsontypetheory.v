@@ -21,6 +21,11 @@ Definition In (U:Type) (X:Collection U) (x:U) : Prop := X x.
 Notation "x ∈ X" := (In _ X x) (right associativity, at level 30) : type_scope.
 Notation "x ∉ X" := (~(In _ X x)) (right associativity, at level 30) : type_scope.
 
+Reserved Notation "A ∪ B" (right associativity, at level 30).
+(* Unicode of ⋃ is 22c3 *)
+Reserved Notation "⋃ X" (right associativity, at level 30).
+
+
 (* 内包の公理 *)
 Theorem AxiomOfComprehension:
   forall U:Type, forall F:LogicFunction U, exists z':Collection U, forall a:U, a ∈ z' <-> F a.

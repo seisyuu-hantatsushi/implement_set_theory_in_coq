@@ -15,7 +15,7 @@ Notation "`Ø`" :=  (EmptyCollection _) (at level 60).
 Definition ComplementOfCollection (U:Type) (X:Collection U) : Collection U :=
   fun x:U => x ∉ X.
 
-Notation "A ^c" := (ComplementOfCollection _ A) (at level 60).
+Notation "A ^c" := (ComplementOfCollection _ A) (left associativity, at level 10).
 
 Theorem noone_in_empty:
   forall U:Type, forall x:U, x ∉ `Ø`.
