@@ -1,6 +1,8 @@
 From mathcomp Require Import ssreflect.
 
 Require Import relation.
+Require Import axiom_of_pair.
+Require Import axiom_of_union.
 
 Axiom AxiomOfReplacement:
   forall {U:Type}, forall {R:RelationLogicFunction U U},
@@ -80,15 +82,112 @@ End AxiomOfSeparationFromAxiomOfReplacement.
 Inductive CollectionSparation (U:Type) (F:LogicFunction U) : Collection U :=
 | intro_collection_sparation: forall x:U, F x -> x ∈ CollectionSparation U F.
 
-Notation "{|_ : U | F |}" := (CollectionSparation U F).
+Notation "{| : U | F |}" := (CollectionSparation U F).
 
 Inductive IntersectionOfCollection (U:Type) (A B:Collection U): Collection U :=
-| intro_intersection_of_collection: forall x:U, x ∈ A -> x ∈ B -> x ∈ IntersectionOfCollection U A B.
+| intro_intersection_of_collection: forall x:U, x ∈ A -> x ∈ B -> x ∈ IntersectionOfCollection U A B
+where "A ∩ B" := (IntersectionOfCollection _ A B).
 
 Inductive BigCapOfCollection (U:Type) (A': Collection (Collection U)): Collection U :=
-| intro_bigcap_of_collection: forall x:U, forall X:Collection U, X ∈ A' -> x ∈ X -> x ∈  BigCapOfCollection U A'.
+| intro_bigcap_of_collection: forall x:U, (forall X:Collection U, X ∈ A' -> x ∈ X) -> x ∈ BigCapOfCollection U A'
+where  "⋂ X" := (BigCapOfCollection _ X).
 
+Theorem two_element_intersetion_to_and_in:
+  forall U:Type, forall x:U, forall {A B:Collection U}, x ∈ A ∩ B -> x ∈ A /\ x ∈ B.
+Proof.
+  move => U x A B.
+  case => x0 HA HB.
+  split. by []. by [].
+Qed.
 
+Theorem two_element_and_in_to_intersetion:
+    forall U:Type, forall x:U, forall {A B:Collection U}, x ∈ A /\ x ∈ B -> x ∈ A ∩ B.
+Proof.
+  move => U x A B.
+  case => HA HB.
+  split. by []. by [].
+Qed.
 
+Theorem two_element_intersetion_iff_and_in:
+  forall U:Type, forall x:U, forall {A B:Collection U}, x ∈ A ∩ B <-> x ∈ A /\ x ∈ B.
+Proof.
+  move => U x A B.
+  rewrite /iff. split.
+  apply two_element_intersetion_to_and_in.
+  apply two_element_and_in_to_intersetion.
+Qed.
+
+Theorem triple_and_in_to_element_intersetion:
+  forall U:Type, forall x:U, forall {A B C:Collection U}, x ∈ A /\ x ∈ B /\ x ∈ C -> x ∈ A ∩ B ∩ C.
+Proof.
+  move => U x A B C.
+  case => HA HBC.
+  split. by [].
+  apply two_element_and_in_to_intersetion.
+  by [].
+Qed.
+
+Theorem triple_element_intersetion_to_and_in:
+  forall U:Type, forall x:U, forall {A B C:Collection U}, x ∈ A ∩ B ∩ C -> x ∈ A /\ x ∈ B /\ x ∈ C.
+Proof.
+  move => U x A B C.
+  case => x0 HA HBC.
+  split. by [].
+  apply two_element_intersetion_iff_and_in in HBC. by [].
+Qed.
+
+Section IntersectionTest.
+  Variable U:Type.
+  Variable A B C:Collection U.
+  Definition AndFunc A B := fun x:U => x ∈ A /\ x ∈ B.
+
+  Goal {| : U | (AndFunc A B) |} = A ∩ B.
+  Proof.
+    apply mutally_included_iff_eq.
+    split => x; case => x0.
+    case => H0 H1.
+    split.
+    apply H0.
+    apply H1.
+    move => H0 H1.
+    split.
+    split.
+      by []. by [].
+  Qed.
+
+  Goal ⋂ (| A , B |) = A ∩ B.
+  Proof.
+    apply mutally_included_iff_eq.
+    split => x; case => x0.
+    move => H.
+    move: (H A) (H B) => HA HB.
+    split.
+    apply HA. left.
+    apply HB. right.
+    move => HA HB.
+    apply: (intro_bigcap_of_collection U (|A , B|)) => X.
+    case. by[]. by [].
+  Qed.
+
+  Goal ⋂ {| A, B, C |} = A ∩ B ∩ C.
+  Proof.
+    apply mutally_included_iff_eq.
+    split => x.
+    case => x0 H.
+    split.
+    apply H. left. left. apply singleton_iff_eq. reflexivity.
+    split; apply H.
+    left. right. apply singleton_iff_eq. reflexivity.
+    right. apply singleton_iff_eq. reflexivity.
+    case => x0 HA HBC.
+    split => X HABC.
+    apply triple_ext_notation_iff_or_eq in HABC.
+    case HABC => HAeq.
+    rewrite HAeq. by [].
+    apply two_element_intersetion_iff_and_in in HBC.
+    case: HBC => HB HC.
+    case: HAeq => H; rewrite H; by [].
+  Qed.
+End IntersectionTest.
 
 

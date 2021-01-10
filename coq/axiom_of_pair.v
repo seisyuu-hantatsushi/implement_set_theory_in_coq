@@ -12,11 +12,12 @@ Inductive UnorderedPair (U:Type) (x y:U) : Collection U :=
 
 Definition Singleton U x := UnorderedPair U x x.
 
-Notation "{| x ',' y |}" := (UnorderedPair _ x y).
 Notation "{| x |}" := (Singleton _ x).
+Notation "(| x ',' y |)" := (UnorderedPair _ x y).
 
 Theorem axiom_of_pair_create_unordered_pair:
-  forall {U:Type}, forall {x y:U}, exists z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) -> {| x , y |} = z'.
+  forall {U:Type}, forall {x y:U}, exists z':Collection U,
+        (forall z:U, z ∈ z' <-> z = x \/ z = y) -> (| x , y |) = z'.
 Proof.
   move => U x y.
   move: AxiomOfPair => HA.
@@ -40,7 +41,7 @@ Proof.
 Qed.
 
 Theorem unordered_pair_is_satisfied_axiom_of_pair:
-  forall {U:Type}, forall {x y:U}, exists z':Collection U, z' = {| x , y |} ->  (forall z:U, z ∈ z' <-> z = x \/ z = y).
+  forall {U:Type}, forall {x y:U}, exists z':Collection U, z' = (| x , y |) ->  (forall z:U, z ∈ z' <-> z = x \/ z = y).
 Proof.
   move => U x y.
   move: AxiomOfPair => HA.
@@ -124,7 +125,7 @@ Proof.
 Qed.
 
 Theorem unordered_pair_is_uniqueness:
-  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) -> {| x , y |} = z'.
+  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) -> (| x , y |) = z'.
 Proof.
   move => U x y z' H.
   apply AxiomOfExtentionality => x0.
@@ -140,7 +141,7 @@ Proof.
 Qed.
 
 Theorem in_unorder_pair_to_in_or:
-  forall {U:Type}, forall {x y z:U}, z ∈ {| x , y |} -> z ∈ {| x |} \/ z ∈ {| y |}.
+  forall {U:Type}, forall {x y z:U}, z ∈ (| x , y |) -> z ∈ {| x |} \/ z ∈ {| y |}.
 Proof.
   move => U x y z H.
   case H.
@@ -149,7 +150,7 @@ Proof.
 Qed.
 
 Theorem in_or_to_in_unorder_pair:
-  forall {U:Type}, forall {x y z:U}, z ∈ {| x |} \/ z ∈ {| y |} -> z ∈ {| x , y |}.
+  forall {U:Type}, forall {x y z:U}, z ∈ {| x |} \/ z ∈ {| y |} -> z ∈ (| x , y |).
   move => U x y z H.
   have Lx: z = x \/ z = y.
   case H => H0.
@@ -161,7 +162,7 @@ Theorem in_or_to_in_unorder_pair:
 Qed.
 
 Theorem in_unorder_pair_iff_in_or:
-  forall {U:Type}, forall {x y z:U}, z ∈ {| x , y |} <-> z ∈ {| x |} \/ z ∈ {| y |}.
+  forall {U:Type}, forall {x y z:U}, z ∈ (| x , y |) <-> z ∈ {| x |} \/ z ∈ {| y |}.
 Proof.
   move => U x y z.
   rewrite /iff. split.
@@ -170,7 +171,7 @@ Proof.
 Qed.
 
 Theorem unordered_pair_to_or:
-  forall {U:Type}, forall {x y:U}, forall z':Collection U, {| x , y |} = z' -> (forall z:U, z ∈ z' <-> z = x \/ z = y).
+  forall {U:Type}, forall {x y:U}, forall z':Collection U, (| x , y |) = z' -> (forall z:U, z ∈ z' <-> z = x \/ z = y).
 Proof.
   move => U x y z' H z.
   rewrite -H.
@@ -184,7 +185,7 @@ Proof.
 Qed.
 
 Theorem unordered_pair_is_or:
-  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) <-> {| x , y |} = z'.
+  forall {U:Type}, forall {x y:U}, forall z':Collection U, (forall z:U, z ∈ z' <-> z = x \/ z = y) <-> (| x , y |) = z'.
 Proof.
   move => U x y z'.
   rewrite /iff. split.
@@ -193,7 +194,7 @@ Proof.
 Qed.
 
 Theorem unordered_pair_elements_is_sym:
-  forall U:Type, forall {x y:U}, {| x , y |} = {| y , x |}.
+  forall U:Type, forall {x y:U}, (| x , y |) = (| y , x |).
 Proof.
   move => U x y.
   apply AxiomOfExtentionality => x0.
@@ -203,7 +204,7 @@ Proof.
 Qed.
 
 Lemma singleton_eq_unordered_pair_to_and:
-  forall U:Type, forall {a b c:U}, {| a |} = {| b , c |} -> a = b /\ b = c.
+  forall U:Type, forall {a b c:U}, {| a |} = (| b , c |) -> a = b /\ b = c.
 Proof.
   move => U a b c H.
   apply mutally_included_iff_eq in H.
@@ -222,7 +223,7 @@ Proof.
 Qed.
 
 Lemma included_unorder_pair_to_and:
-  forall U:Type, forall {a b c d:U}, {|a , b|} ⊂ {|c , d|} -> (a = c \/ a = d) /\ (b = c \/ b = d).
+  forall U:Type, forall {a b c d:U}, (|a , b|) ⊂ (|c , d|) -> (a = c \/ a = d) /\ (b = c \/ b = d).
 Proof.
   move => U a b c d H.
   split.
@@ -239,7 +240,7 @@ Proof.
 Qed.
 
 Lemma unorder_pair_eq_to_or_l:
-  forall U:Type, forall {a b c d:U}, {|a , b|} = {|c , d|} -> (a = c) \/ (a = d /\ b = c).
+  forall U:Type, forall {a b c d:U}, (|a , b|) = (|c , d|) -> (a = c) \/ (a = d /\ b = c).
 Proof.
   move => U a b c d H.
   apply mutally_included_iff_eq in H.
@@ -265,7 +266,7 @@ Proof.
 Qed.
 
 Lemma unorder_pair_eq_to_or_r:
-  forall U:Type, forall {a b c d:U}, {|a , b|} = {|c , d|} -> (b = d) \/ (a = d /\ b = c).
+  forall U:Type, forall {a b c d:U}, (|a , b|) = (|c , d|) -> (b = d) \/ (a = d /\ b = c).
 Proof.
   move => U a b c d.
   move: unordered_pair_elements_is_sym => H.
@@ -283,7 +284,7 @@ Proof.
 Qed.
 
 Lemma unorder_pair_eq_to_or:
-  forall U:Type, forall {a b c d:U}, {|a , b|} = {|c , d|} -> (a = c /\ b = d) \/ (a = d /\ b = c).
+  forall U:Type, forall {a b c d:U}, (|a , b|) = (|c , d|) -> (a = c /\ b = d) \/ (a = d /\ b = c).
 Proof.
   move => U a b c d H.
   apply LawOfDistributiveByOr.
@@ -299,7 +300,7 @@ Inductive OrderedPair (U:Type) (x y:U) : Collection (Collection U) :=
 Notation "<| x , y |>" := (OrderedPair _ x y).
 
 Theorem ordered_pair_eq_unordered_pair:
-  forall (U:Type), forall {a b:U}, <| a , b |> = {| {|a|} , {|a , b|} |}.
+  forall (U:Type), forall {a b:U}, <| a , b |> = (| {|a|} , (|a , b|) |).
 Proof.
   move => U a b.
   apply AxiomOfExtentionality.

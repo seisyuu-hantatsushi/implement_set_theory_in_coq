@@ -18,11 +18,62 @@ Inductive BigCupOfCollection (U:Type) (X:Collection (Collection U)): Collection 
 | intro_bigcup_of_collection: forall A: Collection U, forall x:U, x ∈ A /\ A ∈ X -> x ∈ BigCupOfCollection U X
 where "⋃ X" := (BigCupOfCollection _ X).
 
+Notation "{| x , y , .. , z |}" :=
+  (UnionOfCollection _ .. (UnionOfCollection _ (Singleton _ x) (Singleton _ y)) .. (Singleton _ z)).
+
+Theorem two_element_union_eq_unordered_pair:
+  forall U:Type, forall {a b:U}, (| a , b |) = {| a , b |}.
+Proof.
+  move => U a b.
+  apply mutally_included_iff_eq.
+  split => x.
+  case.
+  left. apply singleton_iff_eq. reflexivity.
+  right. apply singleton_iff_eq. reflexivity.
+  case => x0 H; apply singleton_iff_eq in H; rewrite H.
+  left.
+  right.
+Qed.
+
+Theorem triple_ext_notation_to_or_eq:
+  forall U:Type, forall {x a b c:U}, x ∈ {| a , b , c |} -> x = a \/ x = b \/ x = c.
+Proof.
+  move => U x a b c.
+  case => x0.
+  case => x1 H; apply singleton_iff_eq in H.
+  left. by [].
+  right. left. by [].
+  move => H.
+  apply singleton_iff_eq in H.
+  right. right. by [].
+Qed.
+
+Theorem triple_or_eq_to_ext_notation:
+  forall U:Type, forall {x a b c:U}, x = a \/ x = b \/ x = c -> x ∈ {| a , b , c |}.
+Proof.
+  move => U x a b c.
+  case => H.
+  left. left. apply singleton_iff_eq. by [].
+  case: H => H0.
+  left. right. apply singleton_iff_eq. by [].
+  right. apply singleton_iff_eq. by [].
+Qed.
+
+Theorem triple_ext_notation_iff_or_eq:
+  forall U:Type, forall {x a b c:U}, x ∈ {| a , b , c |} <-> x = a \/ x = b \/ x = c.
+Proof.
+  move => U x a b c.
+  rewrite /iff. split.
+  apply triple_ext_notation_to_or_eq.
+  apply triple_or_eq_to_ext_notation.
+Qed.
+
 Section UnionFromAxiomTest.
   Variable U:Type.
-  Variable A B:Collection U.
+  Variable a b c : U.
+  Variable A B C:Collection U.
 
-  Goal forall x:U, x ∈ UnionFromAxiom U {| A , B |} -> exists z':Collection U, z' = A ∪ B -> x ∈ z'.
+  Goal forall x:U, x ∈ UnionFromAxiom U (| A , B |) -> exists z':Collection U, z' = A ∪ B -> x ∈ z'.
   Proof.
     move => x.
     case => x' H.
@@ -43,7 +94,7 @@ Section UnionFromAxiomTest.
     right. by [].
   Qed.
 
-  Goal ⋃ {| A , B |} = A ∪ B.
+  Goal ⋃ (| A , B |) = A ∪ B.
   Proof.
     apply AxiomOfExtentionality => x.
     rewrite /iff. split.
@@ -54,12 +105,59 @@ Section UnionFromAxiomTest.
      left. by [].
      right. by [].
     +case => x0 H.
-     apply (intro_bigcup_of_collection U {|A,B|} A).
+     apply (intro_bigcup_of_collection U (|A,B|) A).
      split. by [].
      left.
-     apply (intro_bigcup_of_collection U {|A,B|} B).
+     apply (intro_bigcup_of_collection U (|A,B|) B).
      split. by [].
      right.
+  Qed.
+
+  Goal ⋃ {| A , B , C |} = A ∪ B ∪ C.
+  Proof.
+    apply AxiomOfExtentionality => x.
+    rewrite /iff. split.
+    case => x0' x0.
+    case => H0 H1.
+    apply triple_ext_notation_to_or_eq in H1.
+    case: H1 => H1.
+    rewrite H1 in H0.
+    left. by [].
+    case: H1 => H2; rewrite H2 in H0.
+    right. left. by [].
+    right. right. by [].
+    case => x0 H.
+    apply: (((intro_bigcup_of_collection U {| A , B , C |}) A) x0).
+    split. by [].
+    left. left. apply singleton_iff_eq. reflexivity.
+    case: H => x1 H.
+    apply: (((intro_bigcup_of_collection U {| A , B , C |}) B) x1).
+    split. by [].
+    left. right. apply singleton_iff_eq. reflexivity.
+    apply: (((intro_bigcup_of_collection U {| A , B , C |}) C) x1).
+    split. by [].
+    right. apply singleton_iff_eq. reflexivity.
+  Qed.
+
+  Goal (| a , b |) ∪ {| c |} = {| a , b , c |}.
+  Proof.
+    apply mutally_included_iff_eq.
+    split => x.
+    case => x0.
+    case. left.
+    left.
+    apply singleton_iff_eq. reflexivity.
+    left. right.
+    apply singleton_iff_eq. reflexivity.
+    move => H.
+    right. by [].
+    case => x0 H.
+    left.
+    case H => x1 H0; apply singleton_iff_eq in H0; rewrite H0.
+    left.
+    right.
+    right.
+    apply H.
   Qed.
 
 End UnionFromAxiomTest.
