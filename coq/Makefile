@@ -5,10 +5,13 @@ all: collect_operator.vo
 collect_operator.vo: collect_operator.v zf.vo
 	coqc $<
 
-zf.vo: zf.v relation.vo axiom_of_empty.vo axiom_of_pair.vo axiom_of_union.vo axiom_of_replacement.vo
+zf.vo: zf.v relation.vo axiom_of_empty.vo axiom_of_pair.vo axiom_of_union.vo axiom_of_replacement.vo axiom_of_power.vo
 	coqc $<
 
-axiom_of_replacement.vo: axiom_of_replacement.v relation.vo
+axiom_of_power.vo: axiom_of_power.v relation.vo
+	coqc $<
+
+axiom_of_replacement.vo: axiom_of_replacement.v axiom_of_empty.vo axiom_of_pair.vo axiom_of_union.vo relation.vo
 	coqc $<
 
 axiom_of_union.vo: axiom_of_union.v axiom_of_pair.vo relation.vo
