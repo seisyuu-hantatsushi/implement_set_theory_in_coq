@@ -97,7 +97,7 @@ Inductive CollectionMinus (U:Type) (A B:Collection U): Collection U :=
 | intro_collection_minus: forall x:U, x ∈ A -> x ∉ B -> x ∈ CollectionMinus U A B
 where "A \ B" := (CollectionMinus _ A B).
 
-Theorem two_element_intersetion_to_and_in:
+Theorem in_intersection_to_in_and:
   forall U:Type, forall x:U, forall {A B:Collection U}, x ∈ A ∩ B -> x ∈ A /\ x ∈ B.
 Proof.
   move => U x A B.
@@ -105,7 +105,7 @@ Proof.
   split. by []. by [].
 Qed.
 
-Theorem two_element_and_in_to_intersetion:
+Theorem in_and_to_in_intersection:
     forall U:Type, forall x:U, forall {A B:Collection U}, x ∈ A /\ x ∈ B -> x ∈ A ∩ B.
 Proof.
   move => U x A B.
@@ -113,32 +113,32 @@ Proof.
   split. by []. by [].
 Qed.
 
-Theorem two_element_intersetion_iff_and_in:
+Theorem in_intersection_iff_in_and:
   forall U:Type, forall x:U, forall {A B:Collection U}, x ∈ A ∩ B <-> x ∈ A /\ x ∈ B.
 Proof.
   move => U x A B.
   rewrite /iff. split.
-  apply two_element_intersetion_to_and_in.
-  apply two_element_and_in_to_intersetion.
+  apply in_intersection_to_in_and.
+  apply in_and_to_in_intersection.
 Qed.
 
-Theorem triple_and_in_to_element_intersetion:
+Theorem triple_in_and_to_in_intersection:
   forall U:Type, forall x:U, forall {A B C:Collection U}, x ∈ A /\ x ∈ B /\ x ∈ C -> x ∈ A ∩ B ∩ C.
 Proof.
   move => U x A B C.
   case => HA HBC.
   split. by [].
-  apply two_element_and_in_to_intersetion.
+  apply in_and_to_in_intersection.
   by [].
 Qed.
 
-Theorem triple_element_intersetion_to_and_in:
+Theorem triple_in_intersection_to_in_and:
   forall U:Type, forall x:U, forall {A B C:Collection U}, x ∈ A ∩ B ∩ C -> x ∈ A /\ x ∈ B /\ x ∈ C.
 Proof.
   move => U x A B C.
   case => x0 HA HBC.
   split. by [].
-  apply two_element_intersetion_iff_and_in in HBC. by [].
+  apply in_intersection_iff_in_and in HBC. by [].
 Qed.
 
 Section IntersectionTest.
@@ -190,7 +190,7 @@ Section IntersectionTest.
     apply triple_ext_notation_iff_or_eq in HABC.
     case HABC => HAeq.
     rewrite HAeq. by [].
-    apply two_element_intersetion_iff_and_in in HBC.
+    apply in_intersection_iff_in_and in HBC.
     case: HBC => HB HC.
     case: HAeq => H; rewrite H; by [].
   Qed.
@@ -223,7 +223,7 @@ Theorem LawOfCommutativeAtIntersection:
 Proof.
   move => U X Y.
   apply mutally_included_iff_eq.
-  split => x H; apply two_element_intersetion_iff_and_in ;apply two_element_intersetion_iff_and_in in H; apply and_comm; by [].
+  split => x H; apply in_intersection_iff_in_and ;apply in_intersection_iff_in_and in H; apply and_comm; by [].
 Qed.
 
 Theorem LawOfAssociateAtIntersection:
@@ -233,12 +233,12 @@ Proof.
   apply mutally_included_iff_eq.
   split => x.
   case => x0 HAB HC.
-  apply two_element_intersetion_iff_and_in in HAB.
+  apply in_intersection_iff_in_and in HAB.
   case HAB => HA HB.
   split. by [].
   split. by []. by [].
   move => HABC.
-  apply triple_element_intersetion_to_and_in in HABC.
+  apply triple_in_intersection_to_in_and in HABC.
   case: HABC => HA.
   case => HB HC.
   split. split. by []. by []. by [].
@@ -275,10 +275,10 @@ Proof.
   move => U A.
   apply mutally_included_iff_eq.
   split => x H.
-  apply two_element_intersetion_iff_and_in in H.
+  apply in_intersection_iff_in_and in H.
   case: H => H.
   case. by [].
-  apply two_element_intersetion_iff_and_in.
+  apply in_intersection_iff_in_and.
   split; move: H; apply all_collection_included_empty.
 Qed.
 
@@ -288,7 +288,7 @@ Proof.
   move => U A B H.
   rewrite -H => x.
   move => H0.
-  apply two_element_intersetion_iff_and_in in H0.
+  apply in_intersection_iff_in_and in H0.
   case H0 => H1. exact.
 Qed.
 
@@ -320,7 +320,7 @@ Proof.
   move => U A B H.
   apply mutally_included_to_eq.
   split => x.
-  apply two_element_intersetion_iff_and_in.
+  apply in_intersection_iff_in_and.
   move => HA.
   split. by [].
   move: (notin_collect_iff_in_complement U B x) => H0.
