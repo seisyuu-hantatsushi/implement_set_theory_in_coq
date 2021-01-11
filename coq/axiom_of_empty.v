@@ -81,3 +81,10 @@ Proof.
   move => U A x H.
   case: (noone_in_empty U x). by[].
 Qed.
+
+Theorem collection_is_subcollect_of_fullcollection:
+  forall U:Type, forall A:(Collection U), A ⊂ FullCollection U.
+Proof.
+  move => U A x H.
+  split.
+Qed.

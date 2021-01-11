@@ -29,6 +29,8 @@ Reserved Notation "A ∩ B" (right associativity, at level 30).
 (* Unicode of ⋂ is 22c2 *)
 Reserved Notation "⋂ X"  (right associativity, at level 30).
 
+Reserved Notation "A \ B"  (right associativity, at level 30).
+
 (* 内包の公理 *)
 Theorem AxiomOfComprehension:
   forall U:Type, forall F:LogicFunction U, exists z':Collection U, forall a:U, a ∈ z' <-> F a.

@@ -1,6 +1,7 @@
 From mathcomp Require Import ssreflect.
 
 Require Import relation.
+Require Import axiom_of_empty.
 Require Import axiom_of_pair.
 Require Import axiom_of_union.
 
@@ -92,6 +93,10 @@ Inductive BigCapOfCollection (U:Type) (A': Collection (Collection U)): Collectio
 | intro_bigcap_of_collection: forall x:U, (forall X:Collection U, X ∈ A' -> x ∈ X) -> x ∈ BigCapOfCollection U A'
 where  "⋂ X" := (BigCapOfCollection _ X).
 
+Inductive CollectionMinus (U:Type) (A B:Collection U): Collection U :=
+| intro_collection_minus: forall x:U, x ∈ A -> x ∉ B -> x ∈ CollectionMinus U A B
+where "A \ B" := (CollectionMinus _ A B).
+
 Theorem two_element_intersetion_to_and_in:
   forall U:Type, forall x:U, forall {A B:Collection U}, x ∈ A ∩ B -> x ∈ A /\ x ∈ B.
 Proof.
@@ -140,6 +145,7 @@ Section IntersectionTest.
   Variable U:Type.
   Variable A B C:Collection U.
   Definition AndFunc A B := fun x:U => x ∈ A /\ x ∈ B.
+  Definition DiffFunc A B := fun x:U => x ∈ A /\ x ∉ B.
 
   Goal {| : U | (AndFunc A B) |} = A ∩ B.
   Proof.
@@ -188,6 +194,91 @@ Section IntersectionTest.
     case: HBC => HB HC.
     case: HAeq => H; rewrite H; by [].
   Qed.
+
+  Goal {| : U | (DiffFunc A B) |} = A \ B.
+  Proof.
+    apply mutally_included_iff_eq.
+    split => x.
+    case => x0.
+    case => HA HNB.
+    split; by[].
+    case => x0 HA HNB.
+    split. split; by [].
+  Qed.
+
 End IntersectionTest.
 
+Theorem LawOfIdempotenceAtIntersection:
+  forall U:Type, forall {X:Collection U}, X = X ∩ X.
+Proof.
+  move => U X.
+  apply mutally_included_iff_eq.
+  split => x.
+  move => H. split; by [].
+  case. exact.
+Qed.
+
+Theorem LawOfCommutativeAtIntersection:
+  forall U:Type, forall {X Y:Collection U}, X ∩ Y = Y ∩ X.
+Proof.
+  move => U X Y.
+  apply mutally_included_iff_eq.
+  split => x H; apply two_element_intersetion_iff_and_in ;apply two_element_intersetion_iff_and_in in H; apply and_comm; by [].
+Qed.
+
+Theorem LawOfAssociateAtIntersection:
+  forall U:Type, forall {A B C:Collection U}, (A ∩ B) ∩ C = A ∩ (B ∩ C).
+Proof.
+  move => U A B C.
+  apply mutally_included_iff_eq.
+  split => x.
+  case => x0 HAB HC.
+  apply two_element_intersetion_iff_and_in in HAB.
+  case HAB => HA HB.
+  split. by [].
+  split. by []. by [].
+  move => HABC.
+  apply triple_element_intersetion_to_and_in in HABC.
+  case: HABC => HA.
+  case => HB HC.
+  split. split. by []. by []. by [].
+Qed.
+
+Theorem no_intersection_empty:
+  forall (U:Type), forall (A:Collection U), ( A ∩ `Ø` ) = `Ø`.
+Proof.
+  move => U A.
+  apply mutally_included_iff_eq.
+  split => x.
+  case => x0. exact.
+  case.
+Qed.
+
+Theorem collection_and_fullcollection_eq_collection:
+  forall (U:Type), forall (A:Collection U), ( A ∩ (FullCollection U) ) = A.
+Proof.
+  move => U A.
+  apply mutally_included_iff_eq.
+  split => x.
+  case => x0 HA HF. by [].
+  move => HA.
+  split. by [].
+  move: HA.
+  apply collection_is_subcollect_of_fullcollection.
+Qed.
+
+Definition CoPrimeAtCollection (U:Type) (A B:Collection U) := A ∩ B = `Ø`.
+
+Theorem coprime_complement:
+  forall U:Type, forall A:Collection U, CoPrimeAtCollection U A (A^c).
+Proof.
+  move => U A.
+  apply mutally_included_iff_eq.
+  split => x H.
+  apply two_element_intersetion_iff_and_in in H.
+  case: H => H.
+  case. by [].
+  apply two_element_intersetion_iff_and_in.
+  split; move: H; apply all_collection_included_empty.
+Qed.
 
