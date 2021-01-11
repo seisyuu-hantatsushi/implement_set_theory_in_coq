@@ -15,7 +15,7 @@ Notation "`Ø`" :=  (EmptyCollection _) (at level 60).
 Definition ComplementOfCollection (U:Type) (X:Collection U) : Collection U :=
   fun x:U => x ∉ X.
 
-Notation "A ^c" := (ComplementOfCollection _ A) (at level 100).
+Notation "A ^c" := (ComplementOfCollection _ A) (at level 10).
 
 Theorem noone_in_empty:
   forall U:Type, forall x:U, x ∉ `Ø`.
@@ -87,4 +87,28 @@ Theorem collection_is_subcollect_of_fullcollection:
 Proof.
   move => U A x H.
   split.
+Qed.
+
+Theorem complement_of_complement_collect_is_self:
+  forall U:Type, forall A:Collection U, A = (A^c)^c.
+Proof.
+  move => U A.
+  apply mutally_included_to_eq.
+  split => x H.
+  case. by [].
+  apply DoubleNegativeElimination in H. by [].
+Qed.
+
+Theorem LawOfExcludedMiddleAtComplementCollection:
+  forall U:Type, forall A:Collection U, forall x:U, x ∈ A \/ x ∈ A^c.
+Proof.
+  move => U A x.
+  apply LawOfExcludedMiddle.
+Qed.
+
+Theorem notin_collect_iff_in_complement:
+  forall U:Type, forall A:Collection U, forall x:U, x ∉ A <-> x ∈ A^c.
+Proof.
+  move => U A x.
+  rewrite /iff. split; apply.
 Qed.

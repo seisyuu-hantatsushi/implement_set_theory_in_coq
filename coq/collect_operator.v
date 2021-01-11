@@ -36,4 +36,3 @@ Proof.
   apply: in_or_to_in_union.
   apply LawOfExcludedMiddle.
 Qed.
-

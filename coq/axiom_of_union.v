@@ -262,7 +262,31 @@ Proof.
   right. by [].
 Qed.
 
+Theorem union_to_subcollect:
+  forall U:Type, forall A B:Collection U, A ∪ B = B -> A ⊂ B.
+Proof.
+  move => U A B H.
+  rewrite -H => x.
+  move => H0.
+  left. by [].
+Qed.
 
+Theorem subcollect_to_union:
+  forall U:Type, forall A B:Collection U, A ⊂ B -> A ∪ B = B.
+Proof.
+  move => U A B H.
+  apply mutally_included_to_eq.
+  split => x.
+  case. apply H. exact.
+  move => H0.
+  right. by [].
+Qed.
 
-
-
+Theorem union_iff_subcollect:
+  forall U:Type, forall A B:Collection U, A ∪ B = B <-> A ⊂ B.
+Proof.
+  move => U A B.
+  rewrite /iff. split.
+  apply: union_to_subcollect.
+  apply: subcollect_to_union.
+Qed.

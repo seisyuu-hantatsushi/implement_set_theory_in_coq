@@ -282,3 +282,90 @@ Proof.
   split; move: H; apply all_collection_included_empty.
 Qed.
 
+Theorem intersection_to_subcollect:
+  forall U:Type, forall A B:Collection U, A ∩ B = A -> A ⊂ B.
+Proof.
+  move => U A B H.
+  rewrite -H => x.
+  move => H0.
+  apply two_element_intersetion_iff_and_in in H0.
+  case H0 => H1. exact.
+Qed.
+
+Theorem subcollect_to_intersection:
+  forall U:Type, forall A B:Collection U, A ⊂ B -> A ∩ B = A.
+Proof.
+  move => U A B H.
+  apply mutally_included_to_eq.
+  split => x.
+  case => x0 HA HB. by [].
+  move => H0.
+  split. by [].
+  apply H. by [].
+Qed.
+
+Theorem intersection_iff_subcollect:
+  forall U:Type, forall A B:Collection U, A ∩ B = A <-> A ⊂ B.
+Proof.
+  move => U A B.
+  rewrite /iff. split.
+  apply: intersection_to_subcollect.
+  apply: subcollect_to_intersection.
+Qed.
+
+Theorem coprime_to_intersection_complement_and_other:
+  forall U:Type, forall A B:Collection U,
+      CoPrimeAtCollection U A B -> A ∩ B^c = A.
+Proof.
+  move => U A B H.
+  apply mutally_included_to_eq.
+  split => x.
+  apply two_element_intersetion_iff_and_in.
+  move => HA.
+  split. by [].
+  move: (notin_collect_iff_in_complement U B x) => H0.
+  rewrite /iff in H0. case H0 => H1 H2.
+  apply H1.
+  apply mutally_included_iff_eq in H.
+  case: H => HE0 HE1.
+  move => HB.
+  apply: (noone_in_empty U x).
+  apply HE0.
+  split. by []. by [].
+Qed.
+
+Theorem intersection_complement_and_other_to_coprime:
+  forall U:Type, forall A B:Collection U,
+      A ∩ B^c = A -> CoPrimeAtCollection U A B.
+Proof.
+  move => U A B H.
+  apply empty_collection_is_noone_in_collection.
+  rewrite -H.
+  move => x.
+  rewrite LawOfAssociateAtIntersection.
+  case => x0.
+  move => HA.
+  rewrite LawOfCommutativeAtIntersection.
+  rewrite coprime_complement.
+  apply noone_in_empty.
+Qed.
+
+Theorem coprime_to_complement_other_included:
+  forall U:Type, forall A B:Collection U,
+      CoPrimeAtCollection U A B -> A ⊂ B^c.
+Proof.
+  move => U A B H.
+  apply coprime_to_intersection_complement_and_other in H.
+  apply intersection_iff_subcollect in H.
+    by [].
+Qed.
+
+Theorem complement_other_included_to_coprime:
+  forall U:Type, forall A B:Collection U,
+      A ⊂ B^c -> CoPrimeAtCollection U A B.
+Proof.
+  move => U A B H.
+  apply intersection_complement_and_other_to_coprime.
+  apply intersection_iff_subcollect in H.
+    by [].
+Qed.
