@@ -299,6 +299,12 @@ Inductive OrderedPair (U:Type) (x y:U) : Collection (Collection U) :=
 
 Notation "<| x , y |>" := (OrderedPair _ x y).
 
+Inductive FirstOfOrderedPair (U:Type) (XY: Collection (Collection U)) : Collection U :=
+| ordered_pair_first_accessor: forall x:U, (exists y:U, <|x,y|> = XY) -> FirstOfOrderedPair U XY x.
+
+Inductive SecondOfOrderedPair (U:Type) (XY: Collection (Collection U)) : Collection U :=
+| ordered_pair_second_accessor: forall y:U, (exists x:U, <|x,y|> = XY) -> SecondOfOrderedPair U XY y.
+
 Theorem ordered_pair_eq_unordered_pair:
   forall (U:Type), forall {a b:U}, <| a , b |> = (| {|a|} , (|a , b|) |).
 Proof.

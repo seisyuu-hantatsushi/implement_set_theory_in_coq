@@ -25,4 +25,3 @@ Section AxiomOfPowerTest.
     apply Hzx'.
   Qed.
 End AxiomOfPowerTest.
-
