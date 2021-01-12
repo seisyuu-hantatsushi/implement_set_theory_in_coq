@@ -2,6 +2,10 @@ From mathcomp Require Import ssreflect.
 
 Require Import zf.
 
+Inductive SymDiffOfCollection {U:Type} (A B:Collection U): Collection U :=
+| intro_sym_diff_of_collection:
+    forall x:U, x ∈ (A \ B) ∪ (B \ A) -> x ∈ SymDiffOfCollection A B.
+
 Theorem AbsorptionEmpty:
   forall U:Type, forall A:Collection U, (A ∪ `Ø`) = A.
 Proof.

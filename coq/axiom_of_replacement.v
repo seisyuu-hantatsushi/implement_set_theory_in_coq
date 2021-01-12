@@ -27,17 +27,11 @@ Section AxiomOfSeparationFromAxiomOfReplacement.
     apply (L1 x y z).
     suff: x = y /\ x = z.
     case => H0 H1.
-    split.
-    rewrite H0. reflexivity.
-    rewrite H1. reflexivity.
+    split; [rewrite H0| rewrite H1]; reflexivity.
     suff: (F x /\ x = y) /\ (F x /\ x = z).
     case => H0 H1.
-    split.
-    case H0 => H2 H3. by [].
-    case H1 => H2 H3. by [].
-    split.
-    apply HP1.
-    apply HP2.
+    split; [case H0 => H2 H3|case H1 => H2 H3]; by[].
+    split; by [].
   Qed.
 
   Theorem IntroAxiomOfSparation:
@@ -85,24 +79,24 @@ Inductive CollectionSparation (U:Type) (F:LogicFunction U) : Collection U :=
 
 Notation "{| : U | F |}" := (CollectionSparation U F).
 
-Inductive IntersectionOfCollection (U:Type) (A B:Collection U): Collection U :=
-| intro_intersection_of_collection: forall x:U, x ∈ A -> x ∈ B -> x ∈ IntersectionOfCollection U A B
-where "A ∩ B" := (IntersectionOfCollection _ A B).
+Inductive IntersectionOfCollection {U:Type} (A B:Collection U): Collection U :=
+| intro_intersection_of_collection: forall x:U, x ∈ A -> x ∈ B -> x ∈ IntersectionOfCollection A B
+where "A ∩ B" := (IntersectionOfCollection A B).
 
-Inductive BigCapOfCollection (U:Type) (A': Collection (Collection U)): Collection U :=
-| intro_bigcap_of_collection: forall x:U, (forall X:Collection U, X ∈ A' -> x ∈ X) -> x ∈ BigCapOfCollection U A'
-where  "⋂ X" := (BigCapOfCollection _ X).
+Inductive BigCapOfCollection {U:Type} (A': Collection (Collection U)): Collection U :=
+| intro_bigcap_of_collection: forall x:U, (forall X:Collection U, X ∈ A' -> x ∈ X) -> x ∈ BigCapOfCollection A'
+where  "⋂ X" := (BigCapOfCollection X).
 
-Inductive CollectionMinus (U:Type) (A B:Collection U): Collection U :=
-| intro_collection_minus: forall x:U, x ∈ A -> x ∉ B -> x ∈ CollectionMinus U A B
-where "A \ B" := (CollectionMinus _ A B).
+Inductive CollectionMinus {U:Type} (A B:Collection U): Collection U :=
+| intro_collection_minus: forall x:U, x ∈ A -> x ∉ B -> x ∈ CollectionMinus A B
+where "A \ B" := (CollectionMinus A B).
 
 Theorem in_intersection_to_in_and:
   forall U:Type, forall x:U, forall {A B:Collection U}, x ∈ A ∩ B -> x ∈ A /\ x ∈ B.
 Proof.
   move => U x A B.
   case => x0 HA HB.
-  split. by []. by [].
+  split; by [].
 Qed.
 
 Theorem in_and_to_in_intersection:
@@ -110,7 +104,7 @@ Theorem in_and_to_in_intersection:
 Proof.
   move => U x A B.
   case => HA HB.
-  split. by []. by [].
+  split; by [].
 Qed.
 
 Theorem in_intersection_iff_in_and:
@@ -152,13 +146,10 @@ Section IntersectionTest.
     apply mutally_included_iff_eq.
     split => x; case => x0.
     case => H0 H1.
-    split.
-    apply H0.
-    apply H1.
+    split; [apply H0 | apply H1].
     move => H0 H1.
     split.
-    split.
-      by []. by [].
+    split; by [].
   Qed.
 
   Goal ⋂ (| A , B |) = A ∩ B.
@@ -167,12 +158,10 @@ Section IntersectionTest.
     split => x; case => x0.
     move => H.
     move: (H A) (H B) => HA HB.
-    split.
-    apply HA. left.
-    apply HB. right.
+    split; [apply HA; left|apply HB; right].
     move => HA HB.
-    apply: (intro_bigcap_of_collection U (|A , B|)) => X.
-    case. by[]. by [].
+    apply: (intro_bigcap_of_collection (|A , B|)) => X.
+    case; by [].
   Qed.
 
   Goal ⋂ {| A, B, C |} = A ∩ B ∩ C.
@@ -236,12 +225,12 @@ Proof.
   apply in_intersection_iff_in_and in HAB.
   case HAB => HA HB.
   split. by [].
-  split. by []. by [].
+  split; by [].
   move => HABC.
   apply triple_in_intersection_to_in_and in HABC.
   case: HABC => HA.
   case => HB HC.
-  split. split. by []. by []. by [].
+  split. split; by []. by [].
 Qed.
 
 Theorem no_intersection_empty:
@@ -300,8 +289,7 @@ Proof.
   split => x.
   case => x0 HA HB. by [].
   move => H0.
-  split. by [].
-  apply H. by [].
+  split; [by []|apply H; by []].
 Qed.
 
 Theorem intersection_iff_subcollect:
@@ -331,7 +319,7 @@ Proof.
   move => HB.
   apply: (noone_in_empty U x).
   apply HE0.
-  split. by []. by [].
+  split; by [].
 Qed.
 
 Theorem intersection_complement_and_other_to_coprime:
