@@ -31,6 +31,25 @@ Section DirectProduct.
     split; [rewrite H5 | rewrite H6]; by[].
   Qed.
 
+  Theorem direct_product_empty_l:
+    forall X: Collection U, `Ø` × X = `Ø`.
+  Proof.
+    move => X.
+    apply mutally_included_to_eq.
+    split => Z' H.
+    inversion H as [X' H1].
+    inversion H1 as [x H2].
+    inversion H2 as [y].
+    case: H3 => H3. case => H4 H5.
+    apply DoubleNegativeElimination.
+    move => H6.
+    move: H3.
+    apply noone_in_empty.
+    apply DoubleNegativeElimination.
+    move => HN.
+    move: H.
+    apply noone_in_empty.
+  Qed.
+
 End DirectProduct.
-    
 
