@@ -344,6 +344,30 @@ Section PredicateLogic.
     apply: notAnd_to_imply.
   Qed.
 
+  Theorem and_imply_and_to_dist:
+    forall P Q R S:Prop, (P /\ Q -> R /\ S) -> (P /\ Q -> R) /\ (P /\ Q -> S).
+  Proof.
+    move => P Q R S H.
+    split; apply H.
+  Qed.
+
+  Theorem and_imply_and_dist_to:
+    forall P Q R S:Prop, (P /\ Q -> R) /\ (P /\ Q -> S) -> (P /\ Q -> R /\ S).
+  Proof.
+    move => P Q R S.
+    case => H0 H1 H.
+    split; [apply H0|apply H1]; by [].
+  Qed.
+  
+  Theorem and_imply_and_dist:
+    forall P Q R S:Prop, (P /\ Q -> R /\ S) <-> (P /\ Q -> R) /\ (P /\ Q -> S).
+  Proof.
+    move => P Q R S.
+    rewrite /iff. split.
+    apply and_imply_and_to_dist.
+    apply and_imply_and_dist_to.
+  Qed.
+
   Theorem DoubleNegativeLawOfExcludeMiddle: forall P:Prop, ~~(P \/ ~P).
   Proof.
     move => P H.
@@ -404,4 +428,69 @@ Section PredicateLogic.
     apply: DeMorganNotExists.
   Qed.
 
+  Theorem forall_bound_and_out:
+    forall I:Type, forall (A B:LogicFunction I),
+        (forall x:I, A x) /\ (forall y:I, B y) -> forall x y:I, A x /\ B y.
+  Proof.
+    move => I A B.
+    case => H0 H1 x y.
+    split; by [].
+  Qed.
+
+  Theorem forall_bound_and_in:
+    forall I:Type, forall (A B:LogicFunction I),
+        (forall x y:I, A x /\ B y) -> (forall x:I, A x) /\ (forall y:I, B y).
+  Proof.
+    move => I A B H.
+    split => x; apply H; by [].
+  Qed.
+
+  Theorem forall_bound_and_in_out:
+      forall I:Type, forall (A B:LogicFunction I),
+          (forall x:I, A x) /\ (forall y:I, B y) <-> forall x y:I, A x /\ B y.
+  Proof.
+    move => I A B.
+    rewrite /iff. split.
+    apply forall_bound_and_out.
+    apply forall_bound_and_in.
+  Qed.
+
+  Theorem exists_bound_and_out:
+    forall I:Type, forall (A B:LogicFunction I),
+        (exists x:I, A x) /\ (exists y:I, B y) -> exists x y:I, A x /\ B y.
+  Proof.
+    move => I A B.
+    case => [[x HA [y HB]]].
+    exists x. exists y.
+    split; by [].
+  Qed.
+
+  Theorem exists_bound_and_in:
+    forall I:Type, forall (A B:LogicFunction I),
+        (exists x y:I, A x /\ B y) -> (exists x:I, A x) /\ (exists y:I, B y).
+  Proof.
+    move => I A B.
+    case => [x [y [HA HB]]].
+    split; [exists x|exists y]; by [].
+  Qed.
+
+  Theorem exists_bound_and_in_out:
+    forall I:Type, forall (A B:LogicFunction I),
+        (exists x:I, A x) /\ (exists y:I, B y) <-> exists x y:I, A x /\ B y.
+  Proof.
+    move => I A B.
+    rewrite /iff. split.
+    apply exists_bound_and_out.
+    apply exists_bound_and_in.
+  Qed.
+
 End PredicateLogic.
+
+
+
+
+
+
+
+
+
