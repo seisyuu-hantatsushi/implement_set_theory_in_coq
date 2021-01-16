@@ -10,12 +10,12 @@ Inductive EmptyCollection (U:Type) : Collection U := .
 Inductive FullCollection (U:Type) : Collection U :=
 | intro_full_collection: forall x:U, x ∈ FullCollection U.
 
-Notation "`Ø`" :=  (EmptyCollection _) (at level 60).
+Notation "`Ø`" :=  (EmptyCollection _) (at level 10).
 
 Definition ComplementOfCollection (U:Type) (X:Collection U) : Collection U :=
   fun x:U => x ∉ X.
 
-Notation "A ^c" := (ComplementOfCollection _ A) (at level 10).
+Notation "A ^c" := (ComplementOfCollection _ A) (at level 15).
 
 Theorem noone_in_empty:
   forall U:Type, forall x:U, x ∉ `Ø`.
@@ -49,7 +49,7 @@ Proof.
 Qed.
 
 Theorem empty_collection_to_noone_in_collection:
-  forall U:Type, forall {a':Collection U}, a' = `Ø` -> (forall x:U, x ∉ a').
+  forall U:Type, forall a':Collection U, a' = `Ø` -> (forall x:U, x ∉ a').
 Proof.
   move => U a' H.
   rewrite H.
@@ -57,7 +57,7 @@ Proof.
 Qed.
 
 Theorem empty_collection_is_noone_in_collection:
-  forall U:Type, forall {a':Collection U}, a' = `Ø` <-> (forall x:U, x ∉ a').
+  forall U:Type, forall a':Collection U, a' = `Ø` <-> (forall x:U, x ∉ a').
 Proof.
   move => U a'.
   rewrite /iff. split.

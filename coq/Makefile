@@ -1,6 +1,9 @@
 
 
-all: collect_operator.vo
+all: direct_product.vo
+
+direct_product.vo: direct_product.v collect_operator.vo
+	coqc $<
 
 collect_operator.vo: collect_operator.v zf.vo
 	coqc $<
