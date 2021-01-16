@@ -130,4 +130,15 @@ Proof.
   apply: DeMorganNotForall_Close.
 Qed.
 
+Theorem DeMorganNotForallNot_Open:
+  forall I:Type, forall P:LogicFunction I, ~(forall x:I, ~P x) -> (exists x:I, P x).
+Proof.
+  move => I P H.
+  suff: exists x:I, ~~(P x).
+  case => [x HNN].
+  apply DoubleNegativeElimination in HNN.
+  exists x. by [].
+  apply: (DeMorganNotForall_Open I (fun x => ~ P x)). by [].
+Qed.
+
 Require Export predicate_logic.
