@@ -18,9 +18,9 @@ Inductive PartialOrder (U:Type) (R:Relation U) : Prop :=
 Definition Included U (X Y:Collection U) := forall x:U, x ∈ X -> x ∈ Y.
 Definition IncludedNotEqualTo U (X Y:Collection U) := forall x:U, x ∈ X -> x ∈ Y /\ X <> Y.
 
-Notation "A ⊂ B" := (Included _ A B) (right associativity, at level 30) : type_scope.
+Notation "A ⊂ B" := (Included _ A B) (right associativity, at level 35) : type_scope.
 (* SUBSET OF WITH NOT EQUAL TO. Unicode:228A *)
-Notation "A ⊊ B" := (IncludedNotEqualTo _ A B) (right associativity, at level 30) : type_scope.
+Notation "A ⊊ B" := (IncludedNotEqualTo _ A B) (right associativity, at level 35) : type_scope.
 
 Theorem Included_is_ReflexiveRelation: forall U:Type, ReflexiveRelation (Collection U) (Included U).
 Proof.
