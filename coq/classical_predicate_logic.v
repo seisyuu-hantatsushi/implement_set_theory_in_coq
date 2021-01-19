@@ -64,6 +64,19 @@ Proof.
   apply: imply_to_notOr.
 Qed.
 
+Theorem not_imply_to_or:
+  forall P Q:Prop, (~P -> Q) -> (P \/ Q).
+Proof.
+  move => P Q H.
+  apply DoubleNegativeElimination.
+  move => HF.
+  apply LawOfDeMorgan_NegtationOfDisjunction in HF.
+  inversion HF as [HF0 HF1].
+  apply HF1.
+  apply H.
+  apply HF0.
+Qed.
+
 Theorem PeircesLaw: forall P Q:Prop, ((P -> Q) -> P) -> P.
 Proof.
   move => P Q H0.
@@ -139,6 +152,33 @@ Proof.
   apply DoubleNegativeElimination in HNN.
   exists x. by [].
   apply: (DeMorganNotForall_Open I (fun x => ~ P x)). by [].
+Qed.
+
+Theorem forall_bound_or_in:
+  forall I:Type, forall (A B:LogicFunction I),
+      (forall x y:I, A x \/ B y) -> (forall x:I, A x) \/ (forall y:I, B y).
+Proof.
+  move => I A B H.
+  apply not_imply_to_or => H0.
+  apply DeMorganNotForall_Open in H0.
+  case H0 => x HA y.
+  move: (H x y) => Hxy.
+  apply DoubleNegativeElimination.
+  move => H1.
+  apply DoubleNegative in Hxy.
+  apply Hxy.
+  apply LawOfDeMorgan_NegtationOfDisjunction.
+  split; by [].
+Qed.
+
+Theorem forall_bound_or_in_out:
+  forall I:Type, forall (A B:LogicFunction I),
+      (forall x y:I, A x \/ B y) <-> (forall x:I, A x) \/ (forall y:I, B y).
+Proof.
+  move => I A B.
+  rewrite /iff. split.
+  apply forall_bound_or_in.
+  apply forall_bound_or_out.
 Qed.
 
 Require Export predicate_logic.

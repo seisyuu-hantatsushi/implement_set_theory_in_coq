@@ -358,7 +358,7 @@ Section PredicateLogic.
     case => H0 H1 H.
     split; [apply H0|apply H1]; by [].
   Qed.
-  
+
   Theorem and_imply_and_dist:
     forall P Q R S:Prop, (P /\ Q -> R /\ S) <-> (P /\ Q -> R) /\ (P /\ Q -> S).
   Proof.
@@ -453,6 +453,14 @@ Section PredicateLogic.
     rewrite /iff. split.
     apply forall_bound_and_out.
     apply forall_bound_and_in.
+  Qed.
+
+  Theorem forall_bound_or_out:
+    forall I:Type, forall (A B:LogicFunction I),
+        (forall x:I, A x) \/ (forall y:I, B y) -> forall x y:I, A x \/ B y.
+  Proof.
+    move => I A B.
+    case => H x y; [left|right]; by[].
   Qed.
 
   Theorem exists_bound_and_out:

@@ -141,7 +141,7 @@ Section DirectProduct.
     apply direct_product_is_empty_to_or_empty.
     apply or_empty_to_direct_product_is_empty.
   Qed.
-  
+
   Theorem direct_product_included_concrete_ordered_pair:
     forall (X Y W Z:Collection U), W × Z ⊂ X × Y -> forall (x y:U), <|x, y|> ∈ W × Z -> <|x, y|> ∈ X × Y.
   Proof.
@@ -168,32 +168,73 @@ Section DirectProduct.
     apply: (direct_product_included_concrete_ordered_pair X Y W Z).
     apply H.
   Qed.
-
-  Goal forall (X Y W Z:Collection U), (W ⊂ X /\ Z ⊂ Y) -> W × Z ⊂ X × Y.
+  
+  Theorem each_included_to_direct_product_included:
+    forall (X Y W Z:Collection U), W × Z = `Ø` \/ (W ⊂ X /\ Z ⊂ Y) -> W × Z ⊂ X × Y.
   Proof.
     move => X Y W Z.
-    case => H0 H1 X'.
-    case => [Y' [x [y [HxW [HyZ HY']]]]].
-    rewrite HY'.
-    apply in_and_to_ordered_pair_in_direct_product.
-    split; [apply H0|apply H1]; by [].
+    case;[move => H0;rewrite H0;apply direct_product_included_empty|
+          case => H0 H1 X';case => [Y' [x [y [HxW [HyZ HY']]]]];
+                                   rewrite HY';
+                                   apply in_and_to_ordered_pair_in_direct_product;
+                                   split; [apply H0|apply H1]]; by[].
   Qed.
 
-  Goal forall (X Y W Z:Collection U), W × Z ⊂ X × Y -> W × Z = `Ø` \/ (W ⊂ X /\ Z ⊂ Y).
+  Theorem direct_product_included_to_each_included:
+    forall (X Y W Z:Collection U), W × Z ⊂ X × Y -> W × Z = `Ø` \/ (W ⊂ X /\ Z ⊂ Y).
   Proof.
     move => X Y W Z H.
-    suff: (( W = `Ø` \/ Z = `Ø`) \/ W ⊂ X /\ Z ⊂ Y).
-    case => H0; [left; apply or_empty_to_direct_product_is_empty|right]; by [].
-    
-
+    suff: ((forall x:U, x ∉ Z) \/ W ⊂ X) /\ ((forall x:U, x ∉ W) \/ Z ⊂ Y).
+    move => H0.
+    inversion H0.
+    inversion H1 as [H3|];
+      [left; apply empty_collection_is_noone_in_collection in H3; rewrite H3; apply direct_product_empty_r|
+       inversion H2 as [H4|];
+       [left;apply empty_collection_is_noone_in_collection in H4; rewrite H4; apply direct_product_empty_l|
+        right;split;by []]].
+    have L1: forall (x y:U), (x ∈ W /\ y ∈ Z) -> (x ∈ X /\ y ∈ Y).
+    move: H. apply direct_product_included_to_and.
+    have L2: forall (x y:U), ((x ∈ W /\ y ∈ Z) -> x ∈ X) /\ ((x ∈ W /\ y ∈ Z) -> y ∈ Y).
+    move => x y.
+    apply and_imply_and_dist.
+    apply L1.
+    have L3: forall (x y:U), (x ∉ W \/ y ∉ Z \/ x ∈ X) /\ (x ∉ W \/ y ∉ Z \/ y ∈ Y).
+    move => x y.
+    case: (L2 x y) => LH0 LH1.
+    split;
+      apply LawOfAssociateAtOr;
+      apply not_imply_to_or => H0;
+                                 apply LawOfDeMorgan_NegtationOfDisjunction in H0;
+                                 [apply LH0|apply LH1];
+                                 case H0 => H1 H2;
+                                              apply DoubleNegativeElimination in H1;
+                                              apply DoubleNegativeElimination in H2;
+                                              split; by [].
+    have L4: forall (x y:U), y ∉ Z \/ x ∉ W \/ x ∈ X.
+    move => x y.
+    case: (L3 x y) => H0 H1; case H0 => H2;
+                                          [right; left; by []|
+                                           case H2 => H3; [left|right;right]; by []].
+    have L5: forall (x y:U), x ∉ W \/ y ∉ Z \/ y ∈ Y.
+    move => x y.
+    case: (L3 x y) => H0 H1. by [].
+    have L6: (forall (x y:U), y ∉ Z \/ (x ∈ W -> x ∈ X)) /\ forall x y : U, x ∉ W \/ (y ∈ Z -> y ∈ Y).
+    split; move => x y; [move: (L4 x y) => L4xy; case L4xy => H0;[left;apply H0|
+                                                                  right;apply imply_iff_notOr]|
+                         move: (L5 x y) => L5xy; case L5xy => H0;[left;apply H0|
+                                                                  right;apply imply_iff_notOr]]; by[].
+    case L6 => L61 L62.
+    split; apply forall_bound_or_in; by[].
+  Qed.
 
   Theorem direct_product_included_iff:
     forall (X Y W Z:Collection U), W × Z ⊂ X × Y <-> W × Z = `Ø` \/ (W ⊂ X /\ Z ⊂ Y).
   Proof.
     move => X Y W Z.
-    rewrite /iff. split => H.
-    apply in_and_to_ordered_pair_in_direct_product.
-    
-    
+    rewrite /iff. split.
+    apply direct_product_included_to_each_included.
+    apply each_included_to_direct_product_included.
+  Qed.
+
 End DirectProduct.
 
