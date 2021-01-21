@@ -276,6 +276,51 @@ Section DirectProduct.
     left. by []. by[].
     right. by []. by [].
   Qed.
+
+  Theorem direct_product_dist_intersection_l:
+    forall (A B C:Collection U), A × ( B ∩ C ) = A × B ∩ A × C.
+  Proof.
+    move => A B C.
+    apply mutally_included_to_eq.
+    split => Z' H.
+    +inversion H as [Z0' [x [y [HA [HBC HZ]]]]].
+     inversion HBC as [HB HC].
+     rewrite HZ.
+     split; apply ordered_pair_in_direct_product_iff_in_and; split; by [].
+    -inversion H as [Z0' HAB HAC HZ].
+     inversion HAB as [Z1' [x0 [y0 [HA0 [HB0 HZ1]]]]].
+     inversion HAC as [Z2' [x1 [y1 [HA1 [HC1 HZ2]]]]].
+     rewrite HZ1.
+     have L1: x0 = x1 /\ y0 = y1.
+     rewrite HZ1 in HZ2.
+     apply ordered_pair_to_and in HZ2. by [].
+     inversion L1.
+     apply ordered_pair_in_direct_product_iff_in_and.
+     split;[by []|apply in_and_to_in_intersection].
+     split;[|rewrite H3];by [].
+  Qed.
+
+  Theorem direct_product_dist_intersection_r:
+    forall (A B C:Collection U), ( A ∩ B ) × C = A × C ∩ B × C.
+  Proof.
+    move => A B C.
+    apply mutally_included_to_eq.
+    split => Z' H.
+    +inversion H as [Z0' [x [y [HAB [HC HZ]]]]].
+     inversion HAB as [x0 HA HB].
+     split; rewrite HZ; apply ordered_pair_in_direct_product_iff_in_and; split; by [].
+    +inversion H as [Z0' HAB HAC HZ].
+     inversion HAB as [Z1' [x0 [y0 [HA0 [HB0 HZ1]]]]].
+     inversion HAC as [Z2' [x1 [y1 [HB1 [HC1 HZ2]]]]].
+     rewrite HZ1.
+     have L1: x0 = x1 /\ y0 = y1.
+     rewrite HZ1 in HZ2.
+     apply ordered_pair_to_and in HZ2. by [].
+     inversion L1.
+     apply ordered_pair_in_direct_product_iff_in_and.
+     rewrite -H2 in HB1.
+     split; by[].
+  Qed.
   
 End DirectProduct.
 
