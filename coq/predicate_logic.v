@@ -1,4 +1,5 @@
 From mathcomp Require Import ssreflect.
+Require Import Coq.Setoids.Setoid. (*命題の同値性. <->にrewriteを適用できるように.*)
 
 Section PredicateLogic.
 
@@ -494,11 +495,4 @@ Section PredicateLogic.
 
 End PredicateLogic.
 
-
-
-
-
-
-
-
-
+Require Export Coq.Setoids.Setoid.
