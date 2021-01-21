@@ -7,7 +7,7 @@ Inductive DirectProduct {U:Type} (X Y:Collection U) : Collection (Collection (Co
     forall Z: Collection (Collection U),
       (exists x:U, exists y:U, (x ∈ X /\ y ∈ Y /\ Z = <|x, y|>)) -> Z ∈ DirectProduct X Y.
 
-Notation "A × B" := (DirectProduct A B) (right associativity, at level 30).
+Notation "A × B" := (DirectProduct A B) (right associativity, at level 29).
 
 Inductive FirstProjection {U:Type} (G: Collection (Collection (Collection U))) : Collection U :=
 | first_projection_accessor: forall x:U, (exists y:U, <|x,y|> ∈ G) -> FirstProjection G x.
@@ -168,7 +168,7 @@ Section DirectProduct.
     apply: (direct_product_included_concrete_ordered_pair X Y W Z).
     apply H.
   Qed.
-  
+
   Theorem each_included_to_direct_product_included:
     forall (X Y W Z:Collection U), W × Z = `Ø` \/ (W ⊂ X /\ Z ⊂ Y) -> W × Z ⊂ X × Y.
   Proof.
@@ -236,5 +236,46 @@ Section DirectProduct.
     apply each_included_to_direct_product_included.
   Qed.
 
+  Theorem direct_product_dist_union_l:
+    forall (A B C:Collection U), A × ( B ∪ C ) = A × B ∪ A × C.
+  Proof.
+    move => A B C.
+    apply mutally_included_to_eq.
+    split => Z' H0.
+    inversion H0.
+    inversion H as [x [y [HA [HBC]]]].
+    rewrite H2.
+    case HBC => y0 HB;[left|right];
+                  apply ordered_pair_in_direct_product_iff_in_and;
+                  split; by[].
+    inversion H0 as [Z0' HAX|Z0' HAX];
+      inversion HAX as [Z1' [x [y [HA [HB HZ']]]]];
+      rewrite HZ';
+      apply ordered_pair_in_direct_product_iff_in_and.
+    split; [|left]; by [].
+    split; [|right]; by [].
+  Qed.
+
+  Theorem direct_product_dist_union_r:
+    forall (A B C:Collection U), ( A ∪ B ) × C = A × C ∪ B × C.
+  Proof.
+    move => A B C.
+    apply mutally_included_to_eq.
+    split; move => Z' H.
+    inversion H as [Z0' [x [y [HAB [HC]]]]].
+    inversion HAB as [x0 HA|x0 HB];
+      [left|right];
+      rewrite H0; apply ordered_pair_in_direct_product_iff_in_and;
+        split; by[].
+    inversion H as [Z0' HAC|Z0' HBC];
+      [inversion HAC as [Z1' [x [y [HA [HC HZ']]]]]
+      |inversion HBC as [Z1' [x [y [HB [HC HZ']]]]]];
+      rewrite HZ';
+      apply ordered_pair_in_direct_product_iff_in_and;
+      split.
+    left. by []. by[].
+    right. by []. by [].
+  Qed.
+  
 End DirectProduct.
 
