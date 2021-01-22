@@ -6,6 +6,8 @@ Inductive SymDiffOfCollection {U:Type} (A B:Collection U): Collection U :=
 | intro_sym_diff_of_collection:
     forall x:U, x ∈ (A \ B) ∪ (B \ A) -> x ∈ SymDiffOfCollection A B.
 
+Notation "A △ B" := (SymDiffOfCollection A B) (right associativity, at level 30).
+
 Theorem AbsorptionEmpty:
   forall U:Type, forall A:Collection U, (A ∪ `Ø`) = A.
 Proof.
@@ -131,6 +133,40 @@ Proof.
   move => HAB.
   apply H.
   apply in_intersection_to_in_and. by [].
+Qed.
+
+Goal forall (U:Type) (A B:Collection U), A △ B = A^c △ B^c.
+Proof.
+  move => U A B.
+  apply mutally_included_to_eq.
+  split => x H.
+  +inversion H as [x0 H0 Hx0].
+   split.
+   ++inversion H0 as [x1 H1|x1 H1];
+       [right|left];
+       inversion H1 as [x2 H3 H4 H5];
+       split.
+     apply notin_collect_iff_in_complement.
+     apply H4.
+     apply notin_collect_iff_in_complement.
+     rewrite -complement_of_complement_collect_is_self.
+     apply H3.
+     apply H4.
+     apply notin_collect_iff_in_complement.
+     rewrite -complement_of_complement_collect_is_self.
+     apply H3.
+  +inversion H.
+   inversion H0; split;
+     [right|left];
+     split; inversion H2.
+   apply DoubleNegativeElimination.
+   apply H5.
+   apply notin_collect_iff_in_complement.
+   apply H4.
+   apply DoubleNegativeElimination.
+   apply H5.
+   apply notin_collect_iff_in_complement.
+   apply H4.
 Qed.
 
 Require Export zf.

@@ -357,3 +357,11 @@ Proof.
   apply intersection_iff_subcollect in H.
     by [].
 Qed.
+
+Goal
+  forall (U:Type) (A B:Collection U), A \ B = A ∩ B^c.
+Proof.
+  move => U A B.
+  apply mutally_included_to_eq.
+  split => x H; inversion H; split; by [].
+Qed.
