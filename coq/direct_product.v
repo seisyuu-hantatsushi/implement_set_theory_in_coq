@@ -2,18 +2,20 @@ From mathcomp Require Import ssreflect.
 
 Require Import collect_operator.
 
-Inductive DirectProduct {U:Type} (X Y:Collection U) : Collection (Collection (Collection U)) :=
+Definition TypeOfDirectProduct U := Collection (Collection (Collection U)).
+
+Inductive DirectProduct {U:Type} (X Y:Collection U): TypeOfDirectProduct U :=
 | definition_of_direct_product:
     forall Z: Collection (Collection U),
       (exists x:U, exists y:U, (x ∈ X /\ y ∈ Y /\ Z = <|x, y|>)) -> Z ∈ DirectProduct X Y.
 
 Notation "A × B" := (DirectProduct A B) (right associativity, at level 29).
 
-Inductive FirstProjection {U:Type} (G: Collection (Collection (Collection U))) : Collection U :=
-| first_projection_accessor: forall x:U, (exists y:U, <|x,y|> ∈ G) -> FirstProjection G x.
+Inductive FirstProjection {U:Type} (G: TypeOfDirectProduct U) : Collection U :=
+| first_projection_accessor: forall x:U, (exists y:U, <|x,y|> ∈ G) -> x ∈ FirstProjection G.
 
-Inductive SecondProjection {U:Type} (G: Collection (Collection (Collection U))) : Collection U :=
-| second_projection_accessor: forall y:U, (exists x:U, <|x,y|> ∈ G) -> SecondProjection G y.
+Inductive SecondProjection {U:Type} (G: TypeOfDirectProduct U) : Collection U :=
+| second_projection_accessor: forall y:U, (exists x:U, <|x,y|> ∈ G) -> y ∈ SecondProjection G.
 
 Section DirectProduct.
   Variable U:Type.
@@ -48,6 +50,18 @@ Section DirectProduct.
     rewrite /iff. split.
     apply ordered_pair_in_direct_product_to_in_and.
     apply in_and_to_ordered_pair_in_direct_product.
+  Qed.
+
+  Theorem not_in_and_to_ordered_pair_not_in_direct_product:
+    forall (A B: Collection U) (a b:U), a ∉ A /\ b ∉ B -> <|a,b|> ∉ A × B.
+  Proof.
+    move => A B a b H.
+    apply LawOfDeMorgan_NegtationOfDisjunction in H.
+    move => HAB.
+    apply H.
+    apply ordered_pair_in_direct_product_iff_in_and in HAB.
+    inversion HAB.
+    left. by [].
   Qed.
 
   Theorem direct_product_empty_l:
@@ -321,6 +335,6 @@ Section DirectProduct.
      rewrite -H2 in HB1.
      split; by[].
   Qed.
-  
+
 End DirectProduct.
 

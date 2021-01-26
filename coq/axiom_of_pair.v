@@ -299,6 +299,8 @@ Inductive OrderedPair (U:Type) (x y:U) : Collection (Collection U) :=
 
 Notation "<| x , y |>" := (OrderedPair _ x y).
 
+Definition TypeOfOrderedPair U := Collection (Collection U).
+
 Inductive FirstOfOrderedPair (U:Type) (XY: Collection (Collection U)) : Collection U :=
 | ordered_pair_first_accessor: forall x:U, (exists y:U, <|x,y|> = XY) -> FirstOfOrderedPair U XY x.
 
