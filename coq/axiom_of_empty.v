@@ -65,6 +65,38 @@ Proof.
   apply noone_in_collection_to_empty_collection.
 Qed.
 
+Theorem not_empty_collection_to_exists_element_in_collection:
+  forall U:Type, forall a':Collection U, a' <> `Ø` -> (exists x:U, x ∈ a').
+Proof.
+  move => U a' HaNE.
+  apply DoubleNegativeElimination => H.
+  have L1: forall x:U, x ∉ a'.
+  apply DeMorganNotExists.
+  trivial.
+  apply empty_collection_is_noone_in_collection in L1.
+  apply HaNE.
+  trivial.
+Qed.
+
+Theorem exists_element_in_collection_to_not_empty_collection:
+  forall U:Type, forall a':Collection U, (exists x:U, x ∈ a') -> a' <> `Ø`.
+Proof.
+  move => U a' HexA HxA.
+  move: HexA.
+  apply DeMorganNotExists.
+  apply empty_collection_is_noone_in_collection.
+  trivial.
+Qed.
+
+Theorem not_empty_collection_has_least_a_element:
+  forall U:Type, forall a':Collection U, a' <> `Ø` <-> (exists x:U, x ∈ a').
+Proof.
+  move => U a'.
+  rewrite /iff. split.
+  apply not_empty_collection_to_exists_element_in_collection.
+  apply exists_element_in_collection_to_not_empty_collection.
+Qed.
+
 Theorem empty_collection_is_unique:
   forall U:Type, forall {a' b':Collection U}, (forall x: U, x ∉ a') -> (forall x: U, x ∉ b') -> a' = b'.
 Proof.
