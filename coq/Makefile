@@ -1,6 +1,8 @@
 
+all: binary_relation.vo
 
-all: direct_product.vo
+binary_relation.vo: binary_relation.v direct_product.vo collect_operator.vo
+	coqc $<
 
 direct_product.vo: direct_product.v collect_operator.vo
 	coqc $<

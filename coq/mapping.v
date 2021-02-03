@@ -2,70 +2,27 @@ From mathcomp Require Import ssreflect.
 
 Require Import collect_operator.
 Require Import direct_product.
-
-Definition BinaryRelation U := U -> U -> Prop.
+Require Import binary_relation.
 
 Definition GraphOfMapping {U:Type} (G:TypeOfDirectProduct U) (A B:Collection U) :=
   G ⊂ A × B /\ forall x:U, x ∈ A -> exists! y:U, <|x,y|> ∈ G.
 
-Inductive GraphOfBinaryRelation {U:Type} (R:BinaryRelation U) (A B:Collection U) :
-  TypeOfDirectProduct U :=
-| definition_of_graph_of_binary_relation:
-    forall x y:U, (R x y /\ <|x,y|> ∈ A × B) -> <|x,y|> ∈ GraphOfBinaryRelation R A B.
+Definition MappingFunction {U:Type} (f: U -> U) (A B:Collection U) :=
+  forall x:U, x ∈ A -> exists y:U, y = f x /\ y ∈ B.
 
 Definition GraphOfFunction {U:Type} (f: U -> U) (A B:Collection U) :
   TypeOfDirectProduct U := GraphOfBinaryRelation (fun (x y:U) => y = f x) A B.
-
-Inductive DomainOfGraph {U:Type} (G:TypeOfDirectProduct U) : Collection U :=
-| definition_of_domain_of_map: forall x:U, x ∈ FirstProjection G -> x ∈ DomainOfGraph G.
-
-Inductive RangeOfGraph {U:Type} (G:TypeOfDirectProduct U) : Collection U :=
-| definition_of_range_of_map: forall y:U, y ∈ SecondProjection G -> y ∈ RangeOfGraph G.
 
 Section Mapping.
   Variable U:Type.
   Variable f: U -> U.
 
-  Theorem relation_determine_domain:
-    forall (R:BinaryRelation U) (A B:Collection U) (G:TypeOfDirectProduct U),
-      G = GraphOfBinaryRelation R A B -> DomainOfGraph G ⊂ A.
-  Proof.
-    move => R A B G HG x HDG.
-    inversion HDG as [x0 HFG].
-    inversion HFG as [x1 H0].
-    case: H0 => y HGp.
-    rewrite HG in HGp.
-    inversion HGp.
-    inversion H2.
-    rewrite H0 in H4.
-    apply ordered_pair_in_direct_product_to_in_and in H4.
-    inversion H4.
-      by [].
-  Qed.
-
-  Theorem relation_determine_range:
-    forall (R:BinaryRelation U) (A B:Collection U) (G:TypeOfDirectProduct U),
-      G = GraphOfBinaryRelation R A B -> RangeOfGraph G ⊂ B.
-  Proof.
-    move => R A B G HG y HRG.
-    inversion HRG as [y0 HSG].
-    inversion HSG as [y1 H0].
-    case: H0 => x HGp.
-    rewrite HG in HGp.
-    inversion HGp.
-    inversion H2.
-    rewrite H0 in H4.
-    apply ordered_pair_in_direct_product_to_in_and in H4.
-    inversion H4.
-      by [].
-  Qed.
-
   Theorem function_determine_domain:
     forall (A B:Collection U) (G:TypeOfDirectProduct U),
-      G = GraphOfFunction f A B -> DomainOfGraph G ⊂ A.
+      G = GraphOfFunction f A B -> 𝕯( G ) ⊂ A.
   Proof.
     move => A B G HG.
-    move: (relation_determine_domain (fun (x y:U) => y = f x) A B G).
+    move: (relation_determine_domain U (fun (x y:U) => y = f x) A B G).
     apply.
     rewrite HG.
     reflexivity.
@@ -73,10 +30,10 @@ Section Mapping.
 
   Theorem function_determine_range:
     forall (A B:Collection U) (G:TypeOfDirectProduct U),
-      G = GraphOfFunction f A B -> RangeOfGraph G ⊂ B.
+      G = GraphOfFunction f A B -> 𝕽( G ) ⊂ B.
   Proof.
     move => A B G HG.
-    move: (relation_determine_range (fun (x y:U) => y = f x) A B G).
+    move: (relation_determine_range U (fun (x y:U) => y = f x) A B G).
     apply.
     rewrite HG.
     reflexivity.
@@ -86,42 +43,114 @@ Section Mapping.
     forall (A B:Collection U) (G:TypeOfDirectProduct U),
       G = GraphOfFunction f A B -> G ⊂ A × B.
   Proof.
-    move => A B G HG.
-    rewrite HG.
-    move => Z'.
-    split.
-    inversion H.
-    exists x.
+    move => A B G.
+    apply graph_of_correspondence_is_subset_of_direct_product.
+  Qed.
+
+  Lemma rewrite_function_range:
+    forall (A B:Collection U),
+      (forall x:U, exists y:U, y = f x /\ <|x, y|> ∈ A × B) ->
+      (forall x:U, exists y:U, x ∈ A /\ y = f x /\ y ∈ B).
+  Proof.
+    move => A B H x.
+    move: (H x) => Hx.
+    inversion Hx as [y [Hf HAB]].
     exists y.
-    inversion H0.
-    apply ordered_pair_in_direct_product_to_in_and in H3.
-    inversion H3.
-    split; [by []|split;[by []|reflexivity]].
+    apply ordered_pair_in_direct_product_to_in_and in HAB.
+    inversion HAB as [HA HB].
+    split;[trivial|split; trivial].
   Qed.
 
   Theorem function_satisfies_graph_of_mapping:
     forall (A B:Collection U) (G:TypeOfDirectProduct U),
-      (forall x y:U, y = f x /\ <|x, y|> ∈ A × B) ->
+      (forall x:U, exists y:U, y = f x /\ <|x, y|> ∈ A × B) ->
       G = GraphOfFunction f A B ->
       GraphOfMapping G A B.
   Proof.
     move => A B G HF HG.
     split.
     +apply direct_product_included_graph_of_function. by [].
-    +move => x.
-     move Hf: (f x) => y HA.
+    +move => x HA.
+     move: (HF x) => HFx.
+     inversion HFx as [y []].
      exists y.
      split.
      rewrite HG.
      split.
-     split.
-     rewrite Hf.
-     reflexivity.
-    +case: (HF x y) => Hfy HABy. by [].
-    +move => z H0.
-     case: (HF x z) => Hfz HABz.
-     rewrite -Hf -Hfz.
-     reflexivity.
+     exists x.
+     exists y.
+     split; [reflexivity|split;trivial].
+     move => z HG0.
+     rewrite HG in HG0.
+     inversion HG0.
+     inversion H1 as [x0 [z0 [Heqz [Hfz HABz]]]].
+     apply ordered_pair_to_and in Heqz.
+     inversion Heqz.
+     rewrite -H3 -H4 in Hfz.
+     rewrite -Hfz in H.
+     trivial.
   Qed.
-  
+
+  Theorem image_of_function_of_domain_is_empty_is_empty:
+    forall (A B:Collection U) (G:TypeOfDirectProduct U),
+      G = GraphOfFunction f A B -> 𝕴𝖒( G , `Ø` ) = `Ø`.
+  Proof.
+    move => A B G HG.
+    apply (image_of_domain_is_empty_is_empty U (fun x y:U => y = f x) A B).
+    rewrite HG.
+    reflexivity.
+  Qed.
+
+  Theorem condition_of_image_is_not_empty:
+    forall (A B C:Collection U) (G:TypeOfDirectProduct U),
+      MappingFunction f A B ->
+      C <> `Ø` -> C ⊂ A ->
+      G = GraphOfFunction f A B ->
+      exists (y:U), y ∈ 𝕴𝖒( G , C ).
+  Proof.
+    move => A B C G HF HNEC HCA HG.
+    apply not_empty_collection_has_least_a_element in HNEC.
+    inversion HNEC as [x HC].
+    have L1: x ∈ A.
+    apply HCA.
+    trivial.
+    apply HF in L1.
+    inversion L1 as [y].
+    exists y.
+    split.
+    exists x.
+    split; [apply HC|rewrite HG].
+    split.
+    exists x.
+    exists y.
+    split;[trivial|split;[apply H|apply in_and_to_ordered_pair_in_direct_product]].
+    split;[apply HCA;trivial|apply H].
+  Qed.
+
+  Goal
+    forall (A B C D:Collection U) (G:TypeOfDirectProduct U),
+      G = GraphOfFunction f A B ->
+      𝕴𝖒( G , C ∪ D ) = 𝕴𝖒( G , C ) ∪ 𝕴𝖒( G , D ).
+  Proof.
+    move => A B C D G HG.
+    apply mutally_included_to_eq.
+    split => y H.
+    inversion H as [y0 [x]].
+    inversion H0.
+    rewrite HG in H3.
+    inversion H3 as [Z [x1 [y1]]].
+    inversion H2; [left|right];
+      split; exists x; split;
+        trivial; rewrite HG; trivial.
+    split.
+    inversion H as [y0 H0|y0 H0].
+    inversion H0.
+    inversion H2 as [x].
+    exists x.
+    inversion H4.
+    split.
+    left.
+    trivial.
+    trivial.
+  Qed.
 End Mapping.

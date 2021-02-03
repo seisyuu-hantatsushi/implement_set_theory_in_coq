@@ -121,6 +121,15 @@ Proof.
   split.
 Qed.
 
+Theorem element_in_empty_collection_to_empty_collection_eq:
+  forall (U:Type) (A:Collection U),
+    (forall x:U, x ∈ A -> x ∈ `Ø`) -> A = `Ø`.
+Proof.
+  move => U A H.
+  apply mutally_included_to_eq.
+  split;[trivial|apply all_collection_included_empty].
+Qed.
+
 Theorem complement_of_complement_collect_is_self:
   forall U:Type, forall A:Collection U, A = (A^c)^c.
 Proof.

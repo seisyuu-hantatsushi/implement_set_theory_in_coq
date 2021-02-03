@@ -319,7 +319,7 @@ Proof.
 Qed.
 
 Theorem ordered_pair_to_and:
-  forall (U:Type), forall {a b x y:U}, <| a , b |> = <| x , y |> -> a = x /\ b = y.
+  forall (U:Type) (a b x y:U), <| a , b |> = <| x , y |> -> a = x /\ b = y.
 Proof.
   move => U a b x y H.
   rewrite ordered_pair_eq_unordered_pair in H.
@@ -342,4 +342,32 @@ Proof.
   rewrite H0 in H3.
   rewrite H1 in H3.
   apply sym_eq in H3. by [].
+Qed.
+
+Theorem and_to_ordered_pair:
+  forall (U:Type) (a b x y:U),  a = x /\ b = y -> <| a , b |> = <| x , y |>.
+Proof.
+  move => U a b c d.
+  case => [Hac Hbd].
+  rewrite Hac Hbd.
+  reflexivity.
+Qed.
+
+Theorem ordered_pair_iff_and:
+  forall (U:Type) (a b x y:U), <| a , b |> = <| x , y |> <-> a = x /\ b = y.
+Proof.
+  move => U a b c d.
+  rewrite /iff. split.
+  apply ordered_pair_to_and.
+  apply and_to_ordered_pair.
+Qed.
+
+Theorem ordered_pair_swap:
+  forall (U:Type) (a b x y:U), <| a , b |> = <| x , y |> -> <| b , a |> = <| y , x |>.
+Proof.
+  move => U a b x y H.
+  apply ordered_pair_iff_and in H.
+  case: H => [Hax Hby].
+  rewrite Hax Hby.
+  reflexivity.
 Qed.
