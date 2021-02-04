@@ -101,7 +101,7 @@ Section Mapping.
     reflexivity.
   Qed.
 
-  Theorem condition_of_image_is_not_empty:
+  Theorem condition_of_image_of_function_is_not_empty:
     forall (A B C:Collection U) (G:TypeOfDirectProduct U),
       MappingFunction f A B ->
       C <> `Ø` -> C ⊂ A ->
@@ -109,48 +109,21 @@ Section Mapping.
       exists (y:U), y ∈ 𝕴𝖒( G , C ).
   Proof.
     move => A B C G HF HNEC HCA HG.
-    apply not_empty_collection_has_least_a_element in HNEC.
-    inversion HNEC as [x HC].
-    have L1: x ∈ A.
+    apply: (condition_of_image_of_binary_relation_is_not_empty U (fun x y:U => y = f x) A B).
+    apply HF.
+    apply HNEC.
     apply HCA.
     trivial.
-    apply HF in L1.
-    inversion L1 as [y].
-    exists y.
-    split.
-    exists x.
-    split; [apply HC|rewrite HG].
-    split.
-    exists x.
-    exists y.
-    split;[trivial|split;[apply H|apply in_and_to_ordered_pair_in_direct_product]].
-    split;[apply HCA;trivial|apply H].
   Qed.
 
-  Goal
+  Theorem cup_domain_is_cup_image_in_function:
     forall (A B C D:Collection U) (G:TypeOfDirectProduct U),
       G = GraphOfFunction f A B ->
       𝕴𝖒( G , C ∪ D ) = 𝕴𝖒( G , C ) ∪ 𝕴𝖒( G , D ).
   Proof.
     move => A B C D G HG.
-    apply mutally_included_to_eq.
-    split => y H.
-    inversion H as [y0 [x]].
-    inversion H0.
-    rewrite HG in H3.
-    inversion H3 as [Z [x1 [y1]]].
-    inversion H2; [left|right];
-      split; exists x; split;
-        trivial; rewrite HG; trivial.
-    split.
-    inversion H as [y0 H0|y0 H0].
-    inversion H0.
-    inversion H2 as [x].
-    exists x.
-    inversion H4.
-    split.
-    left.
-    trivial.
-    trivial.
+    apply (cup_domain_is_cup_image U (fun x y:U => y = f x) A B).
+    apply HG.
   Qed.
+
 End Mapping.

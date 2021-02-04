@@ -26,6 +26,13 @@ Inductive TransposeOfCorrespondence {U:Type} (G:TypeOfDirectProduct U) : TypeOfD
 | definition_of_transpose_correspondene:
    forall x y:U, <|x,y|> ∈ G -> <|y,x|> ∈ TransposeOfCorrespondence G.
 
+Inductive GraphOfCompoundCorrespondence {U:Type} (G H:TypeOfDirectProduct U): TypeOfDirectProduct U :=
+| definition_of_compound_correspondence:
+    forall Z:TypeOfOrderedPair U, (exists x y:U, Z = <|x,y|> -> (exists z:U, <|x,z|> ∈ G /\ <|z,y|> ∈ H)) -> Z ∈ GraphOfCompoundCorrespondence G H.
+
+Definition CompoundRelation {U:Type} (S T:BinaryRelation U) (SR: Collection U): BinaryRelation U :=
+  fun x y:U => exists z:U, z ∈ SR -> S x z /\ T z y.
+
 (* 𝕯: Unicode:1D56F, 𝕽: Unicode:1D57D *)
 Notation "𝕯( G )" := (DomainOfCorrespondence G) (at level 45).
 Notation "𝕽( G )" := (RangeOfCorrespondence G) (at level 45).
@@ -247,7 +254,7 @@ Section BinaryRelation.
     apply all_collection_included_empty.
   Qed.
 
-  Theorem condition_of_exists_element_in_image_of_binary_relation:
+  Theorem condition_of_image_of_binary_relation_is_not_empty:
     forall (A B C:Collection U) (G:TypeOfDirectProduct U),
       (forall x:U, x ∈ A -> exists y:U, R x y /\ y ∈ B) ->
       C <> `Ø` ->
@@ -277,7 +284,7 @@ Section BinaryRelation.
             apply ordered_pair_in_direct_product_iff_in_and;split;trivial]].
   Qed.
 
-  Theorem cup_domain_cup_image:
+  Theorem cup_domain_is_cup_image:
     forall (A B C D:Collection U) (G:TypeOfDirectProduct U),
       G = GraphOfBinaryRelation R A B ->
       𝕴𝖒( G , C ∪ D ) = 𝕴𝖒( G , C ) ∪ 𝕴𝖒( G , D ).
@@ -308,11 +315,70 @@ Section BinaryRelation.
       𝕴𝖒( G , C ∩ D ) ⊂ 𝕴𝖒( G , C ) ∩ 𝕴𝖒( G , D ).
   Proof.
     move => A B C D G HG y H.
-    inversion H as [y0].
-    inversion H0 as [x].
+    inversion H as [y0 [x]].
+    inversion H0.
     inversion H2.
-    inversion H3.
     split; split; exists x; split; trivial.
+  Qed.
+
+  Theorem diff_domain_included_diff_image:
+    forall (A B C D:Collection U) (G:TypeOfDirectProduct U),
+      G = GraphOfBinaryRelation R A B ->
+      (𝕴𝖒( G , C ) \ 𝕴𝖒( G , D )) ⊂ 𝕴𝖒( G , C \ D ).
+  Proof.
+    move => A B C D G HG y HI.
+    split.
+    inversion HI as [y0 [y1]].
+    inversion H.
+    inversion H2.
+    exists x.
+    split.
+    split.
+    trivial.
+    move => HD.
+    apply H0.
+    split.
+    exists x.
+    split;trivial.
+    trivial.
+  Qed.
+
+  Theorem image_of_inverse_correspondence_include_domain:
+    forall (A B:Collection U) (G:TypeOfDirectProduct U),
+      (forall x:U, x ∈ A -> exists y:U, R x y /\ y ∈ B) ->
+      G = GraphOfBinaryRelation R A B ->
+      A ⊂ 𝕴𝖒( G^-1 , 𝕴𝖒( G , A )).
+  Proof.
+    move => A B G HR HG x HA.
+    move: (HR x) => HRx.
+    have L1: exists y:U, R x y /\ y ∈ B.
+    apply HRx.
+    trivial.
+    inversion L1 as [y].
+    split.
+    exists y.
+    split.
+    split.
+    exists x.
+    split;[apply HA|].
+    rewrite HG.
+    split.
+    exists x.
+    exists y.
+    split;[reflexivity|
+           split;[apply H|
+                  apply ordered_pair_in_direct_product_iff_in_and;
+                  split;[trivial|apply H]
+          ]].
+    split.
+    rewrite HG.
+    split.
+    exists x.
+    exists y.
+    split;[reflexivity|split;
+                       [apply H|
+                        apply ordered_pair_in_direct_product_iff_in_and;
+                        split;[trivial|apply H]]].
   Qed.
 
 End BinaryRelation.
