@@ -26,12 +26,12 @@ Inductive TransposeOfCorrespondence {U:Type} (G:TypeOfDirectProduct U) : TypeOfD
 | definition_of_transpose_correspondene:
    forall x y:U, <|x,y|> ∈ G -> <|y,x|> ∈ TransposeOfCorrespondence G.
 
-Inductive GraphOfCompoundCorrespondence {U:Type} (G H:TypeOfDirectProduct U): TypeOfDirectProduct U :=
+Inductive GraphOfCompoundCorrespondence {U:Type} (H G:TypeOfDirectProduct U): TypeOfDirectProduct U :=
 | definition_of_compound_correspondence:
-    forall Z:TypeOfOrderedPair U, (exists x y:U, Z = <|x,y|> -> (exists z:U, <|x,z|> ∈ G /\ <|z,y|> ∈ H)) -> Z ∈ GraphOfCompoundCorrespondence G H.
+    forall Z:TypeOfOrderedPair U, (exists x y:U, Z = <|x,y|> /\ (exists z:U, <|x,z|> ∈ G /\ <|z,y|> ∈ H)) -> Z ∈ GraphOfCompoundCorrespondence H G.
 
 Definition CompoundRelation {U:Type} (S T:BinaryRelation U) (SR: Collection U): BinaryRelation U :=
-  fun x y:U => exists z:U, z ∈ SR -> S x z /\ T z y.
+  fun x y:U => exists z:U, z ∈ SR /\ S x z /\ T z y.
 
 (* 𝕯: Unicode:1D56F, 𝕽: Unicode:1D57D *)
 Notation "𝕯( G )" := (DomainOfCorrespondence G) (at level 45).
@@ -379,6 +379,221 @@ Section BinaryRelation.
                        [apply H|
                         apply ordered_pair_in_direct_product_iff_in_and;
                         split;[trivial|apply H]]].
+  Qed.
+
+  Theorem image_of_binary_relation_of_singleton_domain_to_orderpair_in_graph:
+    forall (A B:Collection U) (G:TypeOfDirectProduct U) (x y:U),
+      G = GraphOfBinaryRelation R A B ->
+      y ∈ (𝕴𝖒( G , {| x |} )) -> <|x,y|> ∈ G.
+  Proof.
+    move => A B G x y HG HI.
+    inversion HI as [y0].
+    inversion H as [x0].
+    inversion H1.
+    apply singleton_to_eq in H2.
+    rewrite H2 in H3.
+    trivial.
+  Qed.
+
+  Theorem orderpair_in_graph_to_image_of_binary_relation_of_singleton_domain:
+    forall (A B:Collection U) (G:TypeOfDirectProduct U) (x y:U),
+      G = GraphOfBinaryRelation R A B ->
+      <|x,y|> ∈ G -> y ∈ (𝕴𝖒( G , {| x |} )).
+  Proof.
+    move => A B G x y HG HGp.
+    rewrite HG in HGp.
+    inversion HGp.
+    inversion H as [x0 [y0 [H1 [H2 H3]]]].
+    apply ordered_pair_to_and in H1.
+    inversion H1.
+    split.
+    exists x.
+    split.
+    apply singleton_iff_eq.
+    reflexivity.
+    rewrite HG.
+    split.
+    exists x0.
+    exists y0.
+    split;[rewrite H4;rewrite H5;reflexivity|split;trivial].
+  Qed.
+
+  Theorem graph_of_correspondence_included_graph_of_compound_relation:
+    forall (f g:BinaryRelation U)
+           (X Y Z:Collection U)
+           (F G GF:TypeOfDirectProduct U),
+      F = GraphOfBinaryRelation f X Y ->
+      G = GraphOfBinaryRelation g Y Z ->
+      GF = GraphOfCompoundCorrespondence G F ->
+      GraphOfBinaryRelation (CompoundRelation f g Y) X Z ⊂ GF.
+  Proof.
+    move => f g X Y Z F G GF HF HG HGF Z' HI.
+    inversion HI as [z0].
+    inversion H as [x1 [z1]].
+    inversion H1 as [H2 []].
+    inversion H3 as [y1].
+    apply ordered_pair_in_direct_product_iff_in_and in H4.
+    rewrite HGF.
+    split.
+    exists x1.
+    exists z1.
+    split.
+    trivial.
+    exists y1.
+    split;[rewrite HF|rewrite HG];
+      split;[exists x1;exists y1|exists y1;exists z1].
+    split;[reflexivity|split;
+                       [apply H5|
+                        apply ordered_pair_in_direct_product_iff_in_and;split;
+                        [apply H4|
+                         apply H5]]].
+    split;[reflexivity|split;
+                       [apply H5|
+                        apply ordered_pair_in_direct_product_iff_in_and;split;
+                        [apply H5|
+                         apply H4]]].
+  Qed.
+
+  Theorem graph_of_compound_relation_included_graph_of_correspondence:
+    forall (f g:BinaryRelation U)
+           (X Y Z:Collection U)
+           (F G GF:TypeOfDirectProduct U),
+      F = GraphOfBinaryRelation f X Y ->
+      G = GraphOfBinaryRelation g Y Z ->
+      GF = GraphOfCompoundCorrespondence G F ->
+      GF ⊂ GraphOfBinaryRelation (CompoundRelation f g Y) X Z.
+  Proof.
+    move => f g X Y Z F G GF HF HG HGF Z' H.
+    rewrite HGF in H.
+    inversion H as [Z0'].
+    inversion H0 as [x0 [z0]].
+    inversion H2.
+    inversion H4 as [y0].
+    inversion H5.
+    rewrite HF in H6.
+    rewrite HG in H7.
+    inversion H6 as [Z0].
+    inversion H8 as [x1 [y1]].
+    inversion H10.
+    rewrite -H11 in H12.
+    apply ordered_pair_to_and in H11.
+    inversion H11.
+    inversion H12.
+    apply ordered_pair_in_direct_product_iff_in_and in H16.
+    inversion H7.
+    inversion H17 as [y2 [z2]].
+    inversion H19.
+    apply ordered_pair_to_and in H20.
+    inversion H20.
+    inversion H21.
+    apply ordered_pair_in_direct_product_iff_in_and in H25.
+    split.
+    exists x0.
+    exists z0.
+    split;[trivial|split].
+    exists y0.
+    split;[apply H16|
+           split;[rewrite H13 H14;trivial|rewrite H22 H23; apply H21]].
+    apply ordered_pair_in_direct_product_iff_in_and.
+    split;[apply H16|rewrite H23;apply H25].
+  Qed.
+
+  Theorem graph_of_correspondence_is_graph_of_compound_relation:
+    forall (f g:BinaryRelation U)
+           (X Y Z:Collection U)
+           (F G GF:TypeOfDirectProduct U),
+      F = GraphOfBinaryRelation f X Y ->
+      G = GraphOfBinaryRelation g Y Z ->
+      GF = GraphOfCompoundCorrespondence G F ->
+      GraphOfBinaryRelation (CompoundRelation f g Y) X Z = GF.
+  Proof.
+    move => f g X Y Z F G GF HF HG HGF.
+    apply mutally_included_to_eq.
+    split.
+    apply (graph_of_correspondence_included_graph_of_compound_relation f g X Y Z F G GF).
+    trivial.
+    trivial.
+    trivial.
+    apply (graph_of_compound_relation_included_graph_of_correspondence f g X Y Z F G GF).
+    trivial.
+    trivial.
+    trivial.
+  Qed.
+
+  Theorem chain_image_include_image_of_correspondence:
+    forall (f g:BinaryRelation U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      F = GraphOfBinaryRelation f X Y ->
+      G = GraphOfBinaryRelation g Y Z ->
+      GF = GraphOfCompoundCorrespondence G F ->
+      𝕴𝖒( GF, X ) ⊂ 𝕴𝖒( G, 𝕴𝖒( F , X )).
+  Proof.
+    move => f g X Y Z F G GF HF HG HGF z HI.
+    inversion HI as [z0].
+    inversion H as [x0].
+    inversion H1.
+    rewrite HGF in H3.
+    inversion H3.
+    inversion H4 as [x1 [z1]].
+    inversion H6.
+    inversion H8 as [y1].
+    inversion H9.
+    split.
+    exists y1.
+    split.
+    split.
+    exists x1.
+    apply ordered_pair_to_and in H7.
+    inversion H7.
+    split.
+    rewrite -H12.
+    trivial.
+    trivial.
+    apply ordered_pair_to_and in H7.
+    inversion H7.
+    rewrite H13.
+    trivial.
+  Qed.
+
+  Theorem image_of_correspondence_include_chain_image:
+    forall (f g:BinaryRelation U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      F = GraphOfBinaryRelation f X Y ->
+      G = GraphOfBinaryRelation g Y Z ->
+      GF = GraphOfCompoundCorrespondence G F ->
+      𝕴𝖒( G, 𝕴𝖒( F , X )) ⊂ 𝕴𝖒( GF, X ).
+  Proof.
+    move => f g X Y Z F G GF HF HG HGF z H.
+    inversion H as [z0 [y0 []]].
+    inversion H0 as [y1 [x0 []]].
+    split.
+    exists x0.
+    split.
+    trivial.
+    rewrite HGF.
+    split.
+    exists x0.
+    exists z.
+    split;[reflexivity|
+           exists y0;split];trivial.
+  Qed.
+
+  Theorem chain_image_is_image_of_correspondence:
+    forall (f g:BinaryRelation U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      F = GraphOfBinaryRelation f X Y ->
+      G = GraphOfBinaryRelation g Y Z ->
+      GF = GraphOfCompoundCorrespondence G F ->
+      𝕴𝖒( G, 𝕴𝖒( F , X )) = 𝕴𝖒( GF, X ).
+  Proof.
+    move => f g X Y Z F G GF HF HG HGF.
+    apply mutally_included_to_eq.
+    split.
+    apply (image_of_correspondence_include_chain_image f g X Y Z F G GF).
+    trivial.
+    trivial.
+    trivial.
+    apply (chain_image_include_image_of_correspondence f g X Y Z F G GF).
+    trivial.
+    trivial.
+    trivial.
   Qed.
 
 End BinaryRelation.
