@@ -1,5 +1,8 @@
 
-all: binary_relation.vo
+all: mapping.vo
+
+mapping.vo: mapping.v binary_relation.vo direct_product.vo collect_operator.vo
+	coqc $<
 
 binary_relation.vo: binary_relation.v direct_product.vo collect_operator.vo
 	coqc $<
