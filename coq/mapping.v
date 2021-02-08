@@ -13,9 +13,12 @@ Definition MappingFunction {U:Type} (f: U -> U) (A B:Collection U) :=
 Definition GraphOfFunction {U:Type} (f: U -> U) (A B:Collection U) :
   TypeOfDirectProduct U := GraphOfBinaryRelation (fun (x y:U) => y = f x) A B.
 
+Definition CompoundFunction {U:Type} (g f: U -> U) : U -> U :=
+  fun x:U => g ( f x ).
+
 Section Mapping.
   Variable U:Type.
-  Variable f: U -> U.
+  Variable f g h: U -> U.
 
   Theorem function_determine_domain:
     forall (A B:Collection U) (G:TypeOfDirectProduct U),
@@ -124,6 +127,86 @@ Section Mapping.
     move => A B C D G HG.
     apply (cup_domain_is_cup_image U (fun x y:U => y = f x) A B).
     apply HG.
+  Qed.
+
+  Theorem image_of_correspondence_function_include_chain_image:
+    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y -> G = GraphOfFunction g Y Z ->
+      GF = GraphOfCompoundCorrespondence G F ->
+      𝕴𝖒( G ,  𝕴𝖒( F, X ) ) ⊂ 𝕴𝖒( GF, X ).
+  Proof.
+    move => X Y Z F G GF HF HG HGF z.
+    apply: (image_of_correspondence_include_chain_image
+              U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF).
+    trivial.
+    trivial.
+    trivial.
+  Qed.
+
+  Theorem chain_image_include_image_of_correspondence_function:
+    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y -> G = GraphOfFunction g Y Z ->
+      GF = GraphOfCompoundCorrespondence G F ->
+      𝕴𝖒( GF, X ) ⊂ 𝕴𝖒( G, 𝕴𝖒( F , X )).
+  Proof.
+    move => X Y Z F G GF HF HG HGF z.
+    apply: (chain_image_include_image_of_correspondence
+              U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF).
+    trivial.
+    trivial.
+    trivial.
+  Qed.
+
+  Theorem chain_image_is_image_of_correspondence_function:
+    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y -> G = GraphOfFunction g Y Z ->
+      GF = GraphOfCompoundCorrespondence G F ->
+      𝕴𝖒( G, 𝕴𝖒( F , X )) = 𝕴𝖒( GF, X ).
+  Proof.
+    move => X Y Z F G GF HF HG HGF.
+    apply (chain_image_is_image_of_correspondence U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF).
+    trivial.
+    trivial.
+    trivial.
+  Qed.
+
+  Goal
+    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
+      GF = GraphOfFunction (CompoundFunction g f) X Z ->
+      GF ⊂ G ⊙ F.
+  Proof.
+    move => X Y Z F G GF Hf HF HG HGF Z' H.
+    rewrite HGF in H.
+    inversion H as [Z0'].
+    inversion H0 as [x [z]].
+    inversion H2.
+    inversion H4.
+    split.
+    exists x.
+    exists z.
+    split;[trivial|].
+    apply ordered_pair_in_direct_product_iff_in_and in H6.
+    inversion H6.
+    apply Hf in H7.
+    inversion H7 as [y].
+    inversion H9.
+    exists y.
+    split;[rewrite HF|rewrite HG];split.
+    exists x.
+    exists y.
+    split;[reflexivity|split;
+                       [trivial|
+                        apply ordered_pair_in_direct_product_iff_in_and;
+                        split;[apply H6|trivial]]].
+    exists y.
+    exists z.
+    split;[reflexivity|split;
+                       [rewrite H10;trivial|
+                        apply ordered_pair_in_direct_product_iff_in_and;
+                        split;trivial]].
   Qed.
 
 End Mapping.

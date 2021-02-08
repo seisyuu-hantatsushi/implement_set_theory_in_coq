@@ -38,6 +38,8 @@ Notation "𝕯( G )" := (DomainOfCorrespondence G) (at level 45).
 Notation "𝕽( G )" := (RangeOfCorrespondence G) (at level 45).
 Notation "𝕴𝖒( G , C )" := (ImageOfCorrespondence G C) (at level 45).
 Notation "G ^-1" := (TransposeOfCorrespondence G) (at level 34).
+(* ⊙:Unicode 2299 *)
+Notation "G ⊙ F" := (GraphOfCompoundCorrespondence G F) (right associativity, at level 33).
 
 Section BinaryRelation.
 
@@ -594,6 +596,106 @@ Section BinaryRelation.
     trivial.
     trivial.
     trivial.
+  Qed.
+
+  Theorem associativity_of_graph_of_binary_relation:
+    forall (f g h:BinaryRelation U) (X Y Z W:Collection U) (F G H:TypeOfDirectProduct U),
+      F = GraphOfBinaryRelation f X Y ->
+      G = GraphOfBinaryRelation g Y Z ->
+      H = GraphOfBinaryRelation h Z W ->
+      (H ⊙ G) ⊙ F = H ⊙ (G ⊙ F).
+  Proof.
+    move => f g h X Y Z W F G H HF HG HH.
+    apply mutally_included_to_eq.
+    split => W' H0;
+               inversion H0 as [W0'];
+               inversion H1 as [x [w [HW']]].
+    +inversion H3 as [y].
+     inversion H4 as [H5].
+     inversion H6.
+     inversion H7 as [y0 [w0]].
+     inversion H9.
+     inversion H11 as [z].
+     apply ordered_pair_to_and in H10.
+     inversion H10.
+     rewrite -H13 -H14 in H12.
+     split.
+     exists x.
+     exists w.
+     split;[trivial|exists z].
+     split.
+     split.
+     exists x.
+     exists z.
+     split;[reflexivity|exists y].
+     split;[apply H5|apply H12].
+     apply H12.
+    +inversion H3 as [z].
+     inversion H4.
+     inversion H5 as [Z'].
+     inversion H7 as [x0 [z0]].
+     inversion H9.
+     inversion H11 as [y].
+     apply ordered_pair_to_and in H10.
+     inversion H10.
+     rewrite -H13 -H14 in H12.
+     inversion H12.
+     split.
+     exists x.
+     exists w.
+     split.
+     trivial.
+     exists y.
+     split;[trivial|split;exists y;exists w;split].
+     reflexivity.
+     exists z.
+     split;[trivial|trivial].
+  Qed.
+
+  Theorem law_of_distribute_inverse_operator_of_compound_correspondence:
+    forall (f g:BinaryRelation U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
+      F = GraphOfBinaryRelation f X Y ->
+      G = GraphOfBinaryRelation g Y Z ->
+      (G ⊙ F) ^-1 = (F^-1) ⊙ (G^-1).
+  Proof.
+    move => f g X Y Z F G HF HG.
+    apply mutally_included_to_eq.
+    split => Zi' H.
+    +inversion H.
+     inversion H0 as [Z'].
+     inversion H2 as [x0 [y0]].
+     inversion H4.
+     inversion H6 as [z].
+     apply ordered_pair_to_and in H5.
+     inversion H5.
+     rewrite -H8 -H9 in H7.
+     split.
+     exists y.
+     exists x.
+     split.
+     reflexivity.
+     exists z.
+     split; split; apply H7.
+    +inversion H.
+     inversion H0 as [z [x]].
+     inversion H2.
+     inversion H4 as [y].
+     inversion H5.
+     rewrite H3.
+     inversion H6 as [y0 z0].
+     inversion H7 as [x0 y1].
+     split.
+     split.
+     exists x.
+     exists z.
+     split.
+     reflexivity.
+     exists y.
+     apply ordered_pair_swap in H9.
+     rewrite H9 in H8.
+     apply ordered_pair_swap in H11.
+     rewrite H11 in H10.
+     split; trivial.
   Qed.
 
 End BinaryRelation.
