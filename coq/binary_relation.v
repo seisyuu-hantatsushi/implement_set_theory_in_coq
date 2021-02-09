@@ -420,6 +420,19 @@ Section BinaryRelation.
     split;[rewrite H4;rewrite H5;reflexivity|split;trivial].
   Qed.
 
+  Theorem image_of_binary_relation_of_singleton_domain_iff_orderpair_in_graph:
+    forall (A B:Collection U) (G:TypeOfDirectProduct U) (x y:U),
+      G = GraphOfBinaryRelation R A B ->
+      y ∈ (𝕴𝖒( G , {| x |} )) <-> <|x,y|> ∈ G.
+  Proof.
+    move => A B G x y HG.
+    rewrite /iff; split.
+    apply: (image_of_binary_relation_of_singleton_domain_to_orderpair_in_graph A B).
+    trivial.
+    apply: (orderpair_in_graph_to_image_of_binary_relation_of_singleton_domain A B).
+    trivial.
+  Qed.
+
   Theorem graph_of_correspondence_included_graph_of_compound_relation:
     forall (f g:BinaryRelation U)
            (X Y Z:Collection U)
