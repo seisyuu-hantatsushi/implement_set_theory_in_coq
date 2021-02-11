@@ -13,7 +13,10 @@ Definition MappingFunction {U:Type} (f: U -> U) (A B:Collection U) :=
 Definition GraphOfFunction {U:Type} (f: U -> U) (A B:Collection U) :
   TypeOfDirectProduct U := GraphOfBinaryRelation (fun (x y:U) => y = f x) A B.
 
-Definition IdentityFunction {U:Type} : U -> U := fun x => x.
+Definition IdentityFunction U : U -> U := fun x:U => x.
+
+Definition GraphOfIdentity {U:Type} (X:Collection U) : TypeOfDirectProduct U :=
+  GraphOfFunction (IdentityFunction U) X X.
 
 Definition CompoundFunction {U:Type} (g f: U -> U) : U -> U :=
   fun x:U => g ( f x ).
@@ -407,7 +410,7 @@ Section Mapping.
            apply (function_eq_to_graph_of_function_eq X Y F G)];
     trivial.
   Qed.
-    
+
   Theorem singleton_image_to_ordered_pair_in_graph:
     forall (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
       MappingFunction f X Y ->
@@ -714,23 +717,147 @@ Section Mapping.
     trivial.
   Qed.
 
-  Theorem function_to_inverse_function:
-    forall (x y:U) (X Y:Collection U) (F:TypeOfDirectProduct U),
-      F = GraphOfFunction f X Y -> <|x,y|> ∈ F -> <|y,x|> ∈ F ^-1.
+  Theorem image_singleton_domain_of_graph_of_identity_eq_singleton_domain:
+    forall (X:Collection U) (x:U),
+      x ∈ X -> {|x|} = 𝕴𝖒( GraphOfIdentity X , {|x|} ).
   Proof.
-    move => x y X Y F HF.
-    apply (correspondence_to_inverse_correspondence U (fun x y => y = f x) x y X Y).
+    move => X x HxX.
+    apply mutally_included_to_eq.
+    split; move => x0 H.
+    apply singleton_to_eq in H.
+    split.
+    exists x0.
+    split;[apply singleton_iff_eq;trivial|
+           split;
+           exists x0;
+           exists x0;
+           split;[reflexivity|
+                  split]].
     trivial.
+    rewrite H.
+    apply ordered_pair_in_direct_product_iff_in_and.
+    split; trivial.
+    inversion H as [x'].
+    inversion H0 as [x0'].
+    inversion H2.
+    inversion H4.
+    inversion H5 as [x1 [x2]].
+    inversion H7.
+    inversion H9.
+    rewrite H10 in H8.
+    apply ordered_pair_to_and in H8.
+    inversion H8.
+    rewrite -H12 in H13.
+    rewrite H13.
+    assumption.
   Qed.
 
-  Theorem inverse_function_to_function:
-    forall (x y:U) (X Y:Collection U) (F:TypeOfDirectProduct U),
-      F = GraphOfFunction f X Y -> <|x,y|> ∈ F <-> <|y,x|> ∈ F ^-1.
+  Theorem ordered_pair_in_graph_of_identity:
+    forall (X:Collection U) (x:U),
+      x ∈ X -> <|x,x|> ∈ GraphOfIdentity X.
   Proof.
-    move => x y X Y F HF.
-    rewrite /iff.
-    split;[apply (correspondence_to_inverse_correspondence U (fun x y => y = f x) x y X Y)|
-           apply (inverse_correspondence_to_correspondence U (fun x y => y = f x) x y X Y)];
+    move => X x HxX.
+    split.
+    exists x.
+    exists x.
+    split;[reflexivity|split;
+                       [reflexivity|
+                        apply ordered_pair_in_direct_product_iff_in_and;
+                        split;
+                        assumption]].
+  Qed.
+
+  Theorem ordered_pair_in_graph_to_eq:
+    forall (X:Collection U) (x x':U),
+      <|x,x'|> ∈ GraphOfIdentity X -> x = x'.
+  Proof.
+    move => X x x' H.
+    inversion H as [Z [x0 [x0']]].
+    inversion H0 as [H2 [H3]].
+    apply ordered_pair_to_and in H2.
+    inversion H2.
+    rewrite -H5 -H6 in H3.
+    rewrite H3.
+    reflexivity.
+  Qed.
+
+  Theorem compound_identity_function_r:
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y ->
+      F = F ⊙ GraphOfIdentity X.
+  Proof.
+    move => f' X Y F HF.
+    rewrite HF.
+    apply mutally_included_to_eq.
+    split => Z HFZ;
+               inversion HFZ as [Z0 [x0 [y0]]];
+               inversion H.
+    inversion H2.
+    split.
+    exists x0.
+    exists y0.
+    split;[trivial|].
+    exists x0.
+    split.
+    apply ordered_pair_in_graph_of_identity.
+    apply ordered_pair_in_direct_product_to_in_and in H4.
+    apply H4.
+    split.
+    exists x0.
+    exists y0.
+    split;[reflexivity|trivial].
+    inversion H2 as [x0'].
+    inversion H3.
+    apply ordered_pair_in_graph_to_eq in H4.
+    rewrite -H4 in H5.
+    rewrite H1.
+    assumption.
+  Qed.
+
+  Theorem compound_identity_function_l:
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y ->
+      F = GraphOfIdentity Y ⊙ F.
+  Proof.
+    move => f' X Y F HF.
+    rewrite HF.
+    apply mutally_included_to_eq.
+    split => Z H;
+               inversion H;
+               inversion H0 as [x [y]].
+    +inversion H2 as [H3 [H4 H5]].
+     split.
+     exists x.
+     exists y.
+     split;[trivial|exists y;
+                    rewrite -H3;
+                    split;[trivial|
+                           apply ordered_pair_in_graph_of_identity;
+                           apply ordered_pair_in_direct_product_iff_in_and in H5;
+                           apply H5]].
+    +inversion H2 as [H3 H4].
+     inversion H4 as [y' [H5 H6]].
+     apply ordered_pair_in_graph_to_eq in H6.
+     rewrite H6 in H5.
+     rewrite H3.
+     assumption.
+  Qed.
+
+  Theorem associativity_of_graph_of_function:
+    forall (f g h:U -> U) (X Y Z W:Collection U) (F G H:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
+      H = GraphOfFunction h Z W ->
+      (H ⊙ G) ⊙ F = H ⊙ (G ⊙ F).
+  Proof.
+    move => f' g' h' X Y Z W F G H HF HG HH.
+    apply (associativity_of_graph_of_binary_relation U
+                                                     (fun x y => y = f' x)
+                                                     (fun x y => y = g' x)
+                                                     (fun x y => y = h' x)
+                                                     X Y Z W F G H).
+    trivial.
+    trivial.
     trivial.
   Qed.
 
