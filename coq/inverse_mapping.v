@@ -24,7 +24,7 @@ Section InverseMapping.
     move => f g h X Y F G H HF HG HH HGF HFH.
     rewrite (compound_identity_function_r U g Y X G).
     rewrite -HFH.
-    rewrite -(associativity_of_graph_of_function h f g Y X Y X H F G).
+    rewrite -(associativity_of_graph_of_function U h f g Y X Y X H F G).
     rewrite HGF.
     rewrite -(compound_identity_function_l U h Y X H).
     reflexivity.
