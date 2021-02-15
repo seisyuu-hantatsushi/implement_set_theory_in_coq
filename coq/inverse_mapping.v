@@ -5,7 +5,8 @@ Require Import direct_product.
 Require Import mapping.
 
 Definition InvertibleMapping {U} (f:U->U) (X Y:Collection U) (F:TypeOfDirectProduct U) :=
-  exists (g:U->U) (G:TypeOfDirectProduct U), G = GraphOfFunction g Y X /\
+  exists (g:U->U) (G:TypeOfDirectProduct U), MappingFunction g Y X /\
+                                             G = GraphOfFunction g Y X /\
                                              G ⊙ F = GraphOfIdentity X /\
                                              F ⊙ G = GraphOfIdentity Y.
 
@@ -63,28 +64,147 @@ Section InverseMapping.
     trivial.
   Qed.
 
-  Goal
+  Theorem compound_self_inverse_function_is_identity:
     forall (f:U->U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      forall x:U, x ∈ X -> <|x,x|> ∈ F^-1 ⊙ F.
+  Proof.
+    move => f X Y F Hf HF x HxX.
+    split.
+    exists x.
+    exists x.
+    split.
+    reflexivity.
+    exists (f x).
+    rewrite HF.
+    split.
+    split.
+    exists x.
+    exists (f x).
+    split.
+    reflexivity.
+    split;[reflexivity|
+           apply ordered_pair_in_direct_product_iff_in_and;
+           split;[trivial|
+                  apply Hf in HxX;
+                  inversion HxX as [y];
+                  inversion H;
+                  rewrite -H0;
+                  assumption]].
+    split.
+    split.
+    exists x.
+    exists (f x).
+    split;[reflexivity|
+           split;[reflexivity|apply ordered_pair_in_direct_product_iff_in_and;[
+                                split;
+                                trivial;
+                                apply Hf in HxX;
+                                inversion HxX as [y];
+                                inversion H;
+                                rewrite H0 in H1;
+                                assumption]]].
+  Qed.
+
+  Theorem invertible_function_source_is_unique:
+    forall (f:U->U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
       InvertibleMapping f X Y F ->
-      forall (x x' y:U), <|x,y|> ∈ F /\ <|x',y|> ∈ F -> x = x'.
+      forall x x' y:U, <|x,y|> ∈ F /\ <|x',y|> ∈ F -> x = x'.
   Proof.
-    move => f X Y F HF HIF x x' y.
-    case => H0 H1.
-    inversion HIF as [g [G [HG [HGF HFG]]]].
-    move HCGF: (GraphOfFunction (CompoundFunction g f) X X) => GF.
-    move HCFG: (GraphOfFunction (CompoundFunction f g) Y Y) => FG.
-    have L1: G = F^-1.
-    rewrite HF HG.
-    apply mutally_included_to_eq.
-    split.
-    move => Z H.
-    inversion H as [Z0 [y0 [x0]]].
+    move => f X Y F Hf HF HIF x x' y.
+    case => HFx HFx'.
+    inversion HIF as [g [G [Hg [HG [HGF HFG]]]]].
+    have Lx: x ∈ X.
+    rewrite HF in HFx.
+    inversion HFx as [Z [x0 [y0]]].
+    inversion H.
     inversion H2.
-    rewrite H4.
-    split.
+    rewrite -H1 in H4.
+    apply ordered_pair_in_direct_product_iff_in_and in H4.
+    apply H4.
+    have Lx': x' ∈ X.
+    rewrite HF in HFx'.
+    inversion HFx' as [Z [x0 [y0]]].
+    inversion H.
+    inversion H2.
+    rewrite -H1 in H4.
+    apply ordered_pair_in_direct_product_iff_in_and in H4.
+    apply H4.
+    have Ly: y ∈ Y.
+    rewrite HF in HFx.
+    inversion HFx as [Z [x0 [y0]]].
+    inversion H.
+    inversion H2.
+    rewrite -H1 in H4.
+    apply ordered_pair_in_direct_product_iff_in_and in H4.
+    apply H4.
+    have L1: x = (g ◦ f) x.
+    apply (singleton_image_to_mapping_compound_function U f g X Y X F G x x).
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    rewrite HF in HFx.
+    inversion HFx as [Z0 [x0 [y0]]].
+    inversion H as [H1 [H2 H3]].
+    rewrite -H1 in H3.
+    apply ordered_pair_in_direct_product_iff_in_and in H3.
+    apply H3.
+    rewrite HGF.
+    apply image_singleton_domain_of_graph_of_identity_eq_singleton_domain.
+    trivial.
+    have L2: y = (f ◦ g) y.
+    apply (singleton_image_to_mapping_compound_function U g f Y X Y G F y y).
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    rewrite HFG.
+    apply image_singleton_domain_of_graph_of_identity_eq_singleton_domain.
+    trivial.
+    have L3: x' = (g ◦ f) x'.
+    apply (singleton_image_to_mapping_compound_function U f g X Y X F G x' x').
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    rewrite HF in HFx'.
+    inversion HFx' as [Z0 [x0 [y0]]].
+    inversion H as [H1 [H2 H3]].
+    rewrite -H1 in H3.
+    apply ordered_pair_in_direct_product_iff_in_and in H3.
+    apply H3.
+    rewrite HGF.
+    apply image_singleton_domain_of_graph_of_identity_eq_singleton_domain.
+    trivial.
+    have L4: y = f x.
+    rewrite HF in HFx.
+    inversion HFx as [Z0 [x0 [y0]]].
+    inversion H.
+    inversion H2.
+    apply ordered_pair_to_and in H1.
+    inversion H1.
+    rewrite -H5 -H6 in H3.
+    trivial.
+    have L5: y = f x'.
+    rewrite HF in HFx'.
+    inversion HFx' as [Z0 [x0 [y0]]].
+    inversion H.
+    inversion H2.
+    apply ordered_pair_to_and in H1.
+    inversion H1.
+    rewrite -H5 -H6 in H3.
+    trivial.
+    unfold CompoundFunction in L1.
+    unfold CompoundFunction in L3.
+    rewrite -L4 in L1.
+    rewrite -L5 in L3.
+    rewrite L1 L3.
+    reflexivity.
+  Qed.
 
-    rewrite -(compound_graph_of_function_eq_graph_of_compound_function U f g X Y X F G (GraphOfIdentity X)) in HGF.
-    rewrite (compound_graph_of_function_eq_graph_of_compound_function U f g X Y X F G (GraphOfIdentity X)) in HGF.
-    
 End InverseMapping.

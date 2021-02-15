@@ -29,13 +29,12 @@ Axiom AxiomOfFuncionalExtensionality: forall (U:Type) (f g :U -> U),
 
 Section Mapping.
   Variable U:Type.
-  Variable f g h: U -> U.
 
   Theorem function_determine_domain:
-    forall (A B:Collection U) (G:TypeOfDirectProduct U),
+    forall {f:U -> U} (A B:Collection U) (G:TypeOfDirectProduct U),
       G = GraphOfFunction f A B -> 𝕯( G ) ⊂ A.
   Proof.
-    move => A B G HG.
+    move => f A B G HG.
     move: (relation_determine_domain U (fun (x y:U) => y = f x) A B G).
     apply.
     rewrite HG.
@@ -43,10 +42,10 @@ Section Mapping.
   Qed.
 
   Theorem function_determine_range:
-    forall (A B:Collection U) (G:TypeOfDirectProduct U),
+    forall {f:U -> U} (A B:Collection U) (G:TypeOfDirectProduct U),
       G = GraphOfFunction f A B -> 𝕽( G ) ⊂ B.
   Proof.
-    move => A B G HG.
+    move => f A B G HG.
     move: (relation_determine_range U (fun (x y:U) => y = f x) A B G).
     apply.
     rewrite HG.
@@ -54,7 +53,7 @@ Section Mapping.
   Qed.
 
   Theorem direct_product_included_graph_of_function:
-    forall (A B:Collection U) (G:TypeOfDirectProduct U),
+    forall (f:U -> U) (A B:Collection U) (G:TypeOfDirectProduct U),
       G = GraphOfFunction f A B -> G ⊂ A × B.
   Proof.
     move => A B G.
@@ -62,11 +61,11 @@ Section Mapping.
   Qed.
 
   Lemma rewrite_function_range:
-    forall (A B:Collection U),
+    forall (f:U -> U) (A B:Collection U),
       (forall x:U, exists y:U, y = f x /\ <|x, y|> ∈ A × B) ->
       (forall x:U, exists y:U, x ∈ A /\ y = f x /\ y ∈ B).
   Proof.
-    move => A B H x.
+    move => f A B H x.
     move: (H x) => Hx.
     inversion Hx as [y [Hf HAB]].
     exists y.
@@ -76,14 +75,14 @@ Section Mapping.
   Qed.
 
   Theorem function_satisfies_graph_of_mapping:
-    forall (A B:Collection U) (G:TypeOfDirectProduct U),
+    forall (f:U -> U) (A B:Collection U) (G:TypeOfDirectProduct U),
       (forall x:U, exists y:U, y = f x /\ <|x, y|> ∈ A × B) ->
       G = GraphOfFunction f A B ->
       GraphOfMapping G A B.
   Proof.
-    move => A B G HF HG.
+    move => f A B G HF HG.
     split.
-    +apply direct_product_included_graph_of_function. by [].
+    +apply (direct_product_included_graph_of_function f). by [].
     +move => x HA.
      move: (HF x) => HFx.
      inversion HFx as [y []].
@@ -106,23 +105,23 @@ Section Mapping.
   Qed.
 
   Theorem image_of_function_of_domain_is_empty_is_empty:
-    forall (A B:Collection U) (G:TypeOfDirectProduct U),
+    forall (f:U -> U) (A B:Collection U) (G:TypeOfDirectProduct U),
       G = GraphOfFunction f A B -> 𝕴𝖒( G , `Ø` ) = `Ø`.
   Proof.
-    move => A B G HG.
+    move => f A B G HG.
     apply (image_of_domain_is_empty_is_empty U (fun x y:U => y = f x) A B).
     rewrite HG.
     reflexivity.
   Qed.
 
   Theorem condition_of_image_of_function_is_not_empty:
-    forall (A B C:Collection U) (G:TypeOfDirectProduct U),
+    forall (f:U -> U) (A B C:Collection U) (G:TypeOfDirectProduct U),
       MappingFunction f A B ->
       C <> `Ø` -> C ⊂ A ->
       G = GraphOfFunction f A B ->
       exists (y:U), y ∈ 𝕴𝖒( G , C ).
   Proof.
-    move => A B C G HF HNEC HCA HG.
+    move => f A B C G HF HNEC HCA HG.
     apply: (condition_of_image_of_binary_relation_is_not_empty U (fun x y:U => y = f x) A B).
     apply HF.
     apply HNEC.
@@ -131,25 +130,25 @@ Section Mapping.
   Qed.
 
   Theorem image_of_mapping_of_singleton_domain_iff_orderpair_in_graph:
-    forall (f':U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
-      F = GraphOfFunction f' X Y ->
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
+      F = GraphOfFunction f X Y ->
       y ∈ (𝕴𝖒( F , {| x |} )) <-> <|x,y|> ∈ F.
   Proof.
-    move => f' X Y F x y HF.
-    apply: (image_of_binary_relation_of_singleton_domain_iff_orderpair_in_graph U (fun x y => y = f' x) X Y).
+    move => f X Y F x y HF.
+    apply: (image_of_binary_relation_of_singleton_domain_iff_orderpair_in_graph U (fun x y => y = f x) X Y).
     trivial.
   Qed.
 
   Theorem mapping_function_to_singleton_image:
-    forall (f':U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
-      MappingFunction f' X Y ->
-      F = GraphOfFunction f' X Y ->
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
       x ∈ X ->
-      y = f' x ->
+      y = f x ->
       {|y|} = 𝕴𝖒( F , {|x|} ).
   Proof.
-    move => f' X Y F x y Hf HF HxX Hyfx.
-    have L1: exists y:U, y = f' x /\ y ∈ Y.
+    move => f X Y F x y Hf HF HxX Hyfx.
+    have L1: exists y:U, y = f x /\ y ∈ Y.
     apply Hf.
     trivial.
     apply mutally_included_to_eq.
@@ -198,15 +197,15 @@ Section Mapping.
   Qed.
 
   Theorem singleton_image_to_mapping_function:
-    forall (f':U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
-      MappingFunction f' X Y ->
-      F = GraphOfFunction f' X Y ->
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
       x ∈ X ->
       {|y|} = 𝕴𝖒( F , {|x|} ) ->
-      y = f' x.
+      y = f x.
   Proof.
-    move => f' X Y F x y Hf HF HxX H.
-    have L1: exists y:U, y = f' x /\ y ∈ Y.
+    move => f X Y F x y Hf HF HxX H.
+    have L1: exists y:U, y = f x /\ y ∈ Y.
     apply Hf.
     trivial.
     apply mutally_included_iff_eq in H.
@@ -235,24 +234,24 @@ Section Mapping.
   Qed.
 
   Theorem mapping_function_iff_singleton_image:
-    forall (f':U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
-      MappingFunction f' X Y ->
-      F = GraphOfFunction f' X Y ->
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
       x ∈ X ->
-      y = f' x <->
+      y = f x <->
       {|y|} = 𝕴𝖒( F , {|x|} ).
   Proof.
-    move => f' X Y F x y Hf HF HxX.
+    move => f X Y F x y Hf HF HxX.
     rewrite /iff; split;
-      [apply: (mapping_function_to_singleton_image f' X Y)|
-       apply: (singleton_image_to_mapping_function f' X Y)];
+      [apply: (mapping_function_to_singleton_image f X Y)|
+       apply: (singleton_image_to_mapping_function f X Y)];
       trivial;
       trivial;
       assumption.
   Qed.
 
   Theorem singleton_domain_image_eq_to_function_eq:
-    forall (X Y:Collection U) (F G:TypeOfDirectProduct U) (x:U),
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U) (x:U),
       MappingFunction f X Y ->
       MappingFunction g X Y ->
       F = GraphOfFunction f X Y ->
@@ -261,7 +260,7 @@ Section Mapping.
       𝕴𝖒( F , {|x|} ) = 𝕴𝖒( G , {|x|} ) ->
       f x = g x.
   Proof.
-    move => X Y F G x Hf Hg HF HG HxX HI.
+    move => f g X Y F G x Hf Hg HF HG HxX HI.
     have L1: exists y:U, y = f x /\ y ∈ Y.
     apply Hf.
     trivial.
@@ -287,7 +286,7 @@ Section Mapping.
   Qed.
 
   Theorem function_eq_to_singleton_domain_image_eq:
-    forall (X Y:Collection U) (F G:TypeOfDirectProduct U) (x:U),
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U) (x:U),
       MappingFunction f X Y ->
       MappingFunction g X Y ->
       F = GraphOfFunction f X Y ->
@@ -296,7 +295,7 @@ Section Mapping.
       f x = g x ->
       𝕴𝖒( F , {|x|} ) = 𝕴𝖒( G , {|x|} ).
   Proof.
-    move => X Y F G x Hf Hg HF HG HxX Heq.
+    move => f g X Y F G x Hf Hg HF HG HxX Heq.
     apply mutally_included_to_eq.
     split => y H;
                inversion H as [y0 [x0]];
@@ -333,7 +332,7 @@ Section Mapping.
   Qed.
 
   Theorem singleton_domain_image_eq_iff_function_eq:
-    forall (X Y:Collection U) (F G:TypeOfDirectProduct U) (x:U),
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U) (x:U),
       MappingFunction f X Y ->
       MappingFunction g X Y ->
       F = GraphOfFunction f X Y ->
@@ -342,10 +341,10 @@ Section Mapping.
       𝕴𝖒( F , {|x|} ) = 𝕴𝖒( G , {|x|} ) <->
       f x = g x.
   Proof.
-    move => X Y F G x Hf Hg HF HG HxX.
+    move => f g X Y F G x Hf Hg HF HG HxX.
     rewrite /iff.
-    split;[apply (singleton_domain_image_eq_to_function_eq X Y)|
-           apply (function_eq_to_singleton_domain_image_eq X Y)];
+    split;[apply (singleton_domain_image_eq_to_function_eq f g X Y)|
+           apply (function_eq_to_singleton_domain_image_eq f g X Y)];
     trivial;
     trivial;
     trivial;
@@ -353,15 +352,15 @@ Section Mapping.
   Qed.
 
   Theorem graph_of_function_eq_to_function_eq:
-    forall (X Y:Collection U) (F G:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U),
       MappingFunction f X Y ->
       MappingFunction g X Y ->
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g X Y ->
       F = G -> (forall x:U, x ∈ X -> f x = g x).
   Proof.
-    move => X Y F G Hf Hg HF HG Heq x HxX.
-    apply (singleton_domain_image_eq_to_function_eq X Y F G).
+    move => f g X Y F G Hf Hg HF HG Heq x HxX.
+    apply (singleton_domain_image_eq_to_function_eq f g X Y F G).
     trivial.
     trivial.
     trivial.
@@ -372,7 +371,7 @@ Section Mapping.
   Qed.
 
   Theorem function_eq_to_graph_of_function_eq:
-    forall (X Y:Collection U) (F G:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U),
       MappingFunction f X Y ->
       MappingFunction g X Y ->
       F = GraphOfFunction f X Y ->
@@ -380,7 +379,7 @@ Section Mapping.
       (forall x:U, x ∈ X -> f x = g x) ->
       F = G.
   Proof.
-    move => X Y F G Hf Hg HF HG Heq.
+    move => f g X Y F G Hf Hg HF HG Heq.
     rewrite HF HG.
     apply mutally_included_to_eq.
     split => Z' H; inversion H as [Z0' [x0 [y0]]];
@@ -397,29 +396,29 @@ Section Mapping.
   Qed.
 
   Theorem graph_of_function_eq_iff_function_eq:
-    forall (X Y:Collection U) (F G:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U),
       MappingFunction f X Y ->
       MappingFunction g X Y ->
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g X Y ->
       F = G <-> (forall x:U, x ∈ X -> f x = g x).
   Proof.
-    move => X Y F G Hf Hg HF HG.
+    move => f g X Y F G Hf Hg HF HG.
     rewrite /iff.
-    split;[apply (graph_of_function_eq_to_function_eq X Y F G)|
-           apply (function_eq_to_graph_of_function_eq X Y F G)];
+    split;[apply (graph_of_function_eq_to_function_eq f g X Y F G)|
+           apply (function_eq_to_graph_of_function_eq f g X Y F G)];
     trivial.
   Qed.
 
   Theorem singleton_image_to_ordered_pair_in_graph:
-    forall (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
       MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
       x ∈ X ->
       {| y |} = 𝕴𝖒( F , {| x |} ) ->
       <|x,y|> ∈ F.
   Proof.
-    move => X Y F x y Hf HF HxX HI.
+    move => f X Y F x y Hf HF HxX HI.
     have L1: exists y:U, y = f x /\ y ∈ Y.
     apply Hf.
     trivial.
@@ -442,14 +441,14 @@ Section Mapping.
   Qed.
 
   Theorem ordered_pair_in_graph_to_singleton_image:
-    forall (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
       MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
       x ∈ X ->
       <|x,y|> ∈ F ->
       {| y |} = 𝕴𝖒( F , {| x |} ).
   Proof.
-    move => X Y F x y Hf HF HxX HoF.
+    move => f X Y F x y Hf HF HxX HoF.
     have L1: exists y:U, y = f x /\ y ∈ Y.
     apply Hf.
     trivial.
@@ -469,39 +468,62 @@ Section Mapping.
   Qed.
 
   Theorem singleton_image_iff_ordered_pair_in_graph:
-    forall (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
       MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
       x ∈ X ->
       {| y |} = 𝕴𝖒( F , {| x |} ) <->
       <|x, y|> ∈ F.
   Proof.
-    move => X Y F x y Hf HF HxX.
+    move => f X Y F x y Hf HF HxX.
     rewrite /iff; split;
-      [apply (singleton_image_to_ordered_pair_in_graph X Y F)|
-       apply (ordered_pair_in_graph_to_singleton_image X Y F)];
+      [apply (singleton_image_to_ordered_pair_in_graph f X Y F)|
+       apply (ordered_pair_in_graph_to_singleton_image f X Y F)];
       trivial;
       trivial;
       assumption.
   Qed.
 
+  Theorem value_of_function_is_unique:
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y y':U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      x ∈ X ->
+      {|y|} = 𝕴𝖒( F , {|x|} ) ->
+      {|y'|} = 𝕴𝖒( F , {|x|} ) ->
+      y = y'.
+  Proof.
+    move => f X Y F x y y' Hf HF HxX Hy Hy'.
+    apply (singleton_image_to_mapping_function f X Y) in Hy.
+    apply (singleton_image_to_mapping_function f X Y) in Hy'.
+    rewrite Hy Hy'.
+    reflexivity.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    assumption.
+  Qed.
+
   Theorem cup_domain_is_cup_image_in_function:
-    forall (A B C D:Collection U) (G:TypeOfDirectProduct U),
+    forall (f:U -> U) (A B C D:Collection U) (G:TypeOfDirectProduct U),
       G = GraphOfFunction f A B ->
       𝕴𝖒( G , C ∪ D ) = 𝕴𝖒( G , C ) ∪ 𝕴𝖒( G , D ).
   Proof.
-    move => A B C D G HG.
+    move => f A B C D G HG.
     apply (cup_domain_is_cup_image U (fun x y:U => y = f x) A B).
     apply HG.
   Qed.
 
   Theorem image_of_correspondence_function_include_chain_image:
-    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
-      F = GraphOfFunction f X Y -> G = GraphOfFunction g Y Z ->
+    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
       GF = GraphOfCompoundCorrespondence G F ->
       𝕴𝖒( G ,  𝕴𝖒( F, X ) ) ⊂ 𝕴𝖒( GF, X ).
   Proof.
-    move => X Y Z F G GF HF HG HGF z.
+    move => f g X Y Z F G GF HF HG HGF z.
     apply: (image_of_correspondence_include_chain_image
               U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF).
     trivial.
@@ -510,12 +532,13 @@ Section Mapping.
   Qed.
 
   Theorem chain_image_include_image_of_correspondence_function:
-    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
-      F = GraphOfFunction f X Y -> G = GraphOfFunction g Y Z ->
+    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
       GF = GraphOfCompoundCorrespondence G F ->
       𝕴𝖒( GF, X ) ⊂ 𝕴𝖒( G, 𝕴𝖒( F , X )).
   Proof.
-    move => X Y Z F G GF HF HG HGF z.
+    move => f g X Y Z F G GF HF HG HGF z.
     apply: (chain_image_include_image_of_correspondence
               U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF).
     trivial.
@@ -524,12 +547,13 @@ Section Mapping.
   Qed.
 
   Theorem chain_image_is_image_of_correspondence_function:
-    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
-      F = GraphOfFunction f X Y -> G = GraphOfFunction g Y Z ->
+    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
       GF = GraphOfCompoundCorrespondence G F ->
       𝕴𝖒( G, 𝕴𝖒( F , X )) = 𝕴𝖒( GF, X ).
   Proof.
-    move => X Y Z F G GF HF HG HGF.
+    move => f g X Y Z F G GF HF HG HGF.
     apply (chain_image_is_image_of_correspondence U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF).
     trivial.
     trivial.
@@ -537,14 +561,14 @@ Section Mapping.
   Qed.
 
   Theorem compound_graph_of_function_include_graph_of_compound_function:
-    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
       MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
       GF = GraphOfFunction (CompoundFunction g f) X Z ->
       GF ⊂ G ⊙ F.
   Proof.
-    move => X Y Z F G GF Hf HF HG HGF Z' H.
+    move => f g X Y Z F G GF Hf HF HG HGF Z' H.
     rewrite HGF in H.
     inversion H as [Z0'].
     inversion H0 as [x [z]].
@@ -576,13 +600,13 @@ Section Mapping.
   Qed.
 
   Theorem graph_of_compound_function_include_compound_graph_of_function:
-    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
       GF = GraphOfFunction (CompoundFunction g f) X Z ->
       G ⊙ F ⊂ GF.
   Proof.
-    move => X Y Z F G GF HF HG HGF Z' H.
+    move => f g X Y Z F G GF HF HG HGF Z' H.
     inversion H as [Z0'].
     inversion H0 as [x [z]].
     inversion H2.
@@ -621,22 +645,22 @@ Section Mapping.
   Qed.
 
   Theorem compound_graph_of_function_eq_graph_of_compound_function:
-    forall (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
       MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
       GF = GraphOfFunction (CompoundFunction g f) X Z ->
       GF = G ⊙ F.
   Proof.
-    move => X Y Z F G GF Hf HF HG HGF.
+    move => f g X Y Z F G GF Hf HF HG HGF.
     apply mutally_included_iff_eq.
-    split;[apply (compound_graph_of_function_include_graph_of_compound_function X Y Z F G GF)|
-           apply (graph_of_compound_function_include_compound_graph_of_function X Y Z F G GF)];
+    split;[apply (compound_graph_of_function_include_graph_of_compound_function f g X Y Z F G GF)|
+           apply (graph_of_compound_function_include_compound_graph_of_function f g X Y Z F G GF)];
     trivial.
   Qed.
 
   Theorem compound_function_to_in_image_of_graph_function:
-    forall (x z:U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U) (x z:U),
       MappingFunction f X Y ->
       MappingFunction g Y Z ->
       F = GraphOfFunction f X Y ->
@@ -645,7 +669,7 @@ Section Mapping.
       x ∈ X ->
       z = (CompoundFunction g f) x -> z ∈ 𝕴𝖒(GF, {|x|}).
   Proof.
-    move => x z X Y Z F G GF Hf Hg HF HG HGF HxX H.
+    move => f g X Y Z F G GF x z Hf Hg HF HG HGF HxX H.
     split.
     exists x.
     split.
@@ -676,14 +700,14 @@ Section Mapping.
   Qed.
 
   Theorem in_image_of_graph_function_to_compound_function:
-    forall (x z:U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U) (x z:U),
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
       GF = GraphOfFunction (CompoundFunction g f) X Z ->
       x ∈ X ->
       z ∈ (𝕴𝖒(GF, {|x|})) -> z = (CompoundFunction g f) x.
   Proof.
-    move => x z X Y Z F G GF HF HG HGF HxX H.
+    move => f g X Y Z F G GF x z HF HG HGF HxX H.
     inversion H as [z0].
     inversion H0 as [x0].
     inversion H2.
@@ -701,20 +725,144 @@ Section Mapping.
   Qed.
 
   Theorem compound_function_iff_in_image_of_graph_function:
-    forall (x z:U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U) (x z:U),
       MappingFunction f X Y ->
       MappingFunction g Y Z ->
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
       GF = GraphOfFunction (CompoundFunction g f) X Z ->
       x ∈ X ->
-      z = (CompoundFunction g f) x <-> z ∈ 𝕴𝖒(GF, {|x|}).
+      z = (g ◦ f) x <-> z ∈ 𝕴𝖒(GF, {|x|}).
   Proof.
-    move => x z X Y Z F G GF Hf Hg HF HG HGF HxX.
+    move => f g X Y Z F G GF x z Hf Hg HF HG HGF HxX.
     rewrite /iff.
-    split;[apply (compound_function_to_in_image_of_graph_function x z X Y Z F G GF)|
-           apply (in_image_of_graph_function_to_compound_function x z X Y Z F G GF)];
+    split;[apply (compound_function_to_in_image_of_graph_function f g X Y Z F G GF)|
+           apply (in_image_of_graph_function_to_compound_function f g X Y Z F G GF)];
     trivial.
+  Qed.
+
+  Theorem mapping_compound_function_to_singleton_image:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U) (x z:U),
+      MappingFunction f X Y ->
+      MappingFunction g Y Z ->
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
+      x ∈ X ->
+      z = (g ◦ f) x ->
+      {|z|} = 𝕴𝖒( G ⊙ F , {|x|} ).
+  Proof.
+    move => f g X Y Z F G x z Hf Hg HF HG HxX Hgf.
+    rewrite -(compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G (GraphOfFunction (g ◦ f) X Z)).
+    apply (mapping_function_iff_singleton_image (g ◦ f) X Z (GraphOfFunction (g ◦ f) X Z) x z).
+    move => x' Hx'X.
+    apply Hf in Hx'X.
+    inversion Hx'X as [y'].
+    inversion H.
+    apply Hg in H1.
+    inversion H1 as [z'].
+    inversion H2.
+    exists z'.
+    split.
+    rewrite H0 in H3.
+    trivial.
+    trivial.
+    reflexivity.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    reflexivity.
+  Qed.
+
+  Theorem singleton_image_to_mapping_compound_function:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U) (x z:U),
+      MappingFunction f X Y ->
+      MappingFunction g Y Z ->
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
+      x ∈ X ->
+      {|z|} = 𝕴𝖒( G ⊙ F , {|x|} ) ->
+      z = (g ◦ f) x.
+  Proof.
+    move => f g X Y Z F G x z Hf Hg HF HG HxX HI.
+    apply (singleton_image_to_mapping_function (g ◦ f) X Z (GraphOfFunction (g ◦ f) X Z) x z).
+    move => x' Hx'X.
+    apply Hf in Hx'X.
+    inversion Hx'X as [y'].
+    inversion H.
+    apply Hg in H1.
+    inversion H1 as [z'].
+    inversion H2.
+    exists z'.
+    rewrite H0 in H3.
+    split.
+    trivial.
+    trivial.
+    reflexivity.
+    trivial.
+    rewrite (compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G (GraphOfFunction (g ◦ f) X Z)).
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    reflexivity.
+  Qed.
+
+  Theorem mapping_compound_function_iff_singleton_image:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U) (x z:U),
+      MappingFunction f X Y ->
+      MappingFunction g Y Z ->
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
+      x ∈ X ->
+      z = (g ◦ f) x <->
+      {|z|} = 𝕴𝖒( G ⊙ F , {|x|} ).
+  Proof.
+    move => f g X Y Z F G x z Hf Hg HF HG HxX.
+    rewrite /iff.
+    split;
+      [apply (mapping_compound_function_to_singleton_image f g X Y Z F G x z)|
+       apply (singleton_image_to_mapping_compound_function f g X Y Z F G x z)];
+    trivial.
+  Qed.
+
+  Theorem compound_function_value_exists_unique:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      MappingFunction g Y Z ->
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
+      forall x:U, x ∈ X ->
+                  exists z:U, {|z|} = 𝕴𝖒( G ⊙ F , {|x|} ) ->
+                              forall z':U, {|z'|} = 𝕴𝖒( G ⊙ F , {|x|} ) -> z = z'.
+  Proof.
+    move => f g X Y Z F G Hf Hg HF HG x HxX.
+    move Hfgz: (g (f x)) => z.
+    exists z.
+    move => H z' H0.
+    apply (mapping_compound_function_iff_singleton_image f g X Y Z F G x z') in H0.
+    rewrite H0 -Hfgz.
+    reflexivity.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+  Qed.
+
+  Theorem compound_function_value_unique:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
+      F = GraphOfFunction f X Y ->
+      G = GraphOfFunction g Y Z ->
+      forall x z z':U, x ∈ X ->
+                       {|z|} = 𝕴𝖒( G ⊙ F , {|x|} ) ->
+                       {|z'|} = 𝕴𝖒( G ⊙ F , {|x|} ) -> z = z'.
+  Proof.
+    move => f g X Y Z F G HF HG x z z' HxX HIz HIz'.
+    apply singleton_eq_iff_element_eq.
+    rewrite HIz HIz'.
+    reflexivity.
   Qed.
 
   Theorem image_singleton_domain_of_graph_of_identity_eq_singleton_domain:
