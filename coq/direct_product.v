@@ -52,6 +52,16 @@ Section DirectProduct.
     apply in_and_to_ordered_pair_in_direct_product.
   Qed.
 
+  Theorem ordered_pair_in_direct_product_trans:
+    forall (A B: Collection U) (a b:U), <|a,b|> ∈ A × B -> <|b,a|> ∈ B × A.
+  Proof.
+    move => A B a b H.
+    apply ordered_pair_in_direct_product_to_in_and in H.
+    inversion H.
+    apply in_and_to_ordered_pair_in_direct_product.
+    split;trivial.
+  Qed.
+  
   Theorem not_in_and_to_ordered_pair_not_in_direct_product:
     forall (A B: Collection U) (a b:U), a ∉ A /\ b ∉ B -> <|a,b|> ∉ A × B.
   Proof.

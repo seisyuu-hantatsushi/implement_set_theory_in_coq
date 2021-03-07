@@ -129,16 +129,6 @@ Section Mapping.
     trivial.
   Qed.
 
-  Theorem image_of_mapping_of_singleton_domain_iff_orderpair_in_graph:
-    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
-      F = GraphOfFunction f X Y ->
-      y ∈ (𝕴𝖒( F , {| x |} )) <-> <|x,y|> ∈ F.
-  Proof.
-    move => f X Y F x y HF.
-    apply: (image_of_binary_relation_of_singleton_domain_iff_orderpair_in_graph U (fun x y => y = f x) X Y).
-    trivial.
-  Qed.
-
   Theorem mapping_function_to_singleton_image:
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y:U),
       MappingFunction f X Y ->
@@ -484,16 +474,15 @@ Section Mapping.
       assumption.
   Qed.
 
-  Theorem value_of_function_is_unique:
+  Theorem singleton_image_is_unique:
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U) (x y y':U),
       MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
       x ∈ X ->
-      {|y|} = 𝕴𝖒( F , {|x|} ) ->
-      {|y'|} = 𝕴𝖒( F , {|x|} ) ->
+      {|y|} = 𝕴𝖒( F , {|x|} ) /\ {|y'|} = 𝕴𝖒( F , {|x|} ) ->
       y = y'.
   Proof.
-    move => f X Y F x y y' Hf HF HxX Hy Hy'.
+    move => f X Y F x y y' Hf HF HxX [Hy Hy'].
     apply (singleton_image_to_mapping_function f X Y) in Hy.
     apply (singleton_image_to_mapping_function f X Y) in Hy'.
     rewrite Hy Hy'.
@@ -927,6 +916,42 @@ Section Mapping.
     rewrite -H5 -H6 in H3.
     rewrite H3.
     reflexivity.
+  Qed.
+
+  Theorem same_element_pair_in_identity:
+    forall (X:Collection U) (x x':U),
+      x ∈ X /\ x = x' -> <|x,x'|> ∈ GraphOfIdentity X.
+  Proof.
+    move => X x x'.
+    case => HxX Heq.
+    rewrite -Heq.
+    apply ordered_pair_in_graph_of_identity.
+    assumption.
+  Qed.
+
+  Theorem ordered_pair_in_graph_iff_eq:
+    forall (X:Collection U) (x x':U),
+      x ∈ X /\ x = x' <-> <|x,x'|> ∈ GraphOfIdentity X.
+  Proof.
+    move => X x x'.
+    rewrite /iff.
+    split.
+    +case => HxX Heq.
+     rewrite -Heq.
+     apply ordered_pair_in_graph_of_identity.
+     assumption.
+    +move => H.
+     inversion H.
+     inversion H0 as [x0 [x'0]].
+     inversion H2.
+     inversion H4.
+     rewrite -H3 in H6.
+     apply ordered_pair_in_direct_product_iff_in_and in H6.
+     inversion H6.
+     apply ordered_pair_to_and in H3.
+     inversion H3.
+     rewrite -H9 -H10 in H5.
+     split;[trivial|apply eq_sym;assumption].
   Qed.
 
   Theorem compound_identity_function_r:

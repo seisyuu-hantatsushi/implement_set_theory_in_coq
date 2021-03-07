@@ -1,5 +1,11 @@
 
-all: mapping.vo
+all: mapping_morphism.vo
+
+mapping_morphism.vo: mapping_morphism.v inverse_mapping.vo
+	coqc $<
+
+inverse_mapping.vo: inverse_mapping.v mapping.vo
+	coqc $<
 
 mapping.vo: mapping.v binary_relation.vo direct_product.vo collect_operator.vo
 	coqc $<
