@@ -91,8 +91,42 @@ Section Mapping.
     trivial.
     apply ordered_pair_in_direct_product_iff_in_and.
     assumption.
-
   Qed.
+
+  Theorem compound_graph_is_injection_to_source_graph_is_injection:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      MappingFunction g Y Z ->
+      G = GraphOfFunction g Y Z ->
+      InjectionGraph (G ⊙ F) ->
+      InjectionGraph F.
+  Proof.
+    move => f g X Y Z F G Hf HF Hg HG HGFI x x' y [HF0 HF1].
+    unfold InjectionGraph in HGFI.
+    have L1: y ∈ Y.
+    rewrite HF in HF0.
+    inversion HF0 as [Z0 [x0 [y0 [HZ0 [Hyfx HXY]]]]].
+    rewrite HZ0 in H.
+    rewrite H in HXY.
+    apply ordered_pair_in_direct_product_iff_in_and in HXY.
+    apply HXY.
+    have L2: exists z : U, z = g y /\ z ∈ Z.
+    apply Hg in L1.
+    trivial.
+    inversion L2 as [z].
+    apply (HGFI x x' z).
+    split; split; [exists x|exists x']; exists z; split.
+    reflexivity.
+    exists y.
+    split;[trivial|
+           rewrite HG;split;exists y;exists z;split;[reflexivity|split;[apply H|apply ordered_pair_in_direct_product_iff_in_and;split;[trivial|apply H]]]].
+    reflexivity.
+    exists y.
+    split;[trivial|
+           rewrite HG;split;exists y;exists z;split;[reflexivity|split;[apply H|apply ordered_pair_in_direct_product_iff_in_and;split;[trivial|apply H]]]].
+  Qed.
+
   Theorem injection_graph_to_compound_self_inverse_graph_eq_identity_graph:
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
       MappingFunction f X Y ->
