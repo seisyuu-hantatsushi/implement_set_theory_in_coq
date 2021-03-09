@@ -127,6 +127,31 @@ Section Mapping.
            rewrite HG;split;exists y;exists z;split;[reflexivity|split;[apply H|apply ordered_pair_in_direct_product_iff_in_and;split;[trivial|apply H]]]].
   Qed.
 
+  Theorem compound_graph_is_surjection_to_destination_graph_is_surjection:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      SurjectionGraph F Y ->
+      MappingFunction g Y Z ->
+      G = GraphOfFunction g Y Z ->
+      SurjectionGraph (G ⊙ F) Z ->
+      SurjectionGraph G Z.
+  Proof.
+    move => f g X Y Z F G Hf HF HFS Hg HG HGS z HzZ.
+    apply HGS in HzZ.
+    inversion HzZ as [x].
+    inversion H.
+    inversion H0 as [x' [z']].
+    inversion H2.
+    inversion H4 as [y'].
+    inversion H5.
+    apply ordered_pair_to_and in H3.
+    inversion H3.
+    exists y'.
+    rewrite H9.
+    assumption.
+  Qed.
+
   Theorem injection_graph_to_compound_self_inverse_graph_eq_identity_graph:
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
       MappingFunction f X Y ->
