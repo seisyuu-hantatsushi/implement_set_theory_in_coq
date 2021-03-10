@@ -152,6 +152,133 @@ Section Mapping.
     assumption.
   Qed.
 
+  Theorem compound_graph_is_source_identity_graph_to_injection:
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      MappingFunction g Y X ->
+      G = GraphOfFunction g Y X ->
+      G ⊙ F = GraphOfIdentity X ->
+      InjectionGraph F.
+  Proof.
+    move => f g X Y F G Hf HF Hg HG H.
+    move => x x' y [HF0 HF1].
+    have Hgf: forall x:U, x ∈ X -> x = (g ◦ f) x.
+    move => x0 Hx0X.
+    apply (mapping_compound_function_iff_singleton_image U f g X Y X F G x0 x0).
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    rewrite H.
+    apply image_singleton_domain_of_graph_of_identity_eq_singleton_domain.
+    trivial.
+    have L1: forall x z z' : U,
+        x ∈ X -> {|z|} = 𝕴𝖒( G ⊙ F, {|x|}) -> {|z'|} = 𝕴𝖒( G ⊙ F, {|x|}) -> z = z'.
+    apply (compound_function_value_unique U f g X Y X F G).
+    trivial.
+    trivial.
+    move :(L1 x x x') => L2.
+    have L3: x ∈ X.
+    rewrite HF in HF0.
+    inversion HF0 as [Z0 [x0 [y0 []]]].
+    inversion H1.
+    rewrite -H0 in H4.
+    apply ordered_pair_in_direct_product_iff_in_and in H4.
+    apply H4.
+    apply L2.
+    trivial.
+    rewrite H.
+    apply image_singleton_domain_of_graph_of_identity_eq_singleton_domain.
+    trivial.
+    apply (singleton_image_of_compound_graph_iff_ordered_pair_in_compound_graph U f g X Y X F G x x').
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    split.
+    exists x.
+    exists x'.
+    split;[reflexivity|exists y].
+    split;[trivial|].
+    rewrite HG.
+    split.
+    exists y.
+    exists x'.
+    split.
+    reflexivity.
+    rewrite HF in HF1.
+    inversion HF1 as [Z1 [x1 [y1]]].
+    inversion H0 as [Heq1 [Hyfx1 Hxy1]].
+    apply ordered_pair_to_and in Heq1.
+    inversion Heq1 as [Heq1x Heq1y].
+    rewrite -Heq1x -Heq1y in Hyfx1.
+    rewrite -Heq1x in Hxy1.
+    rewrite -Heq1y in Hxy1.
+    split.
+    rewrite Hyfx1.
+    apply Hgf.
+    apply ordered_pair_in_direct_product_iff_in_and in Hxy1.
+    apply Hxy1.
+    apply ordered_pair_in_direct_product_trans.
+    assumption.
+  Qed.
+
+  Theorem compound_graph_is_source_identity_graph_to_surjection:
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      MappingFunction g Y X ->
+      G = GraphOfFunction g Y X ->
+      G ⊙ F = GraphOfIdentity X ->
+      SurjectionGraph G X.
+  Proof.
+    move => f g X Y F G Hf HF Hg HG H x HxX.
+    have Hgf: forall x:U, x ∈ X -> x = (g ◦ f) x.
+    move => x0 Hx0X.
+    apply (mapping_compound_function_iff_singleton_image U f g X Y X F G x0 x0).
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    rewrite H.
+    apply image_singleton_domain_of_graph_of_identity_eq_singleton_domain.
+    trivial.
+    have L1: exists y : U, y = f x /\ y ∈ Y.
+    apply Hf.
+    trivial.
+    inversion L1 as [y [Hyfx HyY]].
+    exists y.
+    rewrite HG.
+    split.
+    exists y.
+    exists x.
+    split;[reflexivity|split].
+    rewrite Hyfx.
+    apply Hgf.
+    trivial.
+    apply ordered_pair_in_direct_product_iff_in_and.
+    split;trivial.
+  Qed.
+
+  Theorem compound_graph_is_source_identity_graph_to_injection_and_surjection:
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      MappingFunction g Y X ->
+      G = GraphOfFunction g Y X ->
+      G ⊙ F = GraphOfIdentity X ->
+      InjectionGraph F /\ SurjectionGraph G X.
+  Proof.
+    move => f g X Y F G Hf HF Hg HG H.
+    split; [apply (compound_graph_is_source_identity_graph_to_injection f g X Y F G)|
+            apply (compound_graph_is_source_identity_graph_to_surjection f g X Y F G)];
+    trivial.
+  Qed.
+
   Theorem injection_graph_to_compound_self_inverse_graph_eq_identity_graph:
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
       MappingFunction f X Y ->

@@ -280,6 +280,6 @@ Section InverseMapping.
     rewrite L1 L3.
     reflexivity.
   Qed.
-  
+
 End InverseMapping.
 

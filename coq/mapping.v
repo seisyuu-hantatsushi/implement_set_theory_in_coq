@@ -550,15 +550,13 @@ Section Mapping.
   Qed.
 
   Theorem compound_graph_of_function_include_graph_of_compound_function:
-    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
       MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
-      GF = GraphOfFunction (CompoundFunction g f) X Z ->
-      GF ⊂ G ⊙ F.
+      GraphOfFunction (CompoundFunction g f) X Z ⊂ G ⊙ F.
   Proof.
-    move => f g X Y Z F G GF Hf HF HG HGF Z' H.
-    rewrite HGF in H.
+    move => f g X Y Z F G Hf HF HG Z' H.
     inversion H as [Z0'].
     inversion H0 as [x [z]].
     inversion H2.
@@ -589,20 +587,18 @@ Section Mapping.
   Qed.
 
   Theorem graph_of_compound_function_include_compound_graph_of_function:
-    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
-      GF = GraphOfFunction (CompoundFunction g f) X Z ->
-      G ⊙ F ⊂ GF.
+      G ⊙ F ⊂ GraphOfFunction (CompoundFunction g f) X Z.
   Proof.
-    move => f g X Y Z F G GF HF HG HGF Z' H.
+    move => f g X Y Z F G HF HG Z' H.
     inversion H as [Z0'].
     inversion H0 as [x [z]].
     inversion H2.
     inversion H4 as [y].
     inversion H5.
     rewrite H3.
-    rewrite HGF.
     split.
     exists x.
     exists z.
@@ -634,17 +630,16 @@ Section Mapping.
   Qed.
 
   Theorem compound_graph_of_function_eq_graph_of_compound_function:
-    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
       MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
-      GF = GraphOfFunction (CompoundFunction g f) X Z ->
-      GF = G ⊙ F.
+      GraphOfFunction (CompoundFunction g f) X Z = G ⊙ F.
   Proof.
-    move => f g X Y Z F G GF Hf HF HG HGF.
+    move => f g X Y Z F G Hf HF HG.
     apply mutally_included_iff_eq.
-    split;[apply (compound_graph_of_function_include_graph_of_compound_function f g X Y Z F G GF)|
-           apply (graph_of_compound_function_include_compound_graph_of_function f g X Y Z F G GF)];
+    split;[apply (compound_graph_of_function_include_graph_of_compound_function f g X Y Z F G)|
+           apply (graph_of_compound_function_include_compound_graph_of_function f g X Y Z F G)];
     trivial.
   Qed.
 
@@ -741,7 +736,7 @@ Section Mapping.
       {|z|} = 𝕴𝖒( G ⊙ F , {|x|} ).
   Proof.
     move => f g X Y Z F G x z Hf Hg HF HG HxX Hgf.
-    rewrite -(compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G (GraphOfFunction (g ◦ f) X Z)).
+    rewrite -(compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G).
     apply (mapping_function_iff_singleton_image (g ◦ f) X Z (GraphOfFunction (g ◦ f) X Z) x z).
     move => x' Hx'X.
     apply Hf in Hx'X.
@@ -761,7 +756,6 @@ Section Mapping.
     trivial.
     trivial.
     trivial.
-    reflexivity.
   Qed.
 
   Theorem singleton_image_to_mapping_compound_function:
@@ -790,12 +784,11 @@ Section Mapping.
     trivial.
     reflexivity.
     trivial.
-    rewrite (compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G (GraphOfFunction (g ◦ f) X Z)).
+    rewrite (compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G).
     trivial.
     trivial.
     trivial.
     trivial.
-    reflexivity.
   Qed.
 
   Theorem mapping_compound_function_iff_singleton_image:
@@ -854,6 +847,88 @@ Section Mapping.
     reflexivity.
   Qed.
 
+  Theorem singleton_image_of_compound_graph_to_ordered_pair_in_compound_graph:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U) (x z:U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      MappingFunction g Y Z ->
+      G = GraphOfFunction g Y Z ->
+      x ∈ X ->
+      {| z |} = 𝕴𝖒( G ⊙ F , {| x |} ) ->
+      <|x,z|> ∈ G ⊙ F.
+  Proof.
+    move => f g X Y Z F G x z Hf HF Hg HG HxX H.
+    apply (singleton_image_iff_ordered_pair_in_graph (g ◦ f) X Z (G ⊙ F) x z).
+    move => x' Hx'X.
+    apply Hf in Hx'X.
+    inversion Hx'X as [y [Hyfx' HyY]].
+    apply Hg in HyY.
+    inversion HyY as [z' [Hzgy Hz'Z]].
+    exists z'.
+    split.
+    unfold CompoundFunction.
+    rewrite -Hyfx'.
+    trivial.
+    trivial.
+    apply sym_eq.
+    rewrite (compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G).
+    reflexivity.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    assumption.
+  Qed.
+
+  Theorem ordered_pair_in_compound_graph_to_singleton_image_of_compound_graph:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U) (x z:U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      MappingFunction g Y Z ->
+      G = GraphOfFunction g Y Z ->
+      x ∈ X ->
+      <|x,z|> ∈ G ⊙ F ->
+          {| z |} = 𝕴𝖒( G ⊙ F , {| x |} ).
+  Proof.
+    move => f g X Y Z F G x z Hf HF Hg HG HxX H.
+    apply (singleton_image_iff_ordered_pair_in_graph (g ◦ f) X Z (G ⊙ F) x z).
+    move => x' Hx'X.
+    apply Hf in Hx'X.
+    inversion Hx'X as [y [Hyfx' HyY]].
+    apply Hg in HyY.
+    inversion HyY as [z' [Hzgy Hz'Z]].
+    exists z'.
+    split.
+    unfold CompoundFunction.
+    rewrite -Hyfx'.
+    trivial.
+    trivial.
+    rewrite (compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G).
+    reflexivity.
+    trivial.
+    trivial.
+    trivial.
+    trivial.
+    assumption.
+  Qed.
+
+  Theorem singleton_image_of_compound_graph_iff_ordered_pair_in_compound_graph:
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U) (x z:U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      MappingFunction g Y Z ->
+      G = GraphOfFunction g Y Z ->
+      x ∈ X ->
+      {| z |} = 𝕴𝖒( G ⊙ F , {| x |} ) <->
+      <|x,z|> ∈ G ⊙ F.
+  Proof.
+    move => f g X Y Z F G x z Hf HF Hg HG HxX.
+    rewrite /iff.
+    split; [apply (singleton_image_of_compound_graph_to_ordered_pair_in_compound_graph f g X Y Z)|
+            apply (ordered_pair_in_compound_graph_to_singleton_image_of_compound_graph f g X Y Z)];
+    trivial.
+  Qed.
+
   Theorem image_singleton_domain_of_graph_of_identity_eq_singleton_domain:
     forall (X:Collection U) (x:U),
       x ∈ X -> {|x|} = 𝕴𝖒( GraphOfIdentity X , {|x|} ).
@@ -888,7 +963,7 @@ Section Mapping.
     rewrite H13.
     assumption.
   Qed.
-
+  
   Theorem ordered_pair_in_graph_of_identity:
     forall (X:Collection U) (x:U),
       x ∈ X -> <|x,x|> ∈ GraphOfIdentity X.
