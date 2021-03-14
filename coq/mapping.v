@@ -263,16 +263,9 @@ Section Mapping.
     inversion H0.
     apply eq_sym.
     rewrite -H3.
-    apply: (singleton_image_to_mapping_function f X Y F x y1).
-    trivial.
-    trivial.
-    trivial.
+    apply: (singleton_image_to_mapping_function f X Y F x y1);trivial.
     rewrite HI.
-    apply: (mapping_function_to_singleton_image g X Y G x y1).
-    trivial.
-    trivial.
-    trivial.
-    assumption.
+    apply: (mapping_function_to_singleton_image g X Y G x y1);trivial.
   Qed.
 
   Theorem function_eq_to_singleton_domain_image_eq:
@@ -350,12 +343,7 @@ Section Mapping.
       F = G -> (forall x:U, x ∈ X -> f x = g x).
   Proof.
     move => f g X Y F G Hf Hg HF HG Heq x HxX.
-    apply (singleton_domain_image_eq_to_function_eq f g X Y F G).
-    trivial.
-    trivial.
-    trivial.
-    trivial.
-    trivial.
+    apply (singleton_domain_image_eq_to_function_eq f g X Y F G);trivial.
     rewrite Heq.
     reflexivity.
   Qed.
@@ -427,7 +415,7 @@ Section Mapping.
                               trivial]].
     trivial.
     trivial.
-    trivial.
+    assumption.
   Qed.
 
   Theorem ordered_pair_in_graph_to_singleton_image:
@@ -443,10 +431,7 @@ Section Mapping.
     apply Hf.
     trivial.
     inversion L1 as [y0 [Hy0fx HY]].
-    apply (mapping_function_to_singleton_image f X Y F).
-    trivial.
-    trivial.
-    trivial.
+    apply (mapping_function_to_singleton_image f X Y F); trivial.
     rewrite HF in HoF.
     inversion HoF.
     inversion H as [x1 [y1]].
@@ -483,16 +468,10 @@ Section Mapping.
       y = y'.
   Proof.
     move => f X Y F x y y' Hf HF HxX [Hy Hy'].
-    apply (singleton_image_to_mapping_function f X Y) in Hy.
-    apply (singleton_image_to_mapping_function f X Y) in Hy'.
+    apply (singleton_image_to_mapping_function f X Y) in Hy;trivial.
+    apply (singleton_image_to_mapping_function f X Y) in Hy';trivial.
     rewrite Hy Hy'.
     reflexivity.
-    trivial.
-    trivial.
-    trivial.
-    trivial.
-    trivial.
-    assumption.
   Qed.
 
   Theorem cup_domain_is_cup_image_in_function:
@@ -514,10 +493,7 @@ Section Mapping.
   Proof.
     move => f g X Y Z F G GF HF HG HGF z.
     apply: (image_of_correspondence_include_chain_image
-              U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF).
-    trivial.
-    trivial.
-    trivial.
+              U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF);trivial.
   Qed.
 
   Theorem chain_image_include_image_of_correspondence_function:
@@ -529,10 +505,7 @@ Section Mapping.
   Proof.
     move => f g X Y Z F G GF HF HG HGF z.
     apply: (chain_image_include_image_of_correspondence
-              U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF).
-    trivial.
-    trivial.
-    trivial.
+              U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF); trivial.
   Qed.
 
   Theorem chain_image_is_image_of_correspondence_function:
@@ -543,10 +516,7 @@ Section Mapping.
       𝕴𝖒( G, 𝕴𝖒( F , X )) = 𝕴𝖒( GF, X ).
   Proof.
     move => f g X Y Z F G GF HF HG HGF.
-    apply (chain_image_is_image_of_correspondence U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF).
-    trivial.
-    trivial.
-    trivial.
+    apply (chain_image_is_image_of_correspondence U (fun x y => y = f x) (fun y z => z = g y) X Y Z F G GF);trivial.
   Qed.
 
   Theorem compound_graph_of_function_include_graph_of_compound_function:
@@ -779,16 +749,10 @@ Section Mapping.
     inversion H2.
     exists z'.
     rewrite H0 in H3.
-    split.
-    trivial.
-    trivial.
+    split; trivial.
     reflexivity.
     trivial.
-    rewrite (compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G).
-    trivial.
-    trivial.
-    trivial.
-    trivial.
+    rewrite (compound_graph_of_function_eq_graph_of_compound_function f g X Y Z F G); trivial.
   Qed.
 
   Theorem mapping_compound_function_iff_singleton_image:
@@ -823,14 +787,9 @@ Section Mapping.
     move Hfgz: (g (f x)) => z.
     exists z.
     move => H z' H0.
-    apply (mapping_compound_function_iff_singleton_image f g X Y Z F G x z') in H0.
+    apply (mapping_compound_function_iff_singleton_image f g X Y Z F G x z') in H0; trivial.
     rewrite H0 -Hfgz.
     reflexivity.
-    trivial.
-    trivial.
-    trivial.
-    trivial.
-    trivial.
   Qed.
 
   Theorem compound_function_value_unique:
@@ -963,7 +922,7 @@ Section Mapping.
     rewrite H13.
     assumption.
   Qed.
-  
+
   Theorem ordered_pair_in_graph_of_identity:
     forall (X:Collection U) (x:U),
       x ∈ X -> <|x,x|> ∈ GraphOfIdentity X.
@@ -1103,10 +1062,7 @@ Section Mapping.
                                                      (fun x y => y = f' x)
                                                      (fun x y => y = g' x)
                                                      (fun x y => y = h' x)
-                                                     X Y Z W F G H).
-    trivial.
-    trivial.
-    trivial.
+                                                     X Y Z W F G H);trivial.
   Qed.
 
 End Mapping.
