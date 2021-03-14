@@ -279,6 +279,23 @@ Section Mapping.
     trivial.
   Qed.
 
+  Theorem mutally_compound_function_is_idenitify_to_bijection_function:
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      MappingFunction g Y X ->
+      G = GraphOfFunction g Y X ->
+      G ⊙ F = GraphOfIdentity X /\ F ⊙ G = GraphOfIdentity Y ->
+      BijectionGraph F Y /\ BijectionGraph G X.
+  Proof.
+    move => f g X Y F G Hf HF Hg HG [HGFX HFGY].
+    split.
+    split;[apply (compound_graph_is_source_identity_graph_to_injection f g X Y F G)|
+           apply (compound_graph_is_source_identity_graph_to_surjection g f Y X G F)];trivial.
+    split;[apply (compound_graph_is_source_identity_graph_to_injection g f Y X G F)|
+           apply (compound_graph_is_source_identity_graph_to_surjection f g X Y F G)];trivial.
+  Qed.
+
   Theorem injection_graph_to_compound_self_inverse_graph_eq_identity_graph:
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
       MappingFunction f X Y ->
@@ -354,6 +371,7 @@ Section Mapping.
                    trivial]].
   Qed.
 
+
   Theorem injection_graph_to_image_of_compound_self_inverse_graph_of_singleton_domain_eq_singleton_domain:
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
       MappingFunction f X Y ->
@@ -361,7 +379,7 @@ Section Mapping.
       InjectionGraph F ->
       forall (x:U), x ∈ X -> {| x |} = 𝕴𝖒( (F ^-1) ⊙ F, {| x |} ).
   Proof.
-    move => f X Y F Hf HF x HxX HIF.
+    move => f X Y F Hf HF HIF x HxX.
     Check injection_graph_to_compound_self_inverse_graph_eq_identity_graph.
     rewrite (injection_graph_to_compound_self_inverse_graph_eq_identity_graph f X Y F).
     apply image_singleton_domain_of_graph_of_identity_eq_singleton_domain.
