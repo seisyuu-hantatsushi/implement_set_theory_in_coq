@@ -416,6 +416,19 @@ Section Mapping.
            apply (compound_graph_is_mutally_identity_graph_to_invertible_function_right f g X Y)];trivial.
   Qed.
 
+  Theorem invertible_mapping_to_exists_invertible_graph:
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      InvertibleMapping f X Y F ->
+      exists G:TypeOfDirectProduct U, G = F ^-1 /\ F = G ^-1.
+  Proof.
+    move => f X Y F HF Hf HGI.
+    inversion HGI as [g [G [Hg [HG HId]]]].
+    exists G.
+    apply (compound_graph_is_mutally_identity_graph_to_invertible_function f g X Y);trivial.
+  Qed.
+
   Theorem injection_graph_to_compound_self_inverse_graph_eq_identity_graph:
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
       MappingFunction f X Y ->
@@ -491,6 +504,73 @@ Section Mapping.
                    trivial]].
   Qed.
 
+  Theorem surjection_graph_to_compound_self_inverse_graph_eq_identity_graph:
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      SurjectionGraph F Y ->
+      F ⊙ (F ^-1) = GraphOfIdentity Y.
+  Proof.
+    move => f X Y F Hf HF HFS.
+    apply mutally_included_to_eq.
+    split => Z H.
+    inversion H as [Z0 [y [y' [HZ0 [x [HF0 HF1]]]]]].
+    rewrite HZ0 in H0.
+    rewrite -H0.
+    inversion HF0.
+    apply ordered_pair_swap in H1.
+    rewrite H1 in H2.
+    rewrite HF in HF1.
+    rewrite HF in H2.
+    inversion HF1 as [Z1 [x1 [y1 [Heq1 [Hyeqfx1]]]]].
+    rewrite Heq1 in H4.
+    rewrite H4 in H3.
+    apply ordered_pair_to_and in H4.
+    inversion H4.
+    rewrite H5 H6 in Hyeqfx1.
+    inversion H2 as [Z2 [x2 [y2 [Heq2 [Hyeqfx2]]]]].
+    rewrite Heq2 in H8.
+    rewrite H8 in H7.
+    apply ordered_pair_to_and in H8.
+    inversion H8.
+    rewrite H9 H10 in Hyeqfx2.
+    rewrite Hyeqfx1 Hyeqfx2.
+    apply ordered_pair_in_graph_of_identity.
+    rewrite -Hyeqfx1.
+    apply ordered_pair_in_direct_product_to_in_and in H3.
+    apply H3.
+    inversion H as [Z0 [y [y' [HZ0 [HId]]]]].
+    rewrite HZ0 in H1.
+    rewrite -H1.
+    split.
+    exists y.
+    exists y'.
+    split;[reflexivity|].
+    apply ordered_pair_in_direct_product_to_in_and in H0.
+    inversion H0.
+    apply HFS in H2.
+    apply HFS in H3.
+    inversion H2 as [x].
+    inversion H3 as [x'].
+    exists x.
+    split.
+    split.
+    trivial.
+    rewrite HId.
+    trivial.
+  Qed.
+
+  Theorem bijection_graph_to_compound_self_inverse_graph_eq_identity_graph:
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      BijectionGraph F Y ->
+      (F ^-1) ⊙ F = GraphOfIdentity X /\ F ⊙ (F ^-1) = GraphOfIdentity Y.
+  Proof.
+    move => f X Y F Hf HF [HIF HSF].
+    split;[apply (injection_graph_to_compound_self_inverse_graph_eq_identity_graph f X Y F)|
+           apply (surjection_graph_to_compound_self_inverse_graph_eq_identity_graph f X Y F)];trivial.
+  Qed.
 
   Theorem injection_graph_to_image_of_compound_self_inverse_graph_of_singleton_domain_eq_singleton_domain:
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
