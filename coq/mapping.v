@@ -614,22 +614,20 @@ Section Mapping.
   Qed.
 
   Theorem compound_function_to_in_image_of_graph_function:
-    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U) (x z:U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U) (x z:U),
       MappingFunction f X Y ->
       MappingFunction g Y Z ->
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
-      GF = GraphOfFunction (CompoundFunction g f) X Z ->
       x ∈ X ->
-      z = (CompoundFunction g f) x -> z ∈ 𝕴𝖒(GF, {|x|}).
+      z = (CompoundFunction g f) x -> z ∈ 𝕴𝖒((GraphOfFunction (CompoundFunction g f) X Z), {|x|}).
   Proof.
-    move => f g X Y Z F G GF x z Hf Hg HF HG HGF HxX H.
+    move => f g X Y Z F G x z Hf Hg HF HG HxX H.
     split.
     exists x.
     split.
     apply singleton_iff_eq.
     reflexivity.
-    rewrite HGF.
     split.
     exists x.
     exists z.
@@ -654,18 +652,16 @@ Section Mapping.
   Qed.
 
   Theorem in_image_of_graph_function_to_compound_function:
-    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U) (x z:U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G: TypeOfDirectProduct U) (x z:U),
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
-      GF = GraphOfFunction (CompoundFunction g f) X Z ->
       x ∈ X ->
-      z ∈ (𝕴𝖒(GF, {|x|})) -> z = (CompoundFunction g f) x.
+      z ∈ (𝕴𝖒((GraphOfFunction (CompoundFunction g f) X Z), {|x|})) -> z = (CompoundFunction g f) x.
   Proof.
-    move => f g X Y Z F G GF x z HF HG HGF HxX H.
+    move => f g X Y Z F G x z HF HG HxX H.
     inversion H as [z0].
     inversion H0 as [x0].
     inversion H2.
-    rewrite HGF in H4.
     apply singleton_to_eq in H3.
     rewrite H3 in H4.
     inversion H4.
@@ -679,19 +675,18 @@ Section Mapping.
   Qed.
 
   Theorem compound_function_iff_in_image_of_graph_function:
-    forall (f g:U -> U) (X Y Z:Collection U) (F G GF:TypeOfDirectProduct U) (x z:U),
+    forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U) (x z:U),
       MappingFunction f X Y ->
       MappingFunction g Y Z ->
       F = GraphOfFunction f X Y ->
       G = GraphOfFunction g Y Z ->
-      GF = GraphOfFunction (CompoundFunction g f) X Z ->
       x ∈ X ->
-      z = (g ◦ f) x <-> z ∈ 𝕴𝖒(GF, {|x|}).
+      z = (g ◦ f) x <-> z ∈ 𝕴𝖒((GraphOfFunction (CompoundFunction g f) X Z), {|x|}).
   Proof.
-    move => f g X Y Z F G GF x z Hf Hg HF HG HGF HxX.
+    move => f g X Y Z F G x z Hf Hg HF HG HxX.
     rewrite /iff.
-    split;[apply (compound_function_to_in_image_of_graph_function f g X Y Z F G GF)|
-           apply (in_image_of_graph_function_to_compound_function f g X Y Z F G GF)];
+    split;[apply (compound_function_to_in_image_of_graph_function f g X Y Z F G)|
+           apply (in_image_of_graph_function_to_compound_function f g X Y Z F G)];
     trivial.
   Qed.
 
