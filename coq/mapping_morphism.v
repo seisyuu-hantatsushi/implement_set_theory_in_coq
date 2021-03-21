@@ -16,6 +16,24 @@ Definition BijectionGraph {U:Type} (F:TypeOfDirectProduct U) (R:Collection U) :=
 Section Mapping.
   Variable U:Type.
 
+  Theorem not_injection_graph:
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      ~ InjectionGraph F -> exists x x' y:U, x <> x' /\ <|x,y|> ∈ F /\ <|x',y|> ∈ F.
+  Proof.
+    move => f X Y F Hf HF HNIF.
+    unfold InjectionGraph in HNIF.
+    apply (DeMorganNotForall_Triple_Open) in HNIF.
+    case HNIF => [x [x' [y H]]].
+    apply not_imply_to_and in H.
+    apply and_comm in H.
+    exists x.
+    exists x'.
+    exists y.
+    trivial.
+  Qed.
+
   Theorem compound_injection_graph_is_injection_graph:
     forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
       MappingFunction f X Y ->
@@ -621,8 +639,4 @@ Section Mapping.
     trivial.
   Qed.
 
-  
-
-    
-    
 End Mapping.

@@ -416,6 +416,36 @@ Section PredicateLogic.
     apply H.
   Qed.
 
+  Theorem DeMorganNotExists_Double: forall I:Type, forall P:I->I->Prop, ~(exists x y:I, P x y) <-> forall x y:I, ~(P x y).
+  Proof.
+    move => I P.
+    rewrite /iff. split => H.
+    move => x y H0.
+    apply H.
+    exists x.
+    exists y.
+    assumption.
+    case => x.
+    case => y.
+    apply H.
+  Qed.
+
+  Theorem DeMorganNotExists_Triple: forall I:Type, forall P:I->I->I->Prop, ~(exists x y z:I, P x y z) <-> forall x y z:I, ~(P x y z).
+  Proof.
+    move => I P.
+    rewrite /iff. split => H.
+    move => x y z H0.
+    apply H.
+    exists x.
+    exists y.
+    exists z.
+    assumption.
+    case => x.
+    case => y.
+    case => z.
+    apply H.
+  Qed.
+
   Theorem DeMorganNotForall_Close: forall I:Type, forall P:LogicFunction I, (exists x:I, ~ (P x)) -> ~(forall x:I, P x).
   Proof.
     move => I P.
@@ -423,10 +453,45 @@ Section PredicateLogic.
     apply /H /HN.
   Qed.
 
+  Theorem DeMorganNotForall_Double_Close:
+    forall (I:Type) (P:I->I->Prop),
+      (exists x y:I, ~ (P x y)) -> ~(forall x y:I, P x y).
+  Proof.
+    move => I P.
+    case => x.
+    case => y HEx HForall.
+    apply HEx.
+    apply HForall.
+  Qed.
+
+  Theorem DeMorganNotForall_Triple_Close:
+    forall (I:Type) (P:I->I->I->Prop),
+      (exists x y z:I, ~ (P x y z)) -> ~(forall x y z:I, P x y z).
+  Proof.
+    move => I P.
+    case => x.
+    case => y.
+    case => z HEx HForall.
+    apply HEx.
+    apply HForall.
+  Qed.
+  
   Theorem DeMorganNotExistsNot: forall I:Type, forall P:LogicFunction I, ~(exists x:I, ~ (P x)) <-> (forall x:I, ~~P x).
   Proof.
     move => I P.
     apply: DeMorganNotExists.
+  Qed.
+
+  Theorem DeMorganNotExistsNot_Double: forall I:Type, forall P:I->I->Prop, ~(exists x y:I, ~ (P x y)) <-> (forall x y:I, ~~P x y).
+  Proof.
+    move => I P.
+    apply: DeMorganNotExists_Double.
+  Qed.
+
+  Theorem DeMorganNotExistsNot_Triple: forall I:Type, forall P:I->I->I->Prop, ~(exists x y z:I, ~ (P x y z)) <-> (forall x y z:I, ~~P x y z).
+  Proof.
+    move => I P.
+    apply: DeMorganNotExists_Triple.
   Qed.
 
   Theorem forall_bound_and_out:

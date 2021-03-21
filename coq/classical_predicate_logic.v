@@ -122,6 +122,24 @@ Proof.
   apply: LawOfDeMorgan_NegtationOfConjunction_Open.
 Qed.
 
+
+Theorem not_imply_to_and:
+  forall P Q:Prop, ~(P -> Q) -> (P /\ ~Q).
+Proof.
+  move => P Q H.
+  apply DoubleNegativeElimination.
+  move => HF.
+  apply LawOfDeMorgan_NegtationOfConjunction in HF.
+  apply H.
+  case HF.
+  move => HNP HP.
+  case HNP.
+  apply HP.
+  move => HNNQ HP.
+  apply DoubleNegativeElimination.
+  assumption.
+Qed.
+
 Theorem DeMorganNotForall_Open:
   forall I:Type, forall P:LogicFunction I, ~(forall x:I, P x) -> (exists x:I, ~(P x)).
 Proof.
@@ -135,6 +153,32 @@ Proof.
   apply: H0.
 Qed.
 
+Theorem DeMorganNotForall_Double_Open:
+  forall I:Type, forall P:I->I->Prop, ~(forall x y:I, P x y) -> (exists x y:I, ~(P x y)).
+Proof.
+  move => I P.
+  apply: ContrapositionInClassic.
+  move => H.
+  apply: DoubleNegative.
+  move => x y.
+  apply: DoubleNegativeElimination.
+  apply DeMorganNotExistsNot_Double.
+  apply: H.
+Qed.
+
+Theorem DeMorganNotForall_Triple_Open:
+  forall I:Type, forall P:I->I->I->Prop, ~(forall x y z:I, P x y z) -> (exists x y z:I, ~(P x y z)).
+Proof.
+  move => I P.
+  apply: ContrapositionInClassic.
+  move => H.
+  apply: DoubleNegative.
+  move => x y z.
+  apply: DoubleNegativeElimination.
+  apply DeMorganNotExistsNot_Triple.
+  apply H.
+Qed.
+  
 Theorem DeMorganNotForall:
   forall I:Type, forall P:LogicFunction I, ~(forall x:I, P x) <-> (exists x:I, ~(P x)).
 Proof.
