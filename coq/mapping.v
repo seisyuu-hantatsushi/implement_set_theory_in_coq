@@ -598,7 +598,7 @@ Section Mapping.
     apply ordered_pair_in_direct_product_iff_in_and.
     split;[apply H13|apply H21].
   Qed.
-
+  
   Theorem compound_graph_of_function_eq_graph_of_compound_function:
     forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
       MappingFunction f X Y ->
@@ -916,6 +916,102 @@ Section Mapping.
     rewrite -H12 in H13.
     rewrite H13.
     assumption.
+  Qed.
+
+  Theorem compound_graph_eq_to_compound_function_eq:
+    forall (f0 f1 g0 g1:U->U) (X Y Z:Collection U) (F0 F1 G0 G1:TypeOfDirectProduct U),
+      MappingFunction f0 X Y ->
+      F0 = GraphOfFunction f0 X Y ->
+      MappingFunction f1 X Y ->
+      F1 = GraphOfFunction f1 X Y ->
+      MappingFunction g0 Y Z ->
+      G0 = GraphOfFunction g0 Y Z ->
+      MappingFunction g1 Y Z ->
+      G1 = GraphOfFunction g1 Y Z ->
+      G0 ⊙ F0 = G1 ⊙ F1 ->
+      forall x:U, x ∈ X -> (g0 ◦ f0) x = (g1 ◦ f1) x.
+  Proof.
+    move => f0 f1 g0 g1 X Y Z F0 F1 G0 G1 Hf0 HF0 Hf1 HF1 Hg0 HG0 Hg1 HG1 Heq x HxX.
+    have Hg0f0: MappingFunction (g0 ◦ f0) X Z.
+    move => x0 Hx0X.
+    apply Hf0 in Hx0X.
+    inversion Hx0X as [y [Hyf0x0 HyY]].
+    apply Hg0 in HyY.
+    inversion HyY as [z [Hzg0y HzZ]].
+    exists z.
+    split;[unfold CompoundFunction; rewrite -Hyf0x0|];trivial.
+    have Hg1f1: MappingFunction (g1 ◦ f1) X Z.
+    move => x0 Hx0X.
+    apply Hf1 in Hx0X.
+    inversion Hx0X as [y [Hyf1x0 HyY]].
+    apply Hg1 in HyY.
+    inversion HyY as [z [Hzg1y HzZ]].
+    exists z.
+    split;[unfold CompoundFunction; rewrite -Hyf1x0|];trivial.
+    apply (graph_of_function_eq_iff_function_eq (g0 ◦ f0) (g1 ◦ f1) X Z (G0 ⊙ F0) (G1 ⊙ F1));trivial.
+    apply sym_eq.
+    apply (compound_graph_of_function_eq_graph_of_compound_function f0 g0 X Y Z F0 G0); trivial.
+    apply sym_eq.
+    apply (compound_graph_of_function_eq_graph_of_compound_function f1 g1 X Y Z F1 G1); trivial.
+  Qed.
+
+  Theorem compound_function_eq_to_compound_graph_eq:
+    forall (f0 f1 g0 g1:U->U) (X Y Z:Collection U) (F0 F1 G0 G1:TypeOfDirectProduct U),
+      MappingFunction f0 X Y ->
+      F0 = GraphOfFunction f0 X Y ->
+      MappingFunction f1 X Y ->
+      F1 = GraphOfFunction f1 X Y ->
+      MappingFunction g0 Y Z ->
+      G0 = GraphOfFunction g0 Y Z ->
+      MappingFunction g1 Y Z ->
+      G1 = GraphOfFunction g1 Y Z ->
+      (forall x:U, x ∈ X -> (g0 ◦ f0) x = (g1 ◦ f1) x) ->
+      G0 ⊙ F0 = G1 ⊙ F1.
+  Proof.
+    move => f0 f1 g0 g1 X Y Z F0 F1 G0 G1 Hf0 HF0 Hf1 HF1 Hg0 HG0 Hg1 HG1 H.
+    have Hg0f0: MappingFunction (g0 ◦ f0) X Z.
+    move => x0 Hx0X.
+    apply Hf0 in Hx0X.
+    inversion Hx0X as [y [Hyf0x0 HyY]].
+    apply Hg0 in HyY.
+    inversion HyY as [z [Hzg0y HzZ]].
+    exists z.
+    split;[unfold CompoundFunction; rewrite -Hyf0x0|];trivial.
+    have Hg1f1: MappingFunction (g1 ◦ f1) X Z.
+    move => x0 Hx0X.
+    apply Hf1 in Hx0X.
+    inversion Hx0X as [y [Hyf1x0 HyY]].
+    apply Hg1 in HyY.
+    inversion HyY as [z [Hzg1y HzZ]].
+    exists z.
+    split;[unfold CompoundFunction; rewrite -Hyf1x0|];trivial.
+    apply (graph_of_function_eq_iff_function_eq (g0 ◦ f0) (g1 ◦ f1) X Z (G0 ⊙ F0) (G1 ⊙ F1)).
+    trivial.
+    trivial.
+    apply sym_eq.
+    apply (compound_graph_of_function_eq_graph_of_compound_function f0 g0 X Y Z F0 G0); trivial.
+    apply sym_eq.
+    apply (compound_graph_of_function_eq_graph_of_compound_function f1 g1 X Y Z F1 G1); trivial.
+    assumption.
+  Qed.
+
+  Theorem compound_graph_eq_iff_compound_function_eq:
+    forall (f0 f1 g0 g1:U->U) (X Y Z:Collection U) (F0 F1 G0 G1:TypeOfDirectProduct U),
+      MappingFunction f0 X Y ->
+      F0 = GraphOfFunction f0 X Y ->
+      MappingFunction f1 X Y ->
+      F1 = GraphOfFunction f1 X Y ->
+      MappingFunction g0 Y Z ->
+      G0 = GraphOfFunction g0 Y Z ->
+      MappingFunction g1 Y Z ->
+      G1 = GraphOfFunction g1 Y Z ->
+      (G0 ⊙ F0 = G1 ⊙ F1 <->
+       forall x:U, x ∈ X -> (g0 ◦ f0) x = (g1 ◦ f1) x).
+  Proof.
+    move => f0 f1 g0 g1 X Y Z F0 F1 G0 G1 Hf0 HF0 Hf1 HF1 Hg0 HG0 Hg1 HG1.
+    rewrite /iff.
+    split;[apply (compound_graph_eq_to_compound_function_eq f0 f1 g0 g1 X Y Z F0 F1 G0 G1)|
+           apply (compound_function_eq_to_compound_graph_eq f0 f1 g0 g1 X Y Z F0 F1 G0 G1)];trivial.
   Qed.
 
   Theorem ordered_pair_in_graph_of_identity:

@@ -572,77 +572,57 @@ Section Mapping.
            apply (surjection_graph_to_compound_self_inverse_graph_eq_identity_graph f X Y F)];trivial.
   Qed.
 
-  Goal
+  Theorem outer_of_composite_function_is_injection_to_inner_is_unique:
     forall (f0 f1 g:U -> U) (X Y Z:Collection U) (F0 F1 G:TypeOfDirectProduct U),
-      X <> `Ø` ->
       MappingFunction f0 X Y ->
       F0 = GraphOfFunction f0 X Y ->
       MappingFunction f1 X Y ->
       F1 = GraphOfFunction f1 X Y ->
       MappingFunction g Y Z ->
       G = GraphOfFunction g Y Z ->
-      ((G ⊙ F0 = G ⊙ F1 -> F0 = F1) -> InjectionGraph G).
+      InjectionGraph G -> (G ⊙ F0 = G ⊙ F1 -> F0 = F1).
   Proof.
-    move => f0 f1 g X Y Z F0 F1 G HneX Hf0 HF0 Hf1 HF1 Hg HG H y y' z [HG0 HG1].
-    have Hgf0: MappingFunction (g ◦ f0) X Z.
-    move => x0 Hx0X.
-    apply Hf0 in Hx0X.
-    inversion Hx0X as [y0 [Hyfx0 Hy0Y]].
-    apply Hg in Hy0Y.
-    inversion Hy0Y as [z0 [Hzgy0 Hz0Z]].
-    exists z0.
-    split;[unfold CompoundFunction; rewrite -Hyfx0|];trivial.
-    have Hgf1: MappingFunction (g ◦ f1) X Z.
-    move => x0 Hx0X.
-    apply Hf1 in Hx0X.
-    inversion Hx0X as [y0 [Hyfx1 Hy0Y]].
-    apply Hg in Hy0Y.
-    inversion Hy0Y as [z0 [Hzgy0 Hz0Z]].
-    exists z0.
-    split;[unfold CompoundFunction; rewrite -Hyfx1|];trivial.
-    have L1: forall x:U, x ∈ X -> ((g ◦ f0) x = (g ◦ f1) x -> f0 x = f1 x).
-    move => x0 Hx0X H0.
-    apply (graph_of_function_eq_iff_function_eq U f0 f1 X Y F0 F1);trivial.
-    apply H.
-    apply (graph_of_function_eq_iff_function_eq U (g ◦ f0) (g ◦ f1) X Z (G ⊙ F0) (G ⊙ F1));trivial.
-    apply sym_eq.
-    apply (compound_graph_of_function_eq_graph_of_compound_function U f0 g X Y Z F0 G);trivial.
-    apply sym_eq.
-    apply (compound_graph_of_function_eq_graph_of_compound_function U f1 g X Y Z F1 G);trivial.
-    move => x' Hx'X.
-    apply (graph_of_function_eq_iff_function_eq U (g ◦ f0) (g ◦ f1) X Z (G ⊙ F0) (G ⊙ F1));trivial.
-    apply sym_eq.
-    apply (compound_graph_of_function_eq_graph_of_compound_function U f0 g X Y Z F0 G);trivial.
-    apply sym_eq.
-    apply (compound_graph_of_function_eq_graph_of_compound_function U f1 g X Y Z F1 G);trivial.
-    
-    apply not_empty_collection_to_exists_element_in_collection in HneX.
-    inversion HneX as [x HxX].
+    move => f0 f1 g X Y Z F0 F1 G Hf0 HF0 Hf1 HF1 Hg HG HIG Heq.
+    have Heqfg: forall x:U, x ∈ X -> (g ◦ f0) x = (g ◦ f1) x.
+    apply (compound_graph_eq_iff_compound_function_eq U f0 f1 g g X Y Z F0 F1 G G);trivial.
+    apply (function_eq_to_graph_of_function_eq U f0 f1 X Y F0 F1);trivial.
+    move => x HxX.
+    have Heqfgx: (g ◦ f0) x = (g ◦ f1) x.
+    apply Heqfg.
+    trivial.
+    unfold InjectionGraph in HIG.
+    apply (HIG (f0 x) (f1 x) ((g ◦ f0) x)).
+    split;rewrite HG;split.
+    exists (f0 x).
+    exists ((g ◦ f0) x).
+    split;[reflexivity|split;[reflexivity|]].
+    apply Hf0 in HxX.
+    inversion HxX as [y' [Hy'f0x Hy'Y]].
+    rewrite Hy'f0x in Hy'Y.
+    apply in_and_to_ordered_pair_in_direct_product.
+    split.
+    trivial.
+    apply Hg in Hy'Y.
+    inversion Hy'Y as [z' [Hzgf0x Hz'Z]].
+    rewrite Hzgf0x in Hz'Z.
+    trivial.
+    exists (f1 x).
+    exists ((g ◦ f0) x).
+    split;[reflexivity|split;[rewrite Heqfgx;reflexivity|]].
+    apply Hf1 in HxX.
+    inversion HxX as [y' [Hy'f1x Hy'Y]].
+    rewrite Hy'f1x in Hy'Y.
+    apply in_and_to_ordered_pair_in_direct_product.
+    split;trivial.
+    apply Hg in Hy'Y.
+    inversion Hy'Y as [z' [Hzgf1x Hz'Z]].
+    rewrite Hzgf1x in Hz'Z.
+    rewrite Heqfgx.
+    trivial.
+  Qed.
 
-    move graph_of_function_eq_iff_function_eq
-    rewrite HG in HG0.
-    rewrite HG in HG1.
-    inversion HG0 as [Z0 [y0 [z0 [HeqZ0 [Hzgy0]]]]].
-    rewrite HeqZ0 in H1.
-    rewrite H1 in H0.
-    apply ordered_pair_to_and in H1.
-    inversion H1 as [Heqy0 Heqz0].
-    rewrite Heqy0 Heqz0 in Hzgy0.
-    inversion HG1 as [Z1 [y1 [z1 [HeqZ1 [Hzgy1]]]]].
-    rewrite HeqZ1 in H3.
-    rewrite H3 in H2.
-    apply ordered_pair_to_and in H3.
-    inversion H3 as [Heqy1 Heqz1].
-    rewrite Heqy1 Heqz1 in Hzgy1.
-    apply ordered_pair_in_direct_product_iff_in_and in H0.
-    inversion H0 as [HyY HzZ].
-    apply ordered_pair_in_direct_product_iff_in_and in H2.
-    inversion H2 as [Hy'Y HzZ'].
-    have Lf0: exists y:U, y = f0 x /\ y ∈ Y.
-    apply Hf0.
-    trivial.
-    have Lf1: exists y:U, y = f1 x /\ y ∈ Y.
-    apply Hf1.
-    trivial.
+  
+
+    
     
 End Mapping.
