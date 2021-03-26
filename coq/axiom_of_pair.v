@@ -293,11 +293,13 @@ Proof.
   apply unorder_pair_eq_to_or_r in H. by [].
 Qed.
 
-Inductive OrderedPair (U:Type) (x y:U) : Collection (Collection U) :=
-| ordered_pair_first : In (Collection U) (OrderedPair U x y) (Singleton U x)
-| ordered_pair_second : In (Collection U) (OrderedPair U x y) (UnorderedPair U x y).
+Inductive OrderedPair {U:Type} (x y:U) : Collection (Collection U) :=
+| ordered_pair_first : In (Collection U) (OrderedPair x y) (Singleton U x)
+| ordered_pair_second : In (Collection U) (OrderedPair x y) (UnorderedPair U x y).
 
-Notation "<| x , y |>" := (OrderedPair _ x y).
+Notation "<| x , y |>" := (OrderedPair x y).
+
+Definition OrderedPairHighOrder U (x':Collection U) (y:U) := OrderedPair x' (Singleton U y).
 
 Definition TypeOfOrderedPair U := Collection (Collection U).
 

@@ -10,6 +10,8 @@ Inductive GraphOfBinaryRelation {U:Type} (R:BinaryRelation U) (A B:Collection U)
 | definition_of_graph_of_binary_relation:
     forall Z:TypeOfOrderedPair U, (exists x y:U, Z = <|x,y|> /\ R x y /\ <|x,y|> ∈ A × B) -> Z ∈ GraphOfBinaryRelation R A B.
 
+Definition MultivariableBinaryRelation U V := U -> V -> Prop.
+
 Inductive DomainOfCorrespondence {U:Type} (G:TypeOfDirectProduct U) : Collection U :=
 | definition_of_domain_of_correspondence:
     forall x:U, x ∈ FirstProjection G -> x ∈ DomainOfCorrespondence G.
