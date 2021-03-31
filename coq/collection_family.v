@@ -23,4 +23,12 @@ Section MappingSpace.
 
 End MappingSpace.
 
-Inductive {U:Type} (I:Collection U) (X: Collection (Collection U)) 
+(* GraphOfIndexToFamilySet, 添字集合と集合族のGraph*)
+Inductive GraphOfIndexToFamilySet {U:Type} (map: U -> Collection U) (I:Collection U) (X: Collection (Collection U)) :
+  Collection (TypeOfOrderedPair (Collection U)) :=
+| definition_of_graph_of_index_to_family_set:
+    forall Z:TypeOfOrderedPair (Collection U), (exists i:U, exists x':Collection U, Z=<|{|i|},x'|> /\ x' = map i /\ i ∈ I /\ x' ∈ X) -> Z ∈ GraphOfIndexToFamilySet map I X.
+
+(* make sure that correspondence between indexed value in indexed set and set in set of family set. *)
+Definition IndexingFunction {U:Type} (map: U -> Collection U) (I:Collection U) (X: Collection (Collection U)) :=
+  forall i:U, i ∈ I -> exists x':Collection U, x' = map i /\ x' ∈ X.
