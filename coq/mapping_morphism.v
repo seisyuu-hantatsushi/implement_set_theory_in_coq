@@ -13,7 +13,7 @@ Definition SurjectionGraph {U:Type} (F:TypeOfDirectProduct U) (R:Collection U) :
 Definition BijectionGraph {U:Type} (F:TypeOfDirectProduct U) (R:Collection U) :=
   InjectionGraph F /\ SurjectionGraph F R.
 
-Section Mapping.
+Section MappingMorphism.
   Variable U:Type.
 
   Theorem not_injection_graph:
@@ -639,4 +639,28 @@ Section Mapping.
     trivial.
   Qed.
 
-End Mapping.
+  Theorem injection_graph_has_inversible_graph:
+    forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      (InjectionGraph F -> (exists g:U->U, exists G:TypeOfDirectProduct U, MappingFunction g Y X ->
+                                                                           G = GraphOfFunction g Y X ->
+                                                                           G ⊙ F = GraphOfIdentity X) \/ X = `Ø`).
+  Proof.
+    move => f X Y F Hf HF HIF.
+    suff:  X = `Ø` \/ X <> `Ø`.
+    case => HX.
+    right.
+    trivial.
+    left.
+    apply not_empty_collection_to_exists_element_in_collection in HX.
+    inversion HX as [x HxX].
+    move: (fun _:U => x) => g.
+    exists g.
+    exists (F ^-1).
+    move => Hg HGF.
+    apply (injection_graph_to_compound_self_inverse_graph_eq_identity_graph f X Y F); trivial.
+    apply  LawOfExcludedMiddle.
+  Qed.
+  
+End MappingMorphism.
