@@ -33,8 +33,14 @@ Inductive GraphOfIndexToFamilySet {U:Type} (map: U -> Collection U) (I:Collectio
 Definition IndexingFunction {U:Type} (map: U -> Collection U) (I:Collection U) (X: Collection (Collection U)) :=
   forall i:U, i ∈ I -> exists x':Collection U, x' = map i /\ x' ∈ X.
 
-Inductive PickFamilySet {U:Type} (S:Collection (TypeOfOrderedPair (Collection U))) (i:U) : Collection (Collection U) :=
-| definition_of_pick_family_set: forall X:Collection U, <|{|i|}, X|> ∈ S -> X ∈ (PickFamilySet S i).
+Inductive PickFamilySet {U:Type} (X_I:Collection (TypeOfOrderedPair (Collection U))) (i:U) : Collection U :=
+| definition_of_pick_family_set: forall (x:U), (exists (X_i:Collection U), <|{|i|}, X_i|> ∈ X_I /\ x ∈ X_i) -> x ∈ (PickFamilySet X_I i).
+
+(* ⌞ Unicode: 231E BOTTOM LEFT CORNER *)
+Notation "X_I ⌞ i" := (PickFamilySet X_I i) (right associativity, at level 20).
+
+Inductive BigCupOfFamilySet {U:Type} (I:Collection U) (X_I: U -> Collection U) : Collection U :=
+| definition_of_bigcup_of_family: forall x i:U, i∈ I /\ x ∈ (X_I i) -> x ∈ BigCupOfFamilySet I X_I.
 
 Section CollectionFamily.
   Variable U:Type.
@@ -43,54 +49,81 @@ Section CollectionFamily.
     forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (F: Collection (TypeOfOrderedPair (Collection U))),
       F = GraphOfIndexToFamilySet f_i I X' ->
       IndexingFunction f_i I X' ->
-      forall (i:U), i ∈ I -> exists! X:Collection U, {|X|} = (PickFamilySet F i).
+      forall (i:U), i ∈ I -> exists! X_i:Collection U, X_i = (PickFamilySet F i).
   Proof.
     move => f_i I X' F HF HIF i HiI.
     have L1: exists X:Collection U, X = f_i i /\ X ∈ X'.
     apply HIF.
     trivial.
-    inversion L1 as [X].
-    exists X.
+    inversion L1 as [X_i].
+    exists X_i.
     split.
     apply mutally_included_to_eq.
-    split => Z H0.
-    apply singleton_to_eq in H0.
-    rewrite H0.
+    split => x H0.
+    split.
+    exists X_i.
     split.
     rewrite HF.
     split.
     exists i.
-    exists X.
-    split;[reflexivity|split;[apply H|split;[trivial|apply H]]].
-    inversion H0.
-    rewrite HF in H1.
-    inversion H1.
-    inversion H3 as [i0 [X1]].
-    inversion H5 as [Heq].
-    apply ordered_pair_iff_and in Heq.
-    inversion Heq.
-    apply singleton_eq_to_element_eq in H7.
-    apply eq_to_singleton.
-    inversion H6.
-    rewrite H8.
-    rewrite H9.
+    exists X_i.
     inversion H.
-    rewrite H7 in H11.
-    rewrite H11.
-    reflexivity.
-    move => X0 H'.
-    apply mutally_included_iff_eq in H'.
-    inversion H'.
-    apply singleton_to_eq.
-    apply: (H1 X).
+    split;[reflexivity|split;trivial;[split;trivial]].
+    trivial.
+    inversion H0.
+    inversion H1 as [X_i'].
+    inversion H3.
+    rewrite HF in H4.
+    inversion H4.
+    inversion H6 as [i0 [X_i'']].
+    inversion H.
+    inversion H8 as [H11 [H12 [H13 H14]]].
+    apply ordered_pair_iff_and in H11.
+    inversion H11.
+    rewrite H9.
+    apply singleton_eq_to_element_eq in H15.
+    rewrite -H15 in H12.
+    rewrite H12 in H16.
+    rewrite H16 in H5.
+    assumption.
+    move => x' H'.
+    rewrite H'.
+    apply mutally_included_to_eq.
+    split => x H0.
+    split.
+    exists X_i.
     split.
     rewrite HF.
     split.
     exists i.
-    exists X.
-    split;[reflexivity|split;[apply H|split;[trivial|apply H]]].
+    exists X_i.
+    split;[reflexivity|].
+    inversion H.
+    split;[trivial|split;trivial].
+    trivial.
+    inversion H0.
+    inversion H1 as [X_i'].
+    inversion H3.
+    rewrite HF in H4.
+    inversion H4.
+    inversion H6 as [i0 [X_i0']].
+    inversion H8 as [H9 [H10 [H11 H12]]].
+    apply ordered_pair_iff_and in H9.
+    inversion H9.
+    apply singleton_eq_to_element_eq in H13.
+    rewrite -H13 in H10.
+    rewrite -H14 in H10.
+    inversion H.
+    rewrite H10 in H5.
+    rewrite H15.
+    assumption.
   Qed.
 
+  Goal
+    forall (f_i: U -> Collection U) (I Y:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      X_I = GraphOfIndexToFamilySet f_i I X' ->
+      IndexingFunction f_i I X' ->
+      (BigCupOfFamilySet I (fun i:U => X_I ⌞ i)) ∪ Y = (BigCupOfFamilySet I (fun i:U => (X_I ⌞ i) ∪ Y)).
+  Abort.
   
-
 End CollectionFamily.
