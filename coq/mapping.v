@@ -598,7 +598,7 @@ Section Mapping.
     apply ordered_pair_in_direct_product_iff_in_and.
     split;[apply H13|apply H21].
   Qed.
-  
+
   Theorem compound_graph_of_function_eq_graph_of_compound_function:
     forall (f g:U -> U) (X Y Z:Collection U) (F G:TypeOfDirectProduct U),
       MappingFunction f X Y ->

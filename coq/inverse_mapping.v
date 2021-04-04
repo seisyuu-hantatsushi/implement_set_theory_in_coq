@@ -140,6 +140,69 @@ Section InverseMapping.
     split;[reflexivity|exists x;split;[split;trivial|trivial]].
   Qed.
 
+  Goal forall (f:U->U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      X <> `Ø` ->
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      (exists g: U->U, ((forall x:U, x ∈ X -> exists y:U, y = f x /\ x = g y /\ y ∈ Y) /\
+                        (forall y:U, y ∈ Y -> exists x:U, y = f x /\ x = g y /\ x ∈ X))) ->
+      exists g:U->U, F ^-1 = GraphOfFunction g Y X.
+  Proof.
+    move => f X Y F HneX Hf HF H.
+    inversion H as [g [Hif Hig]].
+    exists g.
+    apply not_empty_collection_to_exists_element_in_collection in HneX.
+    inversion HneX as [x HxX].
+    apply mutally_included_to_eq.
+    split => Z H0.
+    inversion H0 as [x' y'].
+    rewrite HF in H1.
+    inversion H1 as [Z1 [x0' [y0']]].
+    inversion H3 as [Heq [Hyfx0' HxXyY]].
+    rewrite -Heq in HxXyY.
+    split.
+    exists y'.
+    exists x'.
+    split;[reflexivity|split].
+    apply ordered_pair_to_and in Heq.
+    inversion Heq.
+    rewrite -H5 -H6 in Hyfx0'.
+    rewrite Hyfx0'.
+    suff: forall x:U, x ∈ X -> x = g (f x).
+    apply.
+    apply ordered_pair_in_direct_product_iff_in_and in HxXyY.
+    apply HxXyY.
+    move => x0 Hx0X.
+    apply Hif in Hx0X.
+    inversion Hx0X as [y0 [H1' [H2']]].
+    rewrite H1' in H2'.
+    trivial.
+    apply ordered_pair_in_direct_product_trans.
+    assumption.
+    inversion H0 as [Z0 [y0 [x0 [HZ0 [Hxgy' HyYxX]]]]].
+    rewrite -H1.
+    rewrite HZ0.
+    split.
+    rewrite HF.
+    split.
+    exists x0.
+    exists y0.
+    split;[reflexivity|].
+    split.
+    rewrite Hxgy'.
+    suff: forall y:U, y ∈ Y -> y = f (g y).
+    apply.
+    apply ordered_pair_in_direct_product_iff_in_and in HyYxX.
+    apply HyYxX.
+    move => y1 Hy1Y.
+    apply Hig in Hy1Y.
+    inversion Hy1Y as [x' [Hy1fx' [Hx1gy' Hx1X]]].
+    rewrite Hx1gy' in Hy1fx'.
+    trivial.
+    apply ordered_pair_in_direct_product_trans.
+    assumption.
+  Qed.
+ 
   Theorem invertible_function_iff_original_function:
     forall (f:U->U) (X Y:Collection U) (F:TypeOfDirectProduct U),
       MappingFunction f X Y ->

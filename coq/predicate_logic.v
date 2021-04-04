@@ -494,6 +494,14 @@ Section PredicateLogic.
     apply: DeMorganNotExists_Triple.
   Qed.
 
+  Theorem exists_dist_one_side:
+    forall (I:Type) (A:LogicFunction I) (B:Prop),
+      (exists x:I, (A x \/ B)) -> (exists x:I, A x) \/ B.
+  Proof.
+    move => I A B.
+    case => x [HA|HB];[left;exists x|right];trivial.
+  Qed.
+
   Theorem forall_bound_and_out:
     forall I:Type, forall (A B:LogicFunction I),
         (forall x:I, A x) /\ (forall y:I, B y) -> forall x y:I, A x /\ B y.

@@ -234,6 +234,19 @@ Section MappingMorphism.
     assumption.
   Qed.
 
+  Theorem compound_graph_is_source_identity_graph_to_injection_2:
+    forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U),
+      MappingFunction f X Y /\ F = GraphOfFunction f X Y ->
+      MappingFunction g Y X /\ G = GraphOfFunction g Y X ->
+      G ⊙ F = GraphOfIdentity X ->
+      InjectionGraph F.
+  Proof.
+    move => f g X Y F G HF HG H.
+    inversion HF.
+    inversion HG.
+    apply (compound_graph_is_source_identity_graph_to_injection f g X Y F G);trivial.
+  Qed.
+
   Theorem compound_graph_is_source_identity_graph_to_surjection:
     forall (f g:U -> U) (X Y:Collection U) (F G:TypeOfDirectProduct U),
       MappingFunction f X Y ->
@@ -643,9 +656,9 @@ Section MappingMorphism.
     forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
       MappingFunction f X Y ->
       F = GraphOfFunction f X Y ->
-      (InjectionGraph F -> (exists g:U->U, exists G:TypeOfDirectProduct U, MappingFunction g Y X ->
-                                                                           G = GraphOfFunction g Y X ->
-                                                                           G ⊙ F = GraphOfIdentity X) \/ X = `Ø`).
+      (InjectionGraph F -> (exists g:U->U, exists G:TypeOfDirectProduct U,
+                                 (MappingFunction g Y X /\ G = GraphOfFunction g Y X) ->
+                                 G ⊙ F = GraphOfIdentity X) \/ X = `Ø`).
   Proof.
     move => f X Y F Hf HF HIF.
     suff:  X = `Ø` \/ X <> `Ø`.
@@ -658,9 +671,41 @@ Section MappingMorphism.
     move: (fun _:U => x) => g.
     exists g.
     exists (F ^-1).
-    move => Hg HGF.
-    apply (injection_graph_to_compound_self_inverse_graph_eq_identity_graph f X Y F); trivial.
-    apply  LawOfExcludedMiddle.
+    case =>[Hg HG].
+    apply (injection_graph_to_compound_self_inverse_graph_eq_identity_graph f X Y);trivial.
+    apply LawOfExcludedMiddle.
   Qed.
-  
+
+  Goal forall (f:U -> U) (X Y:Collection U) (F:TypeOfDirectProduct U),
+      MappingFunction f X Y ->
+      F = GraphOfFunction f X Y ->
+      (((exists g:U->U, exists G:TypeOfDirectProduct U,
+              MappingFunction g Y X /\
+              G = GraphOfFunction g Y X /\
+              G ⊙ F = GraphOfIdentity X) \/ X = `Ø`) -> InjectionGraph F).
+  Proof.
+    move => f X Y F Hf HF [H|H].
+    inversion H as [g [G [Hg [HG HGF]]]].
+    apply (compound_graph_is_source_identity_graph_to_injection f g X Y F G);trivial.
+    move => x x' y.
+    rewrite HF.
+    move => [HF0 HF1].
+    inversion HF0 as [Z0 [x0' [y0' [Heq0 [Hyfx0 HxXyY0]]]]].
+    rewrite Heq0 in H0.
+    rewrite H0 in HxXyY0.
+    inversion HF1 as [Z1 [x1' [y1' [Heq1 [Hyfx1 HxXyY1]]]]].
+    rewrite Heq1 in H1.
+    rewrite H1 in HxXyY1.
+    apply ordered_pair_in_direct_product_to_in_and in HxXyY0.
+    inversion HxXyY0 as [HxX HyY0].
+    apply ordered_pair_in_direct_product_to_in_and in HxXyY1.
+    inversion HxXyY1 as [Hx'X HyY1].
+    rewrite H in HxX.
+    rewrite H in Hx'X.
+    apply DoubleNegativeElimination.
+    move => Hxx'.
+    move: HxX.
+    apply noone_in_empty.
+  Qed.
+
 End MappingMorphism.
