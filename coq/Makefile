@@ -1,5 +1,8 @@
 
-all: mapping_morphism.vo
+all: mapping_morphism.vo collection_family.vo
+
+collection_family.vo: collection_family.v mapping.vo
+	coqc $<
 
 mapping_morphism.vo: mapping_morphism.v inverse_mapping.vo
 	coqc $<
