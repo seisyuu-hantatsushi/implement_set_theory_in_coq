@@ -34,13 +34,16 @@ Definition IndexingFunction {U:Type} (map: U -> Collection U) (I:Collection U) (
   forall i:U, i ∈ I -> exists x':Collection U, x' = map i /\ x' ∈ X.
 
 Inductive PickFamilySet {U:Type} (X_I:Collection (TypeOfOrderedPair (Collection U))) (i:U) : Collection U :=
-| definition_of_pick_family_set: forall (x:U), (exists (X_i:Collection U), <|{|i|}, X_i|> ∈ X_I /\ x ∈ X_i) -> x ∈ (PickFamilySet X_I i).
+| intro_of_pick_family_set: forall (x:U), (exists (X_i:Collection U), <|{|i|}, X_i|> ∈ X_I /\ x ∈ X_i) -> x ∈ (PickFamilySet X_I i).
 
 (* ⌞ Unicode: 231E BOTTOM LEFT CORNER *)
 Notation "X_I ⌞ i" := (PickFamilySet X_I i) (right associativity, at level 20).
 
 Inductive BigCupOfFamilySet {U:Type} (I:Collection U) (X_I: U -> Collection U) : Collection U :=
-| definition_of_bigcup_of_family: forall x:U, (exists i:U, i∈ I /\ x ∈ (X_I i)) -> x ∈ BigCupOfFamilySet I X_I.
+| intro_of_bigcup_of_family: forall x:U, (exists i:U, i ∈ I /\ x ∈ (X_I i)) -> x ∈ BigCupOfFamilySet I X_I.
+
+Inductive BigCapOfFamilySet {U:Type} (I:Collection U) (X_I: U -> Collection U) : Collection U :=
+| intro_of_bigcap_of_family: forall x: U, (forall i:U, i ∈ I /\ x ∈ (X_I i)) -> x ∈ BigCapOfFamilySet I X_I.
 
 Section CollectionFamily.
   Variable U:Type.
