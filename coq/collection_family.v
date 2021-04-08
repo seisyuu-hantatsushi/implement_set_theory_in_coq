@@ -42,8 +42,12 @@ Notation "X_I ⌞ i" := (PickFamilySet X_I i) (right associativity, at level 20)
 Inductive BigCupOfFamilySet {U:Type} (I:Collection U) (X_I: U -> Collection U) : Collection U :=
 | intro_of_bigcup_of_family: forall x:U, (exists i:U, i ∈ I /\ x ∈ (X_I i)) -> x ∈ BigCupOfFamilySet I X_I.
 
+Notation "⋃{ I , X_I }" := (BigCupOfFamilySet I X_I).
+
 Inductive BigCapOfFamilySet {U:Type} (I:Collection U) (X_I: U -> Collection U) : Collection U :=
-| intro_of_bigcap_of_family: forall x: U, (forall i:U, i ∈ I /\ x ∈ (X_I i)) -> x ∈ BigCapOfFamilySet I X_I.
+| intro_of_bigcap_of_family: forall x: U, (forall i:U, i ∈ I -> x ∈ (X_I i)) -> x ∈ BigCapOfFamilySet I X_I.
+
+Notation "⋂{ I , X_I }" := (BigCapOfFamilySet I X_I).
 
 Section CollectionFamily.
   Variable U:Type.
@@ -126,10 +130,9 @@ Section CollectionFamily.
     forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
       I = `Ø` ->
       X_I = GraphOfIndexToFamilySet f_i I X' ->
-      IndexingFunction f_i I X' ->
-      BigCupOfFamilySet I (fun i:U => X_I ⌞ i) = `Ø`.
+      ⋃{ I , (fun i:U => X_I ⌞ i) } = `Ø`.
   Proof.
-    move => f_i I X' X_I HIE HXI Hfi.
+    move => f_i I X' X_I HIE HXI.
     apply mutally_included_to_eq.
     split => x H.
     inversion H.
@@ -150,10 +153,9 @@ Section CollectionFamily.
     forall (f_i: U -> Collection U) (I Y:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
       I <> `Ø` ->
       X_I = GraphOfIndexToFamilySet f_i I X' ->
-      IndexingFunction f_i I X' ->
-      BigCupOfFamilySet I (fun i:U => (X_I ⌞ i) ∪ Y ) = (BigCupOfFamilySet I (fun i:U => (X_I ⌞ i))) ∪ Y.
+      ⋃{ I , (fun i:U => (X_I ⌞ i) ∪ Y) } = ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∪ Y.
   Proof.
-    move => f_i I Y X' X_I HInE HXI Hfi.
+    move => f_i I Y X' X_I HInE HXI.
     apply not_empty_collection_to_exists_element_in_collection in HInE.
     inversion HInE as [i HiI].
     apply mutally_included_to_eq.
@@ -186,6 +188,84 @@ Section CollectionFamily.
     exists i.
     split;[trivial|right;trivial].
   Qed.
+
+  Theorem indexed_set_eq_empty_to_bigcap_eq_full:
+    forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      I = `Ø` ->
+      X_I = GraphOfIndexToFamilySet f_i I X' ->
+      ⋂{ I , (fun i:U => X_I ⌞ i) } = (FullCollection U).
+  Proof.
+    move => f_i I X' X_I HIE HXI.
+    apply mutally_included_to_eq.
+    split => x H.
+    apply intro_full_collection.
+    split => i HiI.
+    rewrite HIE in HiI.
+    apply DoubleNegativeElimination => HXi.
+    move: HiI.
+    apply noone_in_empty.
+  Qed.
+
+  Theorem bigcup_union_indexed_set:
+    forall (f_i: U -> Collection U) (I I1 I2:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      I = I1 ∪ I2 ->
+      X_I = GraphOfIndexToFamilySet f_i I X' ->
+      ⋃{ I , (fun i:U => X_I ⌞ i) } = ⋃{ I1 , (fun i:U => X_I ⌞ i) } ∪ ⋃{ I2 , (fun i:U => X_I ⌞ i) }.
+  Proof.
+    move => f_i I I1 I2 X' X_I HI HXI.
+    apply mutally_included_to_eq.
+    split => x H.
+    rewrite HI in H.
+    inversion H as [x0].
+    inversion H0 as [i [HiI1I2 HxXi]].
+    inversion HiI1I2 as [i1|i2].
+    left.
+    split.
+    exists i.
+    split;trivial.
+    right.
+    split.
+    exists i.
+    split;trivial.
+    rewrite HI.
+    inversion H as [x0|x0].
+    split.
+    inversion H0 as [x1].
+    inversion H2 as [i1].
+    inversion H4.
+    exists i1.
+    split;[left;trivial|trivial].
+    split.
+    inversion H0 as [x1].
+    inversion H2 as [i2].
+    inversion H4.
+    exists i2.
+    split;[right;trivial|trivial].
+  Qed.
+
+  Theorem bigcap_intersection_indexed_set:
+    forall (f_i: U -> Collection U) (I I1 I2:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      I = I1 ∪ I2 ->
+      X_I = GraphOfIndexToFamilySet f_i I X' ->
+      ⋂{ I , (fun i:U => X_I ⌞ i) } = ⋂{ I1 , (fun i:U => X_I ⌞ i) } ∩ ⋂{ I2 , (fun i:U => X_I ⌞ i) }.
+  Proof.
+    move => f_i I I1 I2 X' X_I HI HXI.
+    apply mutally_included_to_eq.
+    rewrite HI.
+    split => x H.
+    inversion H as [x0].
+    split;[split => i1' Hi1'I1; move: (H0 i1'); apply; left|
+           split => i2' Hi2'I2; move: (H0 i2'); apply; right];trivial.
+    inversion H as [x0].
+    inversion H0 as [x1].
+    inversion H1 as [x2].
+    split.
+    move => i.
+    case => [i1'|i2'].
+    apply H3.
+    apply H5.
+  Qed.
+
 
 End CollectionFamily.
 
