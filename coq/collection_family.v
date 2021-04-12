@@ -129,12 +129,11 @@ Section CollectionFamily.
   Qed.
 
   Theorem indexed_set_eq_empty_to_bigcup_eq_empty:
-    forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (f_i: U -> Collection U) (I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
       I = `Ø` ->
-      X_I = GraphOfIndexToFamilySet f_i I X' ->
       ⋃{ I , (fun i:U => X_I ⌞ i) } = `Ø`.
   Proof.
-    move => f_i I X' X_I HIE HXI.
+    move => f_i I X_I HIE.
     apply mutally_included_to_eq.
     split => x H.
     inversion H.
@@ -151,13 +150,94 @@ Section CollectionFamily.
     apply noone_in_empty.
   Qed.
 
+  Theorem indexed_set_eq_empty_to_bigcap_eq_full:
+    forall (f_i: U -> Collection U) (I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      I = `Ø` ->
+      ⋂{ I , (fun i:U => X_I ⌞ i) } = (FullCollection U).
+  Proof.
+    move => f_i I X_I HIE.
+    apply mutally_included_to_eq.
+    split => x H.
+    apply intro_full_collection.
+    split => i HiI.
+    rewrite HIE in HiI.
+    apply DoubleNegativeElimination => HXi.
+    move: HiI.
+    apply noone_in_empty.
+  Qed.
+
+  Theorem a_collection_included_bigcup_of_family_set_to_a_collection_included_element_of_family_set:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      ⋃{ I , (fun i:U => X_I ⌞ i) } ⊂ Y -> forall i:U, i ∈ I -> X_I ⌞ i ⊂ Y.
+  Proof.
+    move => I Y X_I H i HiI x HxXi.
+    apply H.
+    split.
+    exists i.
+    split; trivial.
+  Qed.
+
+  Theorem a_collection_included_element_of_family_set_to_a_collection_included_bigcup_of_family_set:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      (forall i:U, i ∈ I -> X_I ⌞ i ⊂ Y) -> ⋃{ I , (fun i:U => X_I ⌞ i) } ⊂ Y.
+  Proof.
+    move => I Y X_I H x H'.
+    inversion H'.
+    inversion H0 as [i].
+    inversion H2.
+    apply H in H3.
+    apply H3.
+    assumption.
+  Qed.
+
+  Theorem a_collection_included_bigcup_of_family_set_iff_a_collection_included_element_of_family_set:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      ⋃{ I , (fun i:U => X_I ⌞ i) } ⊂ Y <-> forall i:U, i ∈ I -> X_I ⌞ i ⊂ Y.
+  Proof.
+    move => I Y X_I.
+    rewrite /iff.
+    split;[apply a_collection_included_bigcup_of_family_set_to_a_collection_included_element_of_family_set|
+           apply a_collection_included_element_of_family_set_to_a_collection_included_bigcup_of_family_set].
+  Qed.
+  
+  Theorem bigcap_of_family_set_included_a_collection_to_element_of_family_set_included_a_collection:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      Y ⊂ ⋂{ I , (fun i:U => X_I ⌞ i) } -> forall i:U, i ∈ I -> Y ⊂ X_I ⌞ i.
+  Proof.
+    move => I Y X_I H i HiI x HxY.
+    apply H in HxY.
+    inversion HxY.
+    apply H0 in HiI.
+    assumption.
+  Qed.
+
+  Theorem element_of_family_set_included_a_collection_to_bigcap_of_family_set_included_a_collection:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      (forall i:U, i ∈ I -> Y ⊂ X_I ⌞ i) -> Y ⊂ ⋂{ I , (fun i:U => X_I ⌞ i) }.
+  Proof.
+    move => I Y X_I H x HxY.
+    split => i HiI.
+    apply H in HiI.
+    apply HiI.
+    assumption.
+  Qed.
+
+  Theorem a_collection_included_element_of_family_set_iff_a_collection_included_bigcap_of_family_set:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      Y ⊂ ⋂{ I , (fun i:U => X_I ⌞ i) } <-> forall i:U, i ∈ I -> Y ⊂ X_I ⌞ i.
+  Proof.
+    move => I Y X_I.
+    rewrite /iff.
+    split;[apply bigcap_of_family_set_included_a_collection_to_element_of_family_set_included_a_collection|
+           apply element_of_family_set_included_a_collection_to_bigcap_of_family_set_included_a_collection].
+  Qed.
+
   Theorem bigcup_family_set_union_eq:
-    forall (f_i: U -> Collection U) (I Y:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (f_i: U -> Collection U) (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
       I <> `Ø` ->
-      X_I = GraphOfIndexToFamilySet f_i I X' ->
       ⋃{ I , (fun i:U => (X_I ⌞ i) ∪ Y) } = ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∪ Y.
   Proof.
-    move => f_i I Y X' X_I HInE HXI.
+    move => f_i I Y X_I HInE.
     apply not_empty_collection_to_exists_element_in_collection in HInE.
     inversion HInE as [i HiI].
     apply mutally_included_to_eq.
@@ -191,67 +271,12 @@ Section CollectionFamily.
     split;[trivial|right;trivial].
   Qed.
 
-  Theorem indexed_set_eq_empty_to_bigcap_eq_full:
-    forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
-      I = `Ø` ->
-      X_I = GraphOfIndexToFamilySet f_i I X' ->
-      ⋂{ I , (fun i:U => X_I ⌞ i) } = (FullCollection U).
-  Proof.
-    move => f_i I X' X_I HIE HXI.
-    apply mutally_included_to_eq.
-    split => x H.
-    apply intro_full_collection.
-    split => i HiI.
-    rewrite HIE in HiI.
-    apply DoubleNegativeElimination => HXi.
-    move: HiI.
-    apply noone_in_empty.
-  Qed.
-
-  Theorem bigcup_union_indexed_set:
-    forall (f_i: U -> Collection U) (I I1 I2:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
-      I = I1 ∪ I2 ->
-      X_I = GraphOfIndexToFamilySet f_i I X' ->
-      ⋃{ I , (fun i:U => X_I ⌞ i) } = ⋃{ I1 , (fun i:U => X_I ⌞ i) } ∪ ⋃{ I2 , (fun i:U => X_I ⌞ i) }.
-  Proof.
-    move => f_i I I1 I2 X' X_I HI HXI.
-    apply mutally_included_to_eq.
-    split => x H.
-    rewrite HI in H.
-    inversion H as [x0].
-    inversion H0 as [i [HiI1I2 HxXi]].
-    inversion HiI1I2 as [i1|i2].
-    left.
-    split.
-    exists i.
-    split;trivial.
-    right.
-    split.
-    exists i.
-    split;trivial.
-    rewrite HI.
-    inversion H as [x0|x0].
-    split.
-    inversion H0 as [x1].
-    inversion H2 as [i1].
-    inversion H4.
-    exists i1.
-    split;[left;trivial|trivial].
-    split.
-    inversion H0 as [x1].
-    inversion H2 as [i2].
-    inversion H4.
-    exists i2.
-    split;[right;trivial|trivial].
-  Qed.
-
   Theorem bigcap_intersection_indexed_set:
-    forall (f_i: U -> Collection U) (I I1 I2:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (f_i: U -> Collection U) (I I1 I2:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
       I = I1 ∪ I2 ->
-      X_I = GraphOfIndexToFamilySet f_i I X' ->
       ⋂{ I , (fun i:U => X_I ⌞ i) } = ⋂{ I1 , (fun i:U => X_I ⌞ i) } ∩ ⋂{ I2 , (fun i:U => X_I ⌞ i) }.
   Proof.
-    move => f_i I I1 I2 X' X_I HI HXI.
+    move => f_i I I1 I2 X_I HI.
     apply mutally_included_to_eq.
     rewrite HI.
     split => x H.
@@ -269,10 +294,10 @@ Section CollectionFamily.
   Qed.
 
   Theorem LawOfDeMorganOfBigcup:
-    forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall(I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
       (⋃{ I , (fun i:U => X_I ⌞ i) })^c = ⋂{ I , (fun i:U => (X_I ⌞ i)^c) }.
   Proof.
-    move => f_i I X' X_I.
+    move => I X_I.
     apply mutally_included_to_eq.
     split => x H.
     split => i HiI HxXI.
@@ -291,10 +316,10 @@ Section CollectionFamily.
   Qed.
 
   Theorem LawOfDeMorganOfBigcap:
-    forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
       (⋂{ I , (fun i:U => X_I ⌞ i) })^c = ⋃{ I , (fun i:U => (X_I ⌞ i)^c) }.
   Proof.
-    move => f_i I X' X_I.
+    move => I X_I.
     apply mutally_included_to_eq.
     split => x H.
     split.
