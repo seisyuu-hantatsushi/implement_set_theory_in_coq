@@ -27,7 +27,9 @@ End MappingSpace.
 Inductive GraphOfIndexToFamilySet {U:Type} (map: U -> Collection U) (I:Collection U) (X: Collection (Collection U)) :
   Collection (TypeOfOrderedPair (Collection U)) :=
 | definition_of_graph_of_index_to_family_set:
-    forall Z:TypeOfOrderedPair (Collection U), (exists i:U, exists x':Collection U, Z=<|{|i|},x'|> /\ x' = map i /\ i ∈ I /\ x' ∈ X) -> Z ∈ GraphOfIndexToFamilySet map I X.
+    forall Z:TypeOfOrderedPair (Collection U),
+      (exists i:U, exists x':Collection U, Z=<|{|i|},x'|> /\ x' = map i /\ i ∈ I /\ x' ∈ X) ->
+      Z ∈ GraphOfIndexToFamilySet map I X.
 
 (* make sure that correspondence between indexed value in indexed set and set in set of family set. *)
 Definition IndexingFunction {U:Type} (map: U -> Collection U) (I:Collection U) (X: Collection (Collection U)) :=
@@ -266,8 +268,60 @@ Section CollectionFamily.
     apply H5.
   Qed.
 
+  Theorem LawOfDeMorganOfBigcup:
+    forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      (⋃{ I , (fun i:U => X_I ⌞ i) })^c = ⋂{ I , (fun i:U => (X_I ⌞ i)^c) }.
+  Proof.
+    move => f_i I X' X_I.
+    apply mutally_included_to_eq.
+    split => x H.
+    split => i HiI HxXI.
+    apply H.
+    split.
+    exists i.
+    split;trivial.
+    move => Hn.
+    inversion Hn.
+    inversion H0 as [i].
+    inversion H.
+    inversion H2.
+    apply H3 in H5.
+    apply H5.
+    assumption.
+  Qed.
+
+  Theorem LawOfDeMorganOfBigcap:
+    forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      (⋂{ I , (fun i:U => X_I ⌞ i) })^c = ⋃{ I , (fun i:U => (X_I ⌞ i)^c) }.
+  Proof.
+    move => f_i I X' X_I.
+    apply mutally_included_to_eq.
+    split => x H.
+    split.
+    apply notin_collect_iff_in_complement in H.
+    apply DoubleNegativeElimination.
+    move => Hn.
+    apply H.
+    split.
+    move => i HiI.
+    apply DoubleNegativeElimination.
+    move => H'.
+    apply Hn.
+    exists i.
+    split;trivial.
+    move => H'.
+    inversion H.
+    inversion H0 as [i].
+    inversion H'.
+    inversion H2.
+    apply H3 in H5.
+    apply H6.
+    trivial.
+  Qed.
 
 End CollectionFamily.
+
+
 
 
 

@@ -178,7 +178,7 @@ Proof.
   apply DeMorganNotExistsNot_Triple.
   apply H.
 Qed.
-  
+
 Theorem DeMorganNotForall:
   forall I:Type, forall P:LogicFunction I, ~(forall x:I, P x) <-> (exists x:I, ~(P x)).
 Proof.
