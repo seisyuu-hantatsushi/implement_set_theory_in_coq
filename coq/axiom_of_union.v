@@ -2,6 +2,7 @@ From mathcomp Require Import ssreflect.
 
 Require Import relation.
 Require Import axiom_of_pair.
+Require Import axiom_of_empty.
 
 Axiom AxiomOfUnion: forall U:Type, forall A:Collection (Collection U), exists B:Collection U, forall x:U, (x ∈ B <-> exists (C:Collection U), (x ∈ C /\ C ∈ A)).
 
@@ -290,3 +291,4 @@ Proof.
   apply: union_to_subcollect.
   apply: subcollect_to_union.
 Qed.
+

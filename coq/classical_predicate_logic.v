@@ -225,4 +225,23 @@ Proof.
   apply forall_bound_or_out.
 Qed.
 
+Theorem forall_bound_or_out_no_bound_prop:
+  forall (I:Type) (A:LogicFunction I) (B:Prop),
+    (forall x:I, A x \/ B) -> (forall x:I, A x) \/ B.
+Proof.
+  move => I A B H.
+  suff: B \/ ~B.
+  case => HB.
+  right.
+  trivial.
+  left.
+  move => x.
+  apply DoubleNegativeElimination => Hn.
+  move: (H x).
+  case.
+  apply Hn.
+  apply HB.
+  apply LawOfExcludedMiddle.
+Qed.
+
 Require Export predicate_logic.

@@ -151,11 +151,11 @@ Section CollectionFamily.
   Qed.
 
   Theorem indexed_set_eq_empty_to_bigcap_eq_full:
-    forall (f_i: U -> Collection U) (I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
       I = `Ø` ->
       ⋂{ I , (fun i:U => X_I ⌞ i) } = (FullCollection U).
   Proof.
-    move => f_i I X_I HIE.
+    move => I X_I HIE.
     apply mutally_included_to_eq.
     split => x H.
     apply intro_full_collection.
@@ -199,7 +199,7 @@ Section CollectionFamily.
     split;[apply a_collection_included_bigcup_of_family_set_to_a_collection_included_element_of_family_set|
            apply a_collection_included_element_of_family_set_to_a_collection_included_bigcup_of_family_set].
   Qed.
-  
+
   Theorem bigcap_of_family_set_included_a_collection_to_element_of_family_set_included_a_collection:
     forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
       Y ⊂ ⋂{ I , (fun i:U => X_I ⌞ i) } -> forall i:U, i ∈ I -> Y ⊂ X_I ⌞ i.
@@ -230,45 +230,6 @@ Section CollectionFamily.
     rewrite /iff.
     split;[apply bigcap_of_family_set_included_a_collection_to_element_of_family_set_included_a_collection|
            apply element_of_family_set_included_a_collection_to_bigcap_of_family_set_included_a_collection].
-  Qed.
-
-  Theorem bigcup_family_set_union_eq:
-    forall (f_i: U -> Collection U) (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
-      I <> `Ø` ->
-      ⋃{ I , (fun i:U => (X_I ⌞ i) ∪ Y) } = ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∪ Y.
-  Proof.
-    move => f_i I Y X_I HInE.
-    apply not_empty_collection_to_exists_element_in_collection in HInE.
-    inversion HInE as [i HiI].
-    apply mutally_included_to_eq.
-    split => x H.
-    inversion H as [x0].
-    inversion H0 as [i0].
-    inversion H2 as [Hi0I].
-    case H3 => x1.
-    move => Hx1XI.
-    left.
-    split.
-    exists i0.
-    split;trivial.
-    move => Hx1Y.
-    right.
-    trivial.
-    case H.
-    move => x0 Hx0B.
-    inversion Hx0B as [x1].
-    inversion H0 as [i0].
-    split.
-    exists i0.
-    inversion H2.
-    split.
-    trivial.
-    left.
-    trivial.
-    move => x0 Hx0Y.
-    split.
-    exists i.
-    split;[trivial|right;trivial].
   Qed.
 
   Theorem bigcap_intersection_indexed_set:
@@ -343,6 +304,92 @@ Section CollectionFamily.
     apply H6.
     trivial.
   Qed.
+
+  Theorem bigcup_family_set_union_eq:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      I <> `Ø` ->
+      ⋃{ I , (fun i:U => (X_I ⌞ i) ∪ Y) } = ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∪ Y.
+  Proof.
+    move => I Y X_I HInE.
+    apply not_empty_collection_to_exists_element_in_collection in HInE.
+    inversion HInE as [i HiI].
+    apply mutally_included_to_eq.
+    split => x H.
+    inversion H as [x0].
+    inversion H0 as [i0].
+    inversion H2 as [Hi0I].
+    case H3 => x1.
+    move => Hx1XI.
+    left.
+    split.
+    exists i0.
+    split;trivial.
+    move => Hx1Y.
+    right.
+    trivial.
+    case H.
+    move => x0 Hx0B.
+    inversion Hx0B as [x1].
+    inversion H0 as [i0].
+    split.
+    exists i0.
+    inversion H2.
+    split.
+    trivial.
+    left.
+    trivial.
+    move => x0 Hx0Y.
+    split.
+    exists i.
+    split;[trivial|right;trivial].
+  Qed.
+
+  Theorem bigcup_family_set_intersection_eq:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      ⋃{ I , (fun i:U => (X_I ⌞ i) ∩ Y) } = ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∩ Y.
+  Proof.
+    move => I Y X_I.
+    apply mutally_included_to_eq.
+    split => x H.
+    inversion H as [x0 [i [HiI [x0' HxXI HxY]]]].
+    split;[split;exists i;split;trivial|trivial].
+    inversion H as [x0 [x1 [i [HiI]]]].
+    split.
+    exists i.
+    split;[trivial|split;trivial].
+  Qed.
+
+  Theorem bigcap_family_set_union_eq:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      ⋂{ I , (fun i:U => (X_I ⌞ i) ∪ Y) } = ⋂{ I , (fun i:U => (X_I ⌞ i)) } ∪ Y.
+  Proof.
+    move => I Y X_I.
+    apply mutally_included_to_eq.
+    split => x H.
+    suff:  x ∈ Y \/ x ∉ Y.
+    case => HY.
+    right.
+    trivial.
+    left.
+    split => i HiI.
+    inversion H.
+    apply H0 in HiI.
+    inversion HiI.
+    apply H2.
+    apply DoubleNegativeElimination => Hn.
+    apply HY.
+    assumption.
+    apply LawOfExcludedMiddle.
+    split => i HiI.
+    inversion H.
+    left.
+    inversion H0.
+    apply H2 in HiI.
+    trivial.
+    right.
+    trivial.
+  Qed.
+
 
 End CollectionFamily.
 
