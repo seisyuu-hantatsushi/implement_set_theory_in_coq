@@ -390,6 +390,77 @@ Section CollectionFamily.
     trivial.
   Qed.
 
+  Theorem a_collection_minus_bigcap_eq_bigcup_a_collection_minus_element_of_family_set:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      Y \ ⋂{ I , (fun i:U => (X_I ⌞ i)) } = ⋃{ I , (fun i:U => Y \ (X_I ⌞ i)) }.
+  Proof.
+    move => I Y X_I.
+    apply mutally_included_to_eq.
+    split => x H.
+    inversion H.
+    split.
+    apply DoubleNegativeElimination.
+    move => Hn.
+    have L1: forall i:U, ~(i ∈ I /\ x ∈ Y \ X_I ⌞ i).
+    move => i HnP.
+    apply Hn.
+    exists i.
+    apply HnP.
+    apply H1.
+    split => i HiI.
+    move: (L1 i) => L1i.
+    apply DoubleNegativeElimination.
+    move => HnxXI.
+    apply L1i.
+    split.
+    apply HiI.
+    split.
+    apply H0.
+    apply HnxXI.
+    inversion H.
+    inversion H0 as [i].
+    inversion H2 as [HiI [x' HxY HnxXIi]].
+    split.
+    trivial.
+    move => Hin.
+    apply HnxXIi.
+    inversion Hin.
+    apply H3 in HiI.
+    assumption.
+  Qed.
+
+  Theorem a_collection_minus_bigcup_eq_bigcap_a_collection_minus_element_of_family_set:
+    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+      I <> `Ø` ->
+      Y \ ⋃{ I , (fun i:U => (X_I ⌞ i)) } = ⋂{ I , (fun i:U => Y \ (X_I ⌞ i)) }.
+  Proof.
+    move => I Y X_I HneI.
+    apply mutally_included_to_eq.
+    split => x H.
+    inversion H.
+    split => i HiI.
+    split.
+    trivial.
+    move => HxXI.
+    apply H1.
+    split.
+    exists i.
+    split;assumption.
+    inversion H.
+    apply not_empty_collection_has_least_a_element in HneI.
+    inversion HneI as [i].
+    apply H0 in H2.
+    inversion H2.
+    split.
+    trivial.
+    move => H''.
+    inversion H''.
+    inversion H6 as [i0 [Hi0I Hx1XI]].
+    apply H0 in Hi0I.
+    inversion Hi0I.
+    apply H9.
+    trivial.
+  Qed.
 
 End CollectionFamily.
 
