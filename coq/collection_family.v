@@ -41,13 +41,13 @@ Inductive PickFamilySet {U:Type} (X_I:Collection (TypeOfOrderedPair (Collection 
 (* ⌞ Unicode: 231E BOTTOM LEFT CORNER *)
 Notation "X_I ⌞ i" := (PickFamilySet X_I i) (right associativity, at level 20).
 
-Inductive BigCupOfFamilySet {U:Type} (I:Collection U) (X_I: U -> Collection U) : Collection U :=
-| intro_of_bigcup_of_family: forall x:U, (exists i:U, i ∈ I /\ x ∈ (X_I i)) -> x ∈ BigCupOfFamilySet I X_I.
+Inductive BigCupOfFamilySet {U V:Type} (I:Collection V) (X_I: V -> Collection U) : Collection U :=
+| intro_of_bigcup_of_family: forall x:U, (exists i:V, i ∈ I /\ x ∈ (X_I i)) -> x ∈ BigCupOfFamilySet I X_I.
 
 Notation "⋃{ I , X_I }" := (BigCupOfFamilySet I X_I).
 
-Inductive BigCapOfFamilySet {U:Type} (I:Collection U) (X_I: U -> Collection U) : Collection U :=
-| intro_of_bigcap_of_family: forall x: U, (forall i:U, i ∈ I -> x ∈ (X_I i)) -> x ∈ BigCapOfFamilySet I X_I.
+Inductive BigCapOfFamilySet {U V:Type} (I:Collection V) (X_I: V -> Collection U) : Collection U :=
+| intro_of_bigcap_of_family: forall x: U, (forall i:V, i ∈ I -> x ∈ (X_I i)) -> x ∈ BigCapOfFamilySet I X_I.
 
 Notation "⋂{ I , X_I }" := (BigCapOfFamilySet I X_I).
 
@@ -462,6 +462,151 @@ Section CollectionFamily.
     trivial.
   Qed.
 
+  Goal
+    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+    forall x:U,
+      x ∈ ⋂{ I × J, (fun ij:TypeOfOrderedPair U => (fun x:U => forall i j:U, ij=<|i,j|> -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j))} -> forall i j:U, i∈I -> j∈J -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j.
+  Proof.
+    move => I J X_I Y_J x H i j HiI HjJ.
+    have L1: <|i,j|> ∈ I × J.
+    apply in_and_to_ordered_pair_in_direct_product.
+    split;trivial.
+    inversion H.
+    apply H0 in L1.
+    apply L1.
+    reflexivity.
+  Qed.
+
+  Goal
+    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+    forall x:U,
+      (forall i j:U, i∈I -> j∈J -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j) -> x ∈ ⋂{ I × J, (fun ij:TypeOfOrderedPair U => (fun x:U => forall i j:U, ij=<|i,j|> -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j))}.
+  Proof.
+    move => I J X_I Y_J x H.
+    split => ij HijIJ i j Heq.
+    rewrite Heq in HijIJ.
+    apply ordered_pair_in_direct_product_to_in_and in HijIJ.
+    apply H.
+    apply HijIJ.
+    apply HijIJ.
+  Qed.
+
+  Goal
+    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+    forall x:U,
+      (forall i j:U, i∈I -> j∈J -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j) -> (forall i:U, i ∈ I -> x ∈ X_I ⌞ i) \/ (forall j:U, j ∈ J -> x ∈ Y_J ⌞ j).
+  Proof.
+    move => I J X_I Y_J x H.
+    apply forall_bound_or_in => i j.
+    apply not_imply_to_or.
+    move => Hn HiJ.
+    apply DoubleNegativeElimination.
+    move => Hn0.
+    apply Hn.
+    move => HiI.
+    move: Hn0.
+    apply imply_iff_notOr.
+    suff: x ∈ X_I ⌞ i ∪ Y_J ⌞ j.
+    case => x' Hx'XI.
+    right.
+    trivial.
+    left.
+    apply DoubleNegative.
+    trivial.
+    apply H.
+    trivial.
+    assumption.
+  Qed.
+
+  Theorem union_bigcap_family_set_eq_bigcap_ordered_pair_index:
+    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+      ⋂{ I , (fun i:U => (X_I ⌞ i)) } ∪ ⋂{ J , (fun j:U => (Y_J ⌞ j)) } =
+      ⋂{ I × J, (fun ij:TypeOfOrderedPair U => (fun x:U => forall i j:U, ij=<|i,j|> -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j))}.
+  Proof.
+    move => I J X_I Y_J.
+    apply mutally_included_to_eq.
+    split => x H.
+    split => ij HijIJ i j Heq.
+    rewrite Heq in HijIJ.
+    apply ordered_pair_in_direct_product_to_in_and in HijIJ.
+    inversion HijIJ as [HiI HjJ].
+    inversion H.
+    inversion H0.
+    apply H2 in HiI.
+    left.
+    trivial.
+    inversion H0.
+    apply H2 in HjJ.
+    right.
+    apply H2.
+    apply HijIJ.
+    have L1: forall i j:U, i∈I -> j∈J -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j.
+    move => i j HiI HjJ.
+    have L1: <|i,j|> ∈ I × J.
+    apply in_and_to_ordered_pair_in_direct_product.
+    split;trivial.
+    inversion H.
+    apply H0 in L1.
+    apply L1.
+    reflexivity.
+    have L2: (forall i:U, i ∈ I -> x ∈ X_I ⌞ i) \/ (forall j:U, j ∈ J -> x ∈ Y_J ⌞ j).
+    apply forall_bound_or_in => i j.
+    apply not_imply_to_or.
+    move => Hn HiJ.
+    apply DoubleNegativeElimination.
+    move => Hn0.
+    apply Hn.
+    move => HiI.
+    move: Hn0.
+    apply imply_iff_notOr.
+    suff: x ∈ X_I ⌞ i ∪ Y_J ⌞ j.
+    case => x' Hx'XI.
+    right.
+    trivial.
+    left.
+    apply DoubleNegative.
+    trivial.
+    apply L1.
+    trivial.
+    assumption.
+    case L2 => H';[left|right];split;assumption.
+  Qed.
+
+  Theorem intersection_bigcup_family_set_eq_bigcup_ordered_pair_index:
+    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+      ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∩ ⋃{ J , (fun j:U => (Y_J ⌞ j)) } =
+      ⋃{ I × J, (fun ij:TypeOfOrderedPair U => (fun x:U => exists i j:U, ij=<|i,j|> /\ x ∈ X_I ⌞ i ∩ Y_J ⌞ j))}.
+  Proof.
+    move => I J X_I Y_J.
+    apply mutally_included_to_eq.
+    split => x H.
+    inversion H.
+    split.
+    inversion H0.
+    inversion H3 as [i [HiI HxXI]].
+    inversion H1.
+    inversion H5 as [j [HjJ HxYJ]].
+    exists <|i,j|>.
+    split.
+    apply in_and_to_ordered_pair_in_direct_product.
+    split;trivial.
+    exists i.
+    exists j.
+    split.
+    reflexivity.
+    split; assumption.
+    inversion H.
+    inversion H0 as [ij].
+    inversion H2 as [HijIJ].
+    inversion H3 as [i [j]].
+    inversion H4.
+    rewrite H5 in HijIJ.
+    inversion H6.
+    apply ordered_pair_in_direct_product_to_in_and in HijIJ.
+    inversion HijIJ as [HiI HjJ].
+    split;split;[exists i|exists j];split;trivial.
+  Qed.
+  
 End CollectionFamily.
 
 
