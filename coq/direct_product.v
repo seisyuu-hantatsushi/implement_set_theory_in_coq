@@ -166,6 +166,26 @@ Section DirectProduct.
     apply or_empty_to_direct_product_is_empty.
   Qed.
 
+  Theorem direct_product_is_not_empty_to_not_empty_echo_collection:
+    forall (X Y : Collection U), X × Y <> `Ø` -> X <> `Ø` /\ Y <> `Ø`.
+  Proof.
+    move => X Y H.
+    split => H0;
+               apply H;
+               apply or_empty_to_direct_product_is_empty;[left|right];
+                 trivial.
+  Qed.
+    
+  Theorem not_empty_echo_collection_to_direct_product_is_not_empty:
+    forall (X Y : Collection U),  X <> `Ø` /\ Y <> `Ø` -> X × Y <> `Ø`.
+  Proof.
+    move => X Y H.
+    inversion H.
+    move => H'.
+    apply direct_product_is_empty_to_or_empty in H'.
+    case H';[apply H0|apply H1].
+  Qed.
+
   Theorem direct_product_included_concrete_ordered_pair:
     forall (X Y W Z:Collection U), W × Z ⊂ X × Y -> forall (x y:U), <|x, y|> ∈ W × Z -> <|x, y|> ∈ X × Y.
   Proof.
