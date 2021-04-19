@@ -23,6 +23,8 @@ Section MappingSpace.
 
 End MappingSpace.
 
+Definition TypeOfSetOfFamilySet U := Collection (TypeOfOrderedPair (Collection U)).
+
 (* GraphOfIndexToFamilySet, 添字集合と集合族のGraph*)
 Inductive GraphOfIndexToFamilySet {U:Type} (map: U -> Collection U) (I:Collection U) (X: Collection (Collection U)) :
   Collection (TypeOfOrderedPair (Collection U)) :=
@@ -35,7 +37,7 @@ Inductive GraphOfIndexToFamilySet {U:Type} (map: U -> Collection U) (I:Collectio
 Definition IndexingFunction {U:Type} (map: U -> Collection U) (I:Collection U) (X: Collection (Collection U)) :=
   forall i:U, i ∈ I -> exists x':Collection U, x' = map i /\ x' ∈ X.
 
-Inductive PickFamilySet {U:Type} (X_I:Collection (TypeOfOrderedPair (Collection U))) (i:U) : Collection U :=
+Inductive PickFamilySet {U:Type} (X_I:TypeOfSetOfFamilySet U) (i:U) : Collection U :=
 | intro_of_pick_family_set: forall (x:U), (exists (X_i:Collection U), <|{|i|}, X_i|> ∈ X_I /\ x ∈ X_i) -> x ∈ (PickFamilySet X_I i).
 
 (* ⌞ Unicode: 231E BOTTOM LEFT CORNER *)
@@ -55,7 +57,7 @@ Section CollectionFamily.
   Variable U:Type.
 
   Theorem indexed_set_is_unique:
-    forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (F: Collection (TypeOfOrderedPair (Collection U))),
+    forall (f_i: U -> Collection U) (I:Collection U) (X': Collection (Collection U)) (F: TypeOfSetOfFamilySet U),
       F = GraphOfIndexToFamilySet f_i I X' ->
       IndexingFunction f_i I X' ->
       forall (i:U), i ∈ I -> exists! X_i:Collection U, X_i = (PickFamilySet F i).
@@ -129,7 +131,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem indexed_set_eq_empty_to_bigcup_eq_empty:
-    forall (f_i: U -> Collection U) (I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (f_i: U -> Collection U) (I:Collection U) (X_I: TypeOfSetOfFamilySet U),
       I = `Ø` ->
       ⋃{ I , (fun i:U => X_I ⌞ i) } = `Ø`.
   Proof.
@@ -167,7 +169,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem a_collection_included_bigcup_of_family_set_to_a_collection_included_element_of_family_set:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       ⋃{ I , (fun i:U => X_I ⌞ i) } ⊂ Y -> forall i:U, i ∈ I -> X_I ⌞ i ⊂ Y.
   Proof.
     move => I Y X_I H i HiI x HxXi.
@@ -178,7 +180,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem a_collection_included_element_of_family_set_to_a_collection_included_bigcup_of_family_set:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       (forall i:U, i ∈ I -> X_I ⌞ i ⊂ Y) -> ⋃{ I , (fun i:U => X_I ⌞ i) } ⊂ Y.
   Proof.
     move => I Y X_I H x H'.
@@ -191,7 +193,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem a_collection_included_bigcup_of_family_set_iff_a_collection_included_element_of_family_set:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       ⋃{ I , (fun i:U => X_I ⌞ i) } ⊂ Y <-> forall i:U, i ∈ I -> X_I ⌞ i ⊂ Y.
   Proof.
     move => I Y X_I.
@@ -201,7 +203,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem bigcap_of_family_set_included_a_collection_to_element_of_family_set_included_a_collection:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       Y ⊂ ⋂{ I , (fun i:U => X_I ⌞ i) } -> forall i:U, i ∈ I -> Y ⊂ X_I ⌞ i.
   Proof.
     move => I Y X_I H i HiI x HxY.
@@ -212,7 +214,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem element_of_family_set_included_a_collection_to_bigcap_of_family_set_included_a_collection:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       (forall i:U, i ∈ I -> Y ⊂ X_I ⌞ i) -> Y ⊂ ⋂{ I , (fun i:U => X_I ⌞ i) }.
   Proof.
     move => I Y X_I H x HxY.
@@ -223,7 +225,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem a_collection_included_element_of_family_set_iff_a_collection_included_bigcap_of_family_set:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       Y ⊂ ⋂{ I , (fun i:U => X_I ⌞ i) } <-> forall i:U, i ∈ I -> Y ⊂ X_I ⌞ i.
   Proof.
     move => I Y X_I.
@@ -233,7 +235,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem bigcap_intersection_indexed_set:
-    forall (f_i: U -> Collection U) (I I1 I2:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (f_i: U -> Collection U) (I I1 I2:Collection U) (X_I: TypeOfSetOfFamilySet U),
       I = I1 ∪ I2 ->
       ⋂{ I , (fun i:U => X_I ⌞ i) } = ⋂{ I1 , (fun i:U => X_I ⌞ i) } ∩ ⋂{ I2 , (fun i:U => X_I ⌞ i) }.
   Proof.
@@ -255,7 +257,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem LawOfDeMorganOfBigcup:
-    forall(I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall(I:Collection U) (X_I: TypeOfSetOfFamilySet U),
       (⋃{ I , (fun i:U => X_I ⌞ i) })^c = ⋂{ I , (fun i:U => (X_I ⌞ i)^c) }.
   Proof.
     move => I X_I.
@@ -277,7 +279,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem LawOfDeMorganOfBigcap:
-    forall (I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I:Collection U) (X_I: TypeOfSetOfFamilySet U),
       (⋂{ I , (fun i:U => X_I ⌞ i) })^c = ⋃{ I , (fun i:U => (X_I ⌞ i)^c) }.
   Proof.
     move => I X_I.
@@ -306,7 +308,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem bigcup_family_set_union_eq:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       I <> `Ø` ->
       ⋃{ I , (fun i:U => (X_I ⌞ i) ∪ Y) } = ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∪ Y.
   Proof.
@@ -345,7 +347,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem bigcup_family_set_intersection_eq:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       ⋃{ I , (fun i:U => (X_I ⌞ i) ∩ Y) } = ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∩ Y.
   Proof.
     move => I Y X_I.
@@ -360,7 +362,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem bigcap_family_set_union_eq:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       ⋂{ I , (fun i:U => (X_I ⌞ i) ∪ Y) } = ⋂{ I , (fun i:U => (X_I ⌞ i)) } ∪ Y.
   Proof.
     move => I Y X_I.
@@ -391,7 +393,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem a_collection_minus_bigcap_eq_bigcup_a_collection_minus_element_of_family_set:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       Y \ ⋂{ I , (fun i:U => (X_I ⌞ i)) } = ⋃{ I , (fun i:U => Y \ (X_I ⌞ i)) }.
   Proof.
     move => I Y X_I.
@@ -430,7 +432,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem a_collection_minus_bigcup_eq_bigcap_a_collection_minus_element_of_family_set:
-    forall (I Y:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I Y:Collection U) (X_I: TypeOfSetOfFamilySet U),
       I <> `Ø` ->
       Y \ ⋃{ I , (fun i:U => (X_I ⌞ i)) } = ⋂{ I , (fun i:U => Y \ (X_I ⌞ i)) }.
   Proof.
@@ -463,7 +465,7 @@ Section CollectionFamily.
   Qed.
 
   Goal
-    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I J:Collection U) (X_I Y_J: TypeOfSetOfFamilySet U),
     forall x:U,
       x ∈ ⋂{ I × J, (fun ij:TypeOfOrderedPair U => (fun x:U => forall i j:U, ij=<|i,j|> -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j))} -> forall i j:U, i∈I -> j∈J -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j.
   Proof.
@@ -478,7 +480,7 @@ Section CollectionFamily.
   Qed.
 
   Goal
-    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I J:Collection U) (X_I Y_J: TypeOfSetOfFamilySet U),
     forall x:U,
       (forall i j:U, i∈I -> j∈J -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j) -> x ∈ ⋂{ I × J, (fun ij:TypeOfOrderedPair U => (fun x:U => forall i j:U, ij=<|i,j|> -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j))}.
   Proof.
@@ -492,7 +494,7 @@ Section CollectionFamily.
   Qed.
 
   Goal
-    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I J:Collection U) (X_I Y_J: TypeOfSetOfFamilySet U),
     forall x:U,
       (forall i j:U, i∈I -> j∈J -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j) -> (forall i:U, i ∈ I -> x ∈ X_I ⌞ i) \/ (forall j:U, j ∈ J -> x ∈ Y_J ⌞ j).
   Proof.
@@ -519,7 +521,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem union_bigcap_family_set_eq_bigcap_ordered_pair_index:
-    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I J:Collection U) (X_I Y_J: TypeOfSetOfFamilySet U),
       ⋂{ I , (fun i:U => (X_I ⌞ i)) } ∪ ⋂{ J , (fun j:U => (Y_J ⌞ j)) } =
       ⋂{ I × J, (fun ij:TypeOfOrderedPair U => (fun x:U => forall i j:U, ij=<|i,j|> -> x ∈ X_I ⌞ i ∪ Y_J ⌞ j))}.
   Proof.
@@ -573,7 +575,7 @@ Section CollectionFamily.
   Qed.
 
   Theorem intersection_bigcup_family_set_eq_bigcup_ordered_pair_index:
-    forall (I J:Collection U) (X_I Y_J: Collection (TypeOfOrderedPair (Collection U))),
+    forall (I J:Collection U) (X_I Y_J: TypeOfSetOfFamilySet U),
       ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∩ ⋃{ J , (fun j:U => (Y_J ⌞ j)) } =
       ⋃{ I × J, (fun ij:TypeOfOrderedPair U => (fun x:U => exists i j:U, ij=<|i,j|> /\ x ∈ X_I ⌞ i ∩ Y_J ⌞ j))}.
   Proof.
@@ -606,7 +608,44 @@ Section CollectionFamily.
     inversion HijIJ as [HiI HjJ].
     split;split;[exists i|exists j];split;trivial.
   Qed.
-  
+
+  Theorem image_of_bigcup_eq_bigcup_image_of_family_set:
+    forall (A B I:Collection U) (X_I: TypeOfSetOfFamilySet U) (F:TypeOfDirectProduct U),
+      𝕴𝖒( F ,  ⋃{ I , (fun i:U => X_I ⌞ i) } ) = ⋃{ I , (fun i:U => (fun y:U => y ∈ 𝕴𝖒( F , X_I ⌞ i)))}.
+  Proof.
+    move => A B I X_I F.
+    apply mutally_included_to_eq.
+    split => y H.
+    split.
+    inversion H.
+    inversion H0 as [x].
+    inversion H2.
+    inversion H3.
+    inversion H5 as [i].
+    inversion H7.
+    exists i.
+    split.
+    trivial.
+    split.
+    exists x.
+    split.
+    trivial.
+    assumption.
+    inversion H as [y0].
+    inversion H0 as [i].
+    inversion H2.
+    inversion H4.
+    inversion H5 as [x].
+    split.
+    exists x.
+    inversion H7.
+    split.
+    split.
+    exists i.
+    split;trivial.
+    assumption.
+  Qed.
+
 End CollectionFamily.
 
 
