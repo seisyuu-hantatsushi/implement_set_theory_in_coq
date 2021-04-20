@@ -610,10 +610,10 @@ Section CollectionFamily.
   Qed.
 
   Theorem image_of_bigcup_eq_bigcup_image_of_family_set:
-    forall (A B I:Collection U) (X_I: TypeOfSetOfFamilySet U) (F:TypeOfDirectProduct U),
+    forall (I:Collection U) (X_I: TypeOfSetOfFamilySet U) (F:TypeOfDirectProduct U),
       𝕴𝖒( F ,  ⋃{ I , (fun i:U => X_I ⌞ i) } ) = ⋃{ I , (fun i:U => (fun y:U => y ∈ 𝕴𝖒( F , X_I ⌞ i)))}.
   Proof.
-    move => A B I X_I F.
+    move => I X_I F.
     apply mutally_included_to_eq.
     split => y H.
     split.
@@ -646,6 +646,109 @@ Section CollectionFamily.
     assumption.
   Qed.
 
+  Theorem image_of_bigcap_included_bigcap_image_of_family_set:
+    forall (I:Collection U) (X_I: TypeOfSetOfFamilySet U) (F:TypeOfDirectProduct U),
+      𝕴𝖒( F ,  ⋂{ I , (fun i:U => X_I ⌞ i) } ) ⊂ ⋂{ I , (fun i:U => (fun y:U => y ∈ 𝕴𝖒( F , X_I ⌞ i)))}.
+  Proof.
+    move => I X_I F y H.
+    split => i HiI.
+    inversion H as [y0 [x0 []]].
+    inversion H0.
+    split.
+    exists x0.
+    apply H3 in HiI.
+    split;trivial.
+  Qed.
+
+  Theorem inverse_image_of_bigcup_included_bigcup_inverse_image_of_family_set:
+    forall (J:Collection U) (Y_J: TypeOfSetOfFamilySet U) (F:TypeOfDirectProduct U),
+      𝕴𝖒( F ^-1 ,  ⋃{ J , (fun j:U => Y_J ⌞ j) } ) = ⋃{ J , (fun j:U => (fun x:U => x ∈ 𝕴𝖒( F^-1 , Y_J ⌞ j)))}.
+  Proof.
+    move => J Y_J F.
+    apply mutally_included_to_eq.
+    split => x H.
+    split.
+    inversion H as [x0].
+    inversion H0 as [y].
+    inversion H2.
+    inversion H3 as [y0 [j]].
+    exists j.
+    inversion H5 as [HjJ HyYJ].
+    split;trivial.
+    split.
+    exists y.
+    split;trivial.
+    inversion H.
+    inversion H as [x1 [j [HjJ HxIm]]].
+    split.
+    inversion HxIm as [x2 [y [HyYJ]]].
+    exists y.
+    split.
+    split.
+    exists j.
+    split;trivial.
+    assumption.
+  Qed.
+
+  Theorem inverse_image_of_bigcap_included_bigcap_inverse_image_of_family_set:
+    forall (f:U -> U) (J A B:Collection U) (Y_J: TypeOfSetOfFamilySet U) (F:TypeOfDirectProduct U),
+      J<>`Ø` ->
+      MappingFunction f A B ->
+      F = GraphOfFunction f A B ->
+      𝕴𝖒( F ^-1 ,  ⋂{ J , (fun j:U => Y_J ⌞ j) } ) = ⋂{ J , (fun j:U => (fun x:U => x ∈ 𝕴𝖒( F^-1 , Y_J ⌞ j)))}.
+  Proof.
+    move => f J A B Y_J F HnEJ Hf HF.
+    apply mutally_included_to_eq.
+    split => x H.
+    inversion H as [x0 [y [HyI HFI]]].
+    inversion HyI as [y0].
+    split => j HjJ.
+    apply H1 in HjJ.
+    split.
+    exists y.
+    split;trivial.
+    apply not_empty_collection_to_exists_element_in_collection in HnEJ.
+    inversion HnEJ as [j].
+    inversion H as [x0].
+    apply H1 in H0.
+    inversion H0 as [x1].
+    split.
+    inversion H3 as [y].
+    inversion H5.
+    exists y.
+    split.
+    split => j0 Hj0J.
+    apply H1 in Hj0J.
+    inversion Hj0J as [x2].
+    inversion H8 as [y'].
+    inversion H10.
+    inversion H7 as [x'' y''].
+    inversion H12 as [x''' y'''].
+    apply ordered_pair_swap in H14.
+    apply ordered_pair_swap in H16.
+    rewrite H14 in H13.
+    rewrite H16 in H15.
+    suff: y=y'.
+    move => H'.
+    rewrite H'.
+    trivial.
+    rewrite HF in H13.
+    rewrite HF in H15.
+    inversion H13 as [Z3 [x3 [y3]]].
+    inversion H15 as [Z4 [x4 [y4]]].
+    inversion H17 as [Heq1 [Hyfx]].
+    inversion H19 as [Heq2 [Hy'fx]].
+    apply ordered_pair_to_and in Heq1.
+    apply ordered_pair_to_and in Heq2.
+    inversion Heq1 as [Hxeqx3 Hyeqy3].
+    inversion Heq2 as [Hxeqx4 Hy'eqy4].
+    rewrite -Hxeqx3 -Hyeqy3 in Hyfx.
+    rewrite -Hxeqx4 -Hy'eqy4 in Hy'fx.
+    rewrite Hyfx Hy'fx.
+    reflexivity.
+    assumption.
+  Qed.
+  
 End CollectionFamily.
 
 
