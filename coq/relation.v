@@ -14,6 +14,12 @@ Definition TransitiveRelation U (R:Relation U) := forall x y z:U, R x y -> R y z
 Inductive PartialOrder (U:Type) (R:Relation U) : Prop :=
   define_partail_order: ReflexiveRelation U R -> AntisymmetricRelation U R -> TransitiveRelation U R -> PartialOrder U R.
 
+Inductive EquivalenceRelation (U:Type) (R:Relation U) : Prop :=
+  define_equivalence_relation: ReflexiveRelation U R ->
+                               SymmetricRelation U R ->
+                               TransitiveRelation U R ->
+                               EquivalenceRelation U R.
+
 (* operator Included. Collection -> Collection -> Prop *)
 Definition Included U (X Y:Collection U) := forall x:U, x ∈ X -> x ∈ Y.
 Definition IncludedNotEqualTo U (X Y:Collection U) := forall x:U, x ∈ X -> x ∈ Y /\ X <> Y.

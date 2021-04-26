@@ -299,7 +299,8 @@ Inductive OrderedPair {U:Type} (x y:U) : Collection (Collection U) :=
 
 Notation "<| x , y |>" := (OrderedPair x y).
 
-Definition OrderedPairHighOrder U (x':Collection U) (y:U) := OrderedPair x' (Singleton U y).
+Definition OrderedPairHighOrderFirst U (x':Collection U) (y:U) := OrderedPair x' (Singleton U y).
+Definition OrderedPairHighOrderSecond U (x:U) (y':Collection U) := OrderedPair (Singleton U x) y'.
 
 Definition TypeOfOrderedPair U := Collection (Collection U).
 
