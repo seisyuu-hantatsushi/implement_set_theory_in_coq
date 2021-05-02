@@ -16,7 +16,7 @@ Inductive UnionOfCollection (U:Type) (A B:Collection U): Collection U :=
 where "A ∪ B" := (UnionOfCollection _ A B).
 
 Inductive BigCupOfCollection (U:Type) (X:Collection (Collection U)): Collection U :=
-| intro_bigcup_of_collection: forall A: Collection U, forall x:U, x ∈ A /\ A ∈ X -> x ∈ BigCupOfCollection U X
+| intro_bigcup_of_collection: forall x:U, (exists A: Collection U, x ∈ A /\ A ∈ X) -> x ∈ BigCupOfCollection U X
 where "⋃ X" := (BigCupOfCollection _ X).
 
 Notation "{| x , y , .. , z |}" :=
@@ -98,46 +98,72 @@ Section UnionFromAxiomTest.
   Goal ⋃ (| A , B |) = A ∪ B.
   Proof.
     apply AxiomOfExtentionality => x.
-    rewrite /iff. split.
-    +case => A0 x0.
-     case => H0 H1.
-     apply in_unorder_pair_iff_in_or in H1.
-     case: H1 => H1; apply singleton_to_eq in H1; rewrite H1 in H0.
-     left. by [].
-     right. by [].
-    +case => x0 H.
-     apply (intro_bigcup_of_collection U (|A,B|) A).
-     split. by [].
+    rewrite /iff. split; case => x0 H.
+    +inversion H as [A0 [Hx0A0 HA0]].
+     inversion HA0.
      left.
-     apply (intro_bigcup_of_collection U (|A,B|) B).
-     split. by [].
+     assumption.
+     right.
+     assumption.
+    +split.
+     exists A.
+     split.
+     trivial.
+     left.
+     split.
+     exists B.
+     split.
+     trivial.
      right.
   Qed.
 
   Goal ⋃ {| A , B , C |} = A ∪ B ∪ C.
   Proof.
-    apply AxiomOfExtentionality => x.
-    rewrite /iff. split.
-    case => x0' x0.
-    case => H0 H1.
-    apply triple_ext_notation_to_or_eq in H1.
-    case: H1 => H1.
-    rewrite H1 in H0.
-    left. by [].
-    case: H1 => H2; rewrite H2 in H0.
-    right. left. by [].
-    right. right. by [].
-    case => x0 H.
-    apply: (((intro_bigcup_of_collection U {| A , B , C |}) A) x0).
-    split. by [].
-    left. left. apply singleton_iff_eq. reflexivity.
-    case: H => x1 H.
-    apply: (((intro_bigcup_of_collection U {| A , B , C |}) B) x1).
-    split. by [].
-    left. right. apply singleton_iff_eq. reflexivity.
-    apply: (((intro_bigcup_of_collection U {| A , B , C |}) C) x1).
-    split. by [].
-    right. apply singleton_iff_eq. reflexivity.
+    apply mutally_included_to_eq.
+    rewrite /iff. split => x H.
+    inversion H.
+    inversion H0 as [X0 [HxX0 HU]].
+    inversion HU as [X1|X1].
+    inversion H2 as [X2|X2].
+    apply singleton_to_eq in H4.
+    rewrite H4 in HxX0.
+    left.
+    trivial.
+    apply singleton_to_eq in H4.
+    rewrite H4 in HxX0.
+    right.
+    left.
+    trivial.
+    apply singleton_to_eq in H2.
+    right.
+    right.
+    rewrite H2 in HxX0.
+    trivial.
+    inversion H.
+    split.
+    exists A.
+    split.
+    trivial.
+    left.
+    left.
+    apply eq_to_singleton.
+    reflexivity.
+    inversion H0.
+    split.
+    exists B.
+    split.
+    trivial.
+    left.
+    right.
+    apply eq_to_singleton.
+    reflexivity.
+    split.
+    exists C.
+    split.
+    trivial.
+    right.
+    apply eq_to_singleton.
+    reflexivity.
   Qed.
 
   Goal (| a , b |) ∪ {| c |} = {| a , b , c |}.
