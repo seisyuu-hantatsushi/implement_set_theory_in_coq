@@ -8,6 +8,21 @@ Inductive SymDiffOfCollection {U:Type} (A B:Collection U): Collection U :=
 
 Notation "A △ B" := (SymDiffOfCollection A B) (right associativity, at level 30).
 
+Inductive DirectSumOfCollection {U:Type} (X':Collection (Collection U)): Collection U:=
+| definition_of_direct_sum_of_collection: forall x:U,
+    x ∈ (⋃ X')  /\
+    (forall A B:Collection U, A ∈ X' /\ B ∈ X' -> A ∩ B = `Ø`)
+    -> x ∈ DirectSumOfCollection X'.
+
+Inductive PartitionOfCollection {U:Type} (X:Collection U) : Collection (Collection U):=
+| definition_of_partition_of_collection:
+    forall X':Collection U,
+      X'<>`Ø` /\
+      (exists P:Collection (Collection U), P ⊂ 𝔓(X) /\
+                                           X = (⋃ P) /\
+                                           forall A B:Collection U, A∈P /\ B∈P -> A ∩ B = `Ø`)
+        -> X' ∈ PartitionOfCollection X.
+
 Theorem AbsorptionEmpty:
   forall U:Type, forall A:Collection U, (A ∪ `Ø`) = A.
 Proof.

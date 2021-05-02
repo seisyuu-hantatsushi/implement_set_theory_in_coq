@@ -10,7 +10,7 @@ Inductive PowerCollection {U:Type} (A:Collection U) : Collection (Collection U) 
 | definition_of_power: forall x':Collection U, x' ⊂ A -> x' ∈ PowerCollection A.
 
 (* 𝔓:Unicode 1D513 *)
-Notation "𝔓( X )" := (@PowerCollection X) (at level 15).
+Notation "𝔓( X )" := (PowerCollection X) (at level 15).
 
 Section AxiomOfPowerTest.
   Variable U:Type.

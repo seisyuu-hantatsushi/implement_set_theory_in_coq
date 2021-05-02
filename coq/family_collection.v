@@ -53,6 +53,12 @@ Inductive BigCapOfFamilySet {U V:Type} (I:Collection V) (X_I: V -> Collection U)
 
 Notation "⋂{ I , X_I }" := (BigCapOfFamilySet I X_I).
 
+Definition Covering {U V:Type} (X:Collection U) (I:Collection V) (X_I: V -> Collection U) := X ⊂ ⋃{ I , X_I }.
+
+
+Definition PartitionOfCollection {U:Type} (X I:Collection U) (X_I: Collection (TypeOfOrderedPair (Collection U))) :=
+  X = ⋃{ I , (fun i:U => X_I ⌞ i) } /\ (forall i j:U, i∈I /\ j∈I /\ i<>j /\ (X_I ⌞ i) <> `Ø` -> X_I ⌞ i ∩ X_I ⌞ j = `Ø`).
+
 Section CollectionFamily.
   Variable U:Type.
 
