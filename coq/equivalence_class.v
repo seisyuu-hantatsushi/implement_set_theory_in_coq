@@ -4,7 +4,7 @@ Require Import collect_operator.
 Require Import direct_product.
 Require Import mapping.
 Require Import mapping_morphism.
-Require Import collection_family.
+Require Import family_collection.
 
 Inductive EquivalenceClass {U:Type} (R:Relation U) (a:U) : Collection U :=
   definition_of_equivalence_class: forall x:U, EquivalenceRelation U R /\ R a x -> x ∈ EquivalenceClass R a.
@@ -14,8 +14,11 @@ Inductive QuotientSet {U:Type} (R:Relation U) (X:Collection U) : Collection (Col
  *)
 Definition QuotientSet (U:Type) (R:Relation U) (a:U) := PowerCollection (EquivalenceClass R a).
 
+Definition EquivalenceClassByFunction {U V:Type} (f:U->V) (a:U) :=
+  EquivalenceClass (fun x y:U => f x = f y) a.
+
 Section EquivalenceClass.
-  Variable U:Type.
+  Variable U V:Type.
   Variable R:Relation U.
 
   Theorem a_element_in_equivalence_class_of_it_element:
@@ -112,7 +115,7 @@ Section EquivalenceClass.
     apply H1.
     assumption.
   Qed.
-  
+
   Theorem intersection_of_equivalence_class_not_empty_to_same_relation:
     EquivalenceRelation U R ->
     forall a b:U, EquivalenceClass R a ∩ EquivalenceClass R b <> `Ø` -> R a b.
@@ -142,5 +145,29 @@ Section EquivalenceClass.
     split;[apply same_relation_to_intersection_of_equivalence_class_not_empty|
            apply intersection_of_equivalence_class_not_empty_to_same_relation];trivial.
   Qed.
-  
+
+  Theorem result_value_same_to_equivalence_class_eq:
+    forall (f:U->V), forall a b:U,
+        f a = f b -> EquivalenceClassByFunction f a = EquivalenceClassByFunction f b.
+  Proof.
+    move => f a b H.
+    apply mutally_included_to_eq.
+    split => x H'.
+    inversion H'.
+    inversion H0.
+    split.
+    split.
+    apply H2.
+    rewrite -H3.
+    apply eq_sym.
+    trivial.
+    inversion H'.
+    inversion H0.
+    split.
+    split.
+    apply H2.
+    rewrite -H3.
+    assumption.
+  Qed.
+
 End EquivalenceClass.
