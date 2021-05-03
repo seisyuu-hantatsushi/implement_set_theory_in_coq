@@ -53,8 +53,16 @@ Inductive BigCapOfFamilySet {U V:Type} (I:Collection V) (X_I: V -> Collection U)
 
 Notation "⋂{ I , X_I }" := (BigCapOfFamilySet I X_I).
 
-Definition Covering {U V:Type} (X:Collection U) (I:Collection V) (X_I: V -> Collection U) := X ⊂ ⋃{ I , X_I }.
+Inductive BuilderOfFamilySet {U V:Type} (I:Collection V) (X_I:V -> Collection U) : Collection (Collection U) :=
+| definition_of_collection_of_family_set:
+    forall Xi:Collection U, (exists i:V, i ∈ I /\ Xi = X_I i) -> Xi ∈ BuilderOfFamilySet I X_I.
 
+Definition CoveringByFamilySet {U V:Type} (X:Collection U) (I:Collection V) (X_I: V -> Collection U) := X = ⋃{ I , X_I }.
+
+Definition ProvidePartitionByFamilySetToSet {U V:Type} (X:Collection U) (I:Collection V) (X_I: V -> Collection U) :=
+  CoveringByFamilySet X I X_I /\
+  (forall i:V, i ∈ I -> X_I i <> `Ø`) /\
+  (forall i j:V, i ∈ I /\ j ∈ I /\ i <> j -> (X_I i) ∩ (X_I j) = `Ø`).
 
 Section FamilyCollection.
   Variable U:Type.
@@ -751,14 +759,64 @@ Section FamilyCollection.
     reflexivity.
     assumption.
   Qed.
+
+  Theorem a_element_of_covering_family_set_is_subset_of_covered_set:
+    forall(I X:Collection U) (X_I: TypeOfSetOfFamilySet U),
+      CoveringByFamilySet X I (fun i:U => X_I ⌞ i) ->
+      forall i:U, i ∈ I -> X_I ⌞ i ⊂ X.
+  Proof.
+    move =>  I X X_I HC i HiI x HXIi.
+    inversion HC.
+    split.
+    exists i.
+    split;trivial.
+  Qed.
+
+  Theorem collection_of_family_set_is_subset_of_power_set:
+    forall (I X:Collection U) (X_I: TypeOfSetOfFamilySet U),
+      CoveringByFamilySet X I (fun i:U => X_I ⌞ i) ->
+      BuilderOfFamilySet I (fun i:U => X_I ⌞ i) ⊂ 𝔓(X).
+  Proof.
+    move => I X X_I HC Xi HXiXI.
+    split => x H.
+    inversion HC.
+    split.
+    inversion HXiXI.
+    inversion H1 as [i].
+    inversion H3 as [HiI Heq].
+    exists i.
+    split.
+    trivial.
+    rewrite -Heq.
+    assumption.
+  Qed.
+
+  Theorem bigcup_of_familyset_eq_bigcup_of_collection_of_familyset:
+    forall (I:Collection U) (X_I: TypeOfSetOfFamilySet U),
+      ⋃{ I , fun i:U => X_I ⌞ i } = ⋃ (BuilderOfFamilySet I (fun i:U => X_I ⌞ i)).
+  Proof.
+    move => I X_I.
+    apply mutally_included_to_eq.
+    split => x H.
+    split.
+    inversion H.
+    inversion H0 as [i].
+    inversion H2.
+    exists (X_I ⌞ i).
+    split;[trivial|
+           split;exists i;split;trivial].
+    inversion H.
+    inversion H0 as [Xi].
+    inversion H2.
+    inversion H4.
+    inversion H5 as [i].
+    split.
+    inversion H7.
+    exists i.
+    split;[trivial|rewrite -H9;trivial].
+  Qed.
+
+
+
   
 End FamilyCollection.
-
-
-
-
-
-
-
-
-
