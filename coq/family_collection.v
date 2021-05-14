@@ -21,6 +21,21 @@ Section MappingSpace.
     apply H.
   Qed.
 
+  Goal forall (X Y: Collection U),
+      MappingSpace X Y ⊂ 𝔓(X × Y).
+  Proof.
+    move => X Y F H.
+    split => f H'.
+    inversion H.
+    inversion H0 as [f' [Hf HF]].
+    rewrite HF in H'.
+    inversion H'.
+    inversion H2 as [x [y [Heq [Hyf'x HXY]]]].
+    rewrite -Heq in HXY.
+    assumption.
+  Qed.
+ 
+  
 End MappingSpace.
 
 Definition TypeOfSetOfFamilySet U := Collection (TypeOfOrderedPair (Collection U)).
@@ -63,6 +78,10 @@ Definition ProvidePartitionByFamilySetToSet {U V:Type} (X:Collection U) (I:Colle
   CoveringByFamilySet X I X_I /\
   (forall i:V, i ∈ I -> X_I i <> `Ø`) /\
   (forall i j:V, i ∈ I /\ j ∈ I /\ i <> j -> (X_I i) ∩ (X_I j) = `Ø`).
+
+(*
+Inductive DirectProductOfFamilySet {U V:Type} (I:Collection V) (X_I: V -> Collection U) :=
+  *)
 
 Section FamilyCollection.
   Variable U:Type.
