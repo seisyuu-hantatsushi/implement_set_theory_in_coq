@@ -3,40 +3,7 @@ From mathcomp Require Import ssreflect.
 Require Import collect_operator.
 Require Import direct_product.
 Require Import mapping.
-
-(* 配置集合, MappingSpace *)
-Inductive MappingSpace {U:Type} (X Y:Collection U) : Collection (TypeOfDirectProduct U) :=
-  definition_of_mapping_space: forall (F:TypeOfDirectProduct U),
-    (exists f:U->U, MappingFunction f X Y /\ F = GraphOfFunction f X Y) -> F ∈ MappingSpace X Y.
-
-Section MappingSpace.
-
-  Variable U:Type.
-
-  Goal forall (X Y: Collection U) (F:TypeOfDirectProduct U),
-      F ∈ MappingSpace X Y -> exists f:U->U,MappingFunction f X Y /\ F = GraphOfFunction f X Y.
-  Proof.
-    move => X Y F HFM.
-    inversion HFM.
-    apply H.
-  Qed.
-
-  Goal forall (X Y: Collection U),
-      MappingSpace X Y ⊂ 𝔓(X × Y).
-  Proof.
-    move => X Y F H.
-    split => f H'.
-    inversion H.
-    inversion H0 as [f' [Hf HF]].
-    rewrite HF in H'.
-    inversion H'.
-    inversion H2 as [x [y [Heq [Hyf'x HXY]]]].
-    rewrite -Heq in HXY.
-    assumption.
-  Qed.
- 
-  
-End MappingSpace.
+Require Import mapping_space.
 
 Definition TypeOfSetOfFamilySet U := Collection (TypeOfOrderedPair (Collection U)).
 

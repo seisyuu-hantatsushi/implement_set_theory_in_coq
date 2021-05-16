@@ -1,7 +1,10 @@
 
 all: mapping_morphism.vo family_collection.vo
 
-family_collection.vo: family_collection.v mapping.vo
+family_collection.vo: family_collection.v mapping_space.vo mapping.vo
+	coqc $<
+
+mapping_space.vo: mapping_space.v collect_operator.vo direct_product.vo mapping.vo
 	coqc $<
 
 mapping_morphism.vo: mapping_morphism.v inverse_mapping.vo
