@@ -4,12 +4,16 @@ Require Import collect_operator.
 Require Import direct_product.
 Require Import binary_relation.
 
-Definition GraphOfMapping {U:Type} (G:TypeOfDirectProduct U) (A B:Collection U) :=
+(* 写像のグラフは集合である.
+   グラフは2つの集合の直積集合の部分集合であり,第一射影の要素に対して第二射影の要素がただ一つ決まる. *)
+(* 写像のグラフが満たさないと行けない条件 *)
+Definition ConditionOfGraphOfMapping {U:Type} (G:TypeOfDirectProduct U) (A B:Collection U) :=
   G ⊂ A × B /\ forall x:U, x ∈ A -> exists! y:U, <|x,y|> ∈ G.
 
 Definition MappingFunction {U:Type} (f: U -> U) (A B:Collection U) :=
   forall x:U, x ∈ A -> exists y:U, y = f x /\ y ∈ B.
 
+(* 関数が与えられると決定されるGraph *)
 Definition GraphOfFunction {U:Type} (f: U -> U) (A B:Collection U) :
   TypeOfDirectProduct U := GraphOfBinaryRelation (fun (x y:U) => y = f x) A B.
 
@@ -78,7 +82,7 @@ Section Mapping.
     forall (f:U -> U) (A B:Collection U) (G:TypeOfDirectProduct U),
       (forall x:U, exists y:U, y = f x /\ <|x, y|> ∈ A × B) ->
       G = GraphOfFunction f A B ->
-      GraphOfMapping G A B.
+      ConditionOfGraphOfMapping G A B.
   Proof.
     move => f A B G HF HG.
     split.

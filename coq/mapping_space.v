@@ -38,7 +38,7 @@ Section MappingSpace.
 
   Theorem element_of_mapping_space_to_graph:
     forall (A B:Collection U) (G:TypeOfDirectProduct U),
-      G ∈ MappingSpace A B -> GraphOfMapping G A B.
+      G ∈ MappingSpace A B -> ConditionOfGraphOfMapping G A B.
   Proof.
     move => A B G H.
     inversion H.
