@@ -7,7 +7,8 @@ Require Import mapping_space.
 
 (* 族:X_iは添字集合:Iから集合:Xへの写像である. X_i:I->X *)
 (* family X_i is alias of mapping indexing set I to set X *)
-Definition IndexedFamily {U V:Type} (map:U -> V) (I:Collection U) (X: Collection V) :=
+Definition TypeOfFamily (U V:Type) := U -> V.
+Definition IndexedFamily {U V:Type} (map:TypeOfFamily U V) (I:Collection U) (X: Collection V) :=
   forall i:U, i ∈ I -> exists Xi:V, Xi = map i /\ Xi ∈ X.
 
 (* 族で添字に対応する要素が集合である場合,集合族と言う. 集合族は関数,写像 *)
@@ -20,7 +21,7 @@ Definition TypeOfGraphOfFamilyOfSets U := Collection (TypeOfOrderedPair (Collect
 (* 族のGraphは添字集合と集合の直積の部分集合である *)
 (* Graph of family is subset of direct product of indexing set I to set X *)
 (* 集合族のGraph *)
-Inductive GraphOfFamilyOfSets {U:Type} (map: U -> Collection U) (I:Collection U) (X: Collection (Collection U)) :
+Inductive GraphOfFamilyOfSets {U:Type} (map: TypeOfFamily U (Collection U)) (I:Collection U) (X: Collection (Collection U)) :
   TypeOfGraphOfFamilyOfSets U :=
 | definition_of_graph_of_family_set:
     forall Z:TypeOfOrderedPair (Collection U),
@@ -28,13 +29,14 @@ Inductive GraphOfFamilyOfSets {U:Type} (map: U -> Collection U) (I:Collection U)
       Z ∈ GraphOfFamilyOfSets map I X.
 
 (* 集合族から添字により集合を得ます *)
-Definition PickIndexedSetByFamilySet {U V:Type} (map:V -> Collection U) (i:V) : Collection U := map i.
+Definition PickIndexedSetByFamilyOfSets {U V:Type} (map:V -> Collection U) (i:V) : Collection U := map i.
 
 (* ⌞ Unicode: 231E BOTTOM LEFT CORNER *)
-Notation "X_I ⌞ i" := (PickIndexedSetByFamilySet X_I i) (right associativity, at level 20).
+Notation "X_I ⌞ i" := (PickIndexedSetByFamilyOfSets X_I i) (left associativity, at level 20).
 
 (* 部分集合族 *)
-Definition FamilySubsetWithIndexingFunction
+Definition FamilyOFSubsetsWithFunction {U:Type} (X_I:U -> Collection U) (I:Collection U) (X: Collection U) :=
+  forall i:U, i ∈ I ->  (X_I ⌞ i) ⊂ X /\ exists X':Collection (Collection U), (X_I ⌞ i) ∈ X' /\ FamilyOfSetsWithFunction X_I I X'.
 
 Inductive BigCupOfFamilySet {U V:Type} (I:Collection V) (X_I: V -> Collection U): Collection U :=
 | intro_of_bigcup_of_family: forall x:U, (exists i:V, i ∈ I /\ x ∈ (X_I ⌞ i)) -> x ∈ BigCupOfFamilySet I X_I.
@@ -54,13 +56,11 @@ Section FamilyCollection.
 
   (* 添字集合の要素iと集合族の要素は一意に決まる. *)
   Theorem indexed_set_is_unique:
-    forall (X_I:U -> Collection U) (I:Collection U) (X': Collection (Collection U)),
-      FamilySetWithIndexingFunction X_I I X' ->
+    forall (X_I:TypeOfFamily U (Collection U)) (I:Collection U) (X': Collection (Collection U)),
+      FamilyOfSetsWithFunction X_I I X' ->
       forall (i:U), i ∈ I -> exists! X_i:Collection U, X_I i = X_i.
   Proof.
     move => f_i I X' HF i HiI.
-    unfold FamilySetWithIndexingFunction in HF.
-    unfold FamilyCollection in HF.
     apply HF in HiI.
     inversion HiI as [X_i].
     inversion H.
@@ -75,7 +75,7 @@ Section FamilyCollection.
 
   (* 添字集合が空なら集合族の合併は空 *)
   Theorem indexed_set_eq_empty_to_bigcup_eq_empty:
-    forall  (X_I: U -> Collection U) (I:Collection U),
+    forall (X_I: TypeOfFamily U (Collection U)) (I:Collection U),
       I = `Ø` ->
       ⋃{ I , (fun i:U => X_I ⌞ i) } = `Ø`.
   Proof.
@@ -98,7 +98,7 @@ Section FamilyCollection.
 
   (* 添字集合が空なら集合族の交わりは全体集合 *)
   Theorem indexed_set_eq_empty_to_bigcap_eq_full:
-    forall (X_I: U -> Collection U) (I:Collection U),
+    forall (X_I: TypeOfFamily U (Collection U)) (I:Collection U),
       I = `Ø` ->
       ⋂{ I , (fun i:U => X_I ⌞ i) } = (FullCollection U).
   Proof.
@@ -115,18 +115,105 @@ Section FamilyCollection.
 
   (* 添字集合が空なら部分集合族の交わりはもとの集合の全体 *)
   Theorem indexed_subset_eq_empty_to_bigcap_eq_full:
-    forall (X_I: U -> Collection U) (I:Collection U) (X:Collection U),
-    forall i:U, i ∈ I -> X_I ⌞ i ⊂ X ->
+    forall (X_I: TypeOfFamily U (Collection U)) (I:Collection U) (X:Collection U),
+    forall i:U, i ∈ I ->
     I = `Ø` ->
     ⋂{ I , (fun i:U => X_I ⌞ i) } = X.
   Proof.
-    move => X_I I X i HiI HSX HIE.
+    move => X_I I X i HiI HIE.
     have L1: forall i:U, i ∉ I.
     rewrite HIE.
     apply noone_in_empty.
     apply DoubleNegativeElimination => HnxX.
     apply (L1 i).
     apply HiI.
+  Qed.
+
+  Theorem LawOfDeMorganOfBigcup:
+    forall (X_I: TypeOfFamily U (Collection U)) (I:Collection U),
+      (⋃{ I , (fun i:U => X_I ⌞ i) })^c = ⋂{ I , (fun i:U => (X_I ⌞ i)^c) }.
+  Proof.
+    move => X_I I.
+    apply mutally_included_to_eq.
+    split => x H0.
+    split => i HiI HxnXi.
+    apply H0.
+    split.
+    exists i.
+    split.
+    apply HiI.
+    trivial.
+    move => HUc.
+    inversion HUc.
+    inversion H as [i [HiI HxXi]].
+    inversion H0.
+    apply H2 in HiI.
+    apply HiI.
+    trivial.
+  Qed.
+
+  Theorem LawOfDeMorganOfBigcap:
+    forall (X_I: TypeOfFamily U (Collection U)) (I:Collection U),
+      (⋂{ I , (fun i:U => X_I ⌞ i) })^c = ⋃{ I , (fun i:U => (X_I ⌞ i)^c) }.
+  Proof.
+    move => X_I I.
+    apply mutally_included_to_eq.
+    split => x H.
+    +apply notin_collect_iff_in_complement in H.
+     apply DoubleNegativeElimination => HnxX.
+     apply H.
+     split.
+     move => i HiI.
+     apply DoubleNegativeElimination => HnxXi.
+     apply HnxX.
+     split.
+     exists i.
+     split. trivial.
+     move => HxXi.
+     apply HnxXi.
+     trivial.
+    +move => HxCap.
+     inversion H.
+     inversion H0 as [i [HiI HnxX]].
+     apply HnxX.
+     inversion HxCap as [x1].
+     apply H2 in HiI.
+     trivial.
+  Qed.
+
+  (* 978-4-489-02249-4 P67 *)
+  Theorem a_set_includes_bigcup_of_sets_of_family_to_a_set_includes_element_of_sets_of_family:
+    forall (I Y:Collection U) (X_I: TypeOfFamily U (Collection U)),
+      ⋃{ I , (fun i:U => X_I ⌞ i) } ⊂ Y -> forall i:U, i ∈ I -> X_I ⌞ i ⊂ Y.
+  Proof.
+    move => I Y X_I H i HiI x HxXi.
+    apply H.
+    split.
+    exists i.
+    split; trivial.
+  Qed.
+
+  Theorem a_set_includes_element_of_sets_of_family_to_a_set_includes_bigcup_of_sets_of_family:
+    forall (I Y:Collection U) (X_I: TypeOfFamily U (Collection U)),
+    (forall i:U, i ∈ I -> X_I ⌞ i ⊂ Y) -> ⋃{ I , (fun i:U => X_I ⌞ i) } ⊂ Y.
+  Proof.
+    move => I Y X_I H x HxCup.
+    inversion HxCup.
+    inversion H0 as [i [H2 H3]].
+    apply H in H2.
+    apply H2.
+    trivial.
+  Qed.
+
+
+  Theorem a_set_includes_bigcup_of_sets_of_family_iff_a_set_includes_element_of_sets_of_family:
+    forall (I Y:Collection U) (X_I: TypeOfFamily U (Collection U)),
+      ⋃{ I , (fun i:U => X_I ⌞ i) } ⊂ Y <-> forall i:U, i ∈ I -> X_I ⌞ i ⊂ Y.
+  Proof.
+    move => I Y X_I.
+    rewrite /iff.
+    split;[apply a_set_includes_bigcup_of_sets_of_family_to_a_set_includes_element_of_sets_of_family|
+           apply a_set_includes_element_of_sets_of_family_to_a_set_includes_bigcup_of_sets_of_family].
   Qed.
 
 End FamilyCollection.
