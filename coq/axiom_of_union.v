@@ -318,3 +318,11 @@ Proof.
   apply: subcollect_to_union.
 Qed.
 
+Theorem union_a_set_and_empty_eq_a_set:
+  forall U:Type, forall A:Collection U, A ∪ `Ø` = A.
+Proof.
+  move => U A.
+  rewrite LawOfCommutativeAtUnion.
+  apply subcollect_to_union.
+  apply all_collection_included_empty.
+Qed.
