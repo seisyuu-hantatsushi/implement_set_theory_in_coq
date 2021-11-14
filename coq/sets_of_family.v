@@ -225,6 +225,7 @@ Section FamilyCollection.
     apply HiI.
     assumption.
   Qed.
+  
 
   Theorem bigcap_of_sets_of_family_includes_a_set_to_a_element_of_sets_of_family_includes_a_set:
     forall (I Y:Collection U) (X_I: TypeOfFamily U (Collection U)),
@@ -247,15 +248,16 @@ Section FamilyCollection.
            apply bigcap_of_sets_of_family_includes_a_set_to_a_element_of_sets_of_family_includes_a_set].
   Qed.
 
-  (* 978-4-489-02249-4 P76 *)
   Theorem bigcup_union_of_sets_of_family_and_a_set_eq:
     forall (I Y:Collection U) (X_I: TypeOfFamily U (Collection U)),
+      I <> `Ø` ->
       ⋃{ I , (fun i:U => (X_I ⌞ i) ∪ Y) } = ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∪ Y.
   Proof.
-    move => I Y X_I.
+    move => I Y X_I HnIE.
     apply mutally_included_to_eq.
-    split => x H.
-    +inversion H as [x0].
+    split => x.
+    +move => H.
+     inversion H as [x0].
      inversion H0 as [i].
      inversion H2 as [HiI].
      inversion H3.
@@ -265,28 +267,77 @@ Section FamilyCollection.
      split; trivial.
      right.
      trivial.
-    +move: (LawOfExcludedMiddle (I = `Ø`)).
-     case;[move=>HIE|move=>HInE].
-     split.C
-
-     
-     apply (indexed_set_eq_empty_to_bigcup_eq_empty X_I I) in HIE.
-     rewrite HIE in H.
+    +case => x0 H.
      split.
-     
      inversion H.
-     inversion H0.
-     inversion H2 as [i].
-     inversion H4.
-     split.
+     inversion H0 as [i].
+     inversion H2.
      exists i.
-     split;trivial.
-     left;trivial.
      split.
-     apply not_empty_collection_to_exists_element_in_collection in HInE.
-     inversion HInE as [i HiI].
+     trivial.
+     left.
+     trivial.
+     apply not_empty_collection_to_exists_element_in_collection in HnIE.
+     inversion HnIE as [i].
+     split.
      exists i.
      split;[trivial|right;trivial].
+    Qed.
+
+  (* 978-4-489-02249-4 P76 *)
+  Theorem union_bigcap_sets_of_family_and_a_set_eq:
+    forall (I Y:Collection U) (X_I: TypeOfFamily U (Collection U)),
+      ⋂{ I , (fun i:U => (X_I ⌞ i)) } ∪ Y = ⋂{ I , (fun i:U => (X_I ⌞ i) ∪ Y) }.
+  Proof.
+    move => I Y X_I.
+    apply mutally_included_to_eq.
+    split => x.
+    +case => x0 H.
+     ++split => i HiI.
+       left.
+       inversion H.
+       apply H0 in HiI.
+       trivial.
+     ++split => i HiI.
+       right.
+       trivial.
+    +case: (LawOfExcludedMiddle (x ∈ Y)) => HY H.
+     ++right.
+       trivial.
+       inversion H.
+     ++left.
+       split.
+       move => i HiI.
+       apply H0 in HiI.
+       inversion HiI.
+       apply H2.
+       apply DoubleNegativeElimination => Hn.
+       apply HY.
+       trivial.
+  Qed.
+
+  Theorem intersection_bigcap_sets_of_family_and_a_set_eq:
+    forall (I Y:Collection U) (X_I: TypeOfFamily U (Collection U)),
+      ⋃{ I , (fun i:U => (X_I ⌞ i)) } ∩ Y = ⋃{ I , (fun i:U => (X_I ⌞ i) ∩ Y) }.
+  Proof.
+    move => I Y X_I.
+    apply mutally_included_to_eq.
+    split => x H.
+    +split.
+    ++inversion H.
+      inversion H0.
+      inversion H3 as [i [HiI HxXi]].
+      exists i.
+      split; trivial.
+      split; trivial.
+    ++inversion H.
+      inversion H0 as [i [HiI HxXi]].
+      inversion HxXi.
+      split.
+      split.
+      exists i.
+      split;trivial.
+      trivial.
   Qed.
 
 End FamilyCollection.
